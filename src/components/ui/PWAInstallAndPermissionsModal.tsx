@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
   Smartphone,
   Bell,
@@ -16,8 +17,10 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function PWAInstallAndPermissionsModal() {
+  const pathname = usePathname();
   // Default to true during SSR to prevent layout flicker
   const [isInstalled, setIsInstalled] = useState<boolean>(true);
+  const [isDismissed, setIsDismissed] = useState<boolean>(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIOS, setIsIOS] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -195,14 +198,15 @@ export function PWAInstallAndPermissionsModal() {
     setAuthSuccessMessage("تم تفعيل كافة الصلاحيات بنجاح! المنظومة جاهزة لإرسال واستقبال التنبيهات.");
   };
 
-  // IF ALREADY INSTALLED -> NEVER SHOW PROMPT
-  if (isInstalled) {
+  // IF ALREADY INSTALLED, DISMISSED, OR ON IMMERSIVE NAVIGATION PAGES -> NEVER SHOW FLOATING BAR
+  const isNavPage = pathname?.includes("/dashboard/calibrate") || pathname?.includes("/dashboard/find");
+  if (isInstalled || isDismissed || isNavPage) {
     return null;
   }
 
   return (
     <>
-      {/* Floating Trigger Bar (Only shown if NOT installed) */}
+      {/* Floating Trigger Bar (Only shown if NOT installed and NOT on navigation pages) */}
       <div
         className="fixed bottom-3 inset-x-3 z-40 max-w-lg mx-auto p-2.5 rounded-xl border border-[#00C853]/50 bg-[#060608]/95 backdrop-blur-md text-white flex items-center justify-between gap-3 shadow-2xl"
         dir="rtl"
@@ -223,14 +227,25 @@ export function PWAInstallAndPermissionsModal() {
           </div>
         </div>
 
-        <Button
-          size="sm"
-          onClick={() => setIsOpen(true)}
-          className="bg-[#00C853] hover:bg-[#00B045] text-black font-mono font-bold text-[11px] h-8 px-3 cursor-pointer shrink-0"
-        >
-          <Download className="w-3 h-3 ml-1" />
-          <span>تثبيت</span>
-        </Button>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Button
+            size="sm"
+            onClick={() => setIsOpen(true)}
+            className="bg-[#00C853] hover:bg-[#00B045] text-black font-mono font-bold text-[11px] h-8 px-3 cursor-pointer shrink-0"
+          >
+            <Download className="w-3 h-3 ml-1" />
+            <span>تثبيت</span>
+          </Button>
+
+          <button
+            type="button"
+            onClick={() => setIsDismissed(true)}
+            className="w-7 h-7 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-colors"
+            title="إخفاء شريط التثبيت"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
 
       {/* Main Installation & Permissions Modal */}

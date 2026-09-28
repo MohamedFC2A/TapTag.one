@@ -132,7 +132,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       .catch((err) => {
         console.warn("Neon background check note:", err);
       });
-  }, [selectedTag.tagUid, vehiclePlate, vehicleMake, vehicleModel]);
+  }, [isMounted, selectedTag.tagUid, vehiclePlate, vehicleMake, vehicleModel]);
 
   // 2. Live dynamic relative time loop (updates every 10s)
   useEffect(() => {

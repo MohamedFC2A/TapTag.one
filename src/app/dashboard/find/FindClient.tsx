@@ -125,7 +125,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
       .finally(() => {
         setIsLoadingPoint(false);
       });
-  }, [selectedTag.tagUid, vehiclePlate, vehicleMake, vehicleModel]);
+  }, [isMounted, selectedTag.tagUid, vehiclePlate, vehicleMake, vehicleModel]);
 
   // Live dynamic relative time update for the calibrated vehicle stance
   useEffect(() => {
