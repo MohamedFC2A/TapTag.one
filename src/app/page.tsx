@@ -22,6 +22,7 @@ import {
   FileCheck,
 } from "lucide-react";
 import { Header } from "@/components/ui/Header";
+import { Footer } from "@/components/ui/Footer";
 import { Language } from "@/types";
 import { translations } from "@/lib/translations";
 
@@ -232,12 +233,7 @@ export default function HomePage() {
         </div>
       </main>
 
-      <footer className="w-full border-t border-[#1F2228] py-8 text-center text-xs text-zinc-500 space-y-1">
-        <p>منظومة TapTag.one • Enterprise Smart Identity &amp; NFC/QR Vehicle System</p>
-        <p className="text-[11px] text-zinc-600 font-mono">
-          POWERED BY NEON.TECH POSTGRESQL &amp; PRISMA ORM
-        </p>
-      </footer>
+      <Footer lang={lang} />
     </div>
   );
 }

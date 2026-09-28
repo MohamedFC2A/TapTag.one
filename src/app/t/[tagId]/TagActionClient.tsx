@@ -26,6 +26,7 @@ import {
 import { SafePublicTag, Language, TagStatus } from "@/types";
 import { translations } from "@/lib/translations";
 import { Header } from "@/components/ui/Header";
+import { Footer } from "@/components/ui/Footer";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { CallModal } from "@/components/ui/CallModal";
 import {
@@ -1174,13 +1175,8 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
         lang={lang}
       />
 
-      {/* Official Footer */}
-      <footer className="w-full border-t border-[#1F2228] py-6 text-center text-xs text-zinc-500 space-y-1">
-        <p>منظومة TapTag.one • بروتوكول حماية هوية المركبات والأصول المشفرة</p>
-        <p className="text-[11px] text-zinc-600 font-mono">
-          FIRST-CLAIM BIOMETRIC OWNERSHIP • ZERO-KNOWLEDGE SHIELD
-        </p>
-      </footer>
+      {/* Official Footer with Matany Group Signature */}
+      <Footer lang={lang} />
     </div>
   );
 }

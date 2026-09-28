@@ -23,6 +23,7 @@ import {
 import { Language, TagStatus } from "@/types";
 import { translations } from "@/lib/translations";
 import { Header } from "@/components/ui/Header";
+import { Footer } from "@/components/ui/Footer";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import {
   updateTagStatus,
@@ -647,6 +648,8 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
           </div>
         </div>
       )}
+
+      <Footer lang={lang} />
     </div>
   );
 }

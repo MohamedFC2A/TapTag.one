@@ -22,6 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Header } from "@/components/ui/Header";
+import { Footer } from "@/components/ui/Footer";
 import { Language } from "@/types";
 import { claimAndActivateTag } from "@/app/actions/activation-actions";
 import {
@@ -38,7 +39,7 @@ export default function ActivateTagPage() {
   // Step state: 1 = Scan/Detect, 2 = Configure & Biometric Claim, 3 = Activated OK
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [scanMode, setScanMode] = useState<"camera" | "nfc" | "manual">("nfc");
-  const [scannedTagUid, setScannedTagUid] = useState<string>("MW-2026-SA");
+  const [scannedTagUid, setScannedTagUid] = useState<string>("TT-2026-SA");
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [isBiometricAuthenticating, setIsBiometricAuthenticating] = useState<boolean>(false);
 
@@ -73,7 +74,7 @@ export default function ActivateTagPage() {
 
     setTimeout(() => {
       setIsScanning(false);
-      setScannedTagUid("MW-" + Math.floor(10000 + Math.random() * 90000) + "-X");
+      setScannedTagUid("TT-" + Math.floor(10000 + Math.random() * 90000) + "-X");
       setStep(2);
     }, 1400);
   };
@@ -85,7 +86,7 @@ export default function ActivateTagPage() {
 
     setTimeout(() => {
       setIsScanning(false);
-      setScannedTagUid("MW-" + Math.floor(10000 + Math.random() * 90000) + "-K");
+      setScannedTagUid("TT-" + Math.floor(10000 + Math.random() * 90000) + "-K");
       setStep(2);
     }, 1800);
   };
@@ -309,7 +310,7 @@ export default function ActivateTagPage() {
                     type="text"
                     value={scannedTagUid}
                     onChange={(e) => setScannedTagUid(e.target.value.toUpperCase())}
-                    placeholder="MW-88219-X"
+                    placeholder="TT-88219-X"
                     className="w-full bg-[#08080A] border border-[#1F2228] rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-[#00C853] uppercase"
                   />
                 </div>
@@ -493,6 +494,8 @@ export default function ActivateTagPage() {
           </div>
         )}
       </main>
+
+      <Footer lang={lang} />
     </div>
   );
 }

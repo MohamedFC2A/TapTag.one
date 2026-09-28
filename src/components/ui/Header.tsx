@@ -6,6 +6,7 @@ import { ShieldCheck, Cpu } from "lucide-react";
 import { Language } from "@/types";
 import { translations } from "@/lib/translations";
 import { LanguageToggle } from "./LanguageToggle";
+import { TapTagLogo } from "./TapTagLogo";
 
 interface HeaderProps {
   lang: Language;
@@ -22,17 +23,11 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
         {/* Brand & Seal */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-lg border border-[#00C853]/40 bg-[#00C853]/10 flex items-center justify-center text-[#00C853] font-bold">
-              <ShieldCheck className="w-5 h-5 text-[#00C853]" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-base font-black text-white tracking-wide">
-                {t.brand}
-              </span>
-              <span className="text-[11px] text-[#A1A1AA]">
-                {t.brandSub}
-              </span>
-            </div>
+            <TapTagLogo
+              subtitle={t.brandSub}
+              showSubtitle={true}
+              size="md"
+            />
           </Link>
         </div>
 
