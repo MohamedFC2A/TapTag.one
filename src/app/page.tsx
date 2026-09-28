@@ -20,6 +20,8 @@ import { Spotlight } from "@/components/ui/Spotlight";
 import { AcrylicCardHolo } from "@/components/ui/AcrylicCardHolo";
 import { BentoGridShowcase } from "@/components/ui/BentoGridShowcase";
 import { LiveSimulator } from "@/components/ui/LiveSimulator";
+import { AntiMetalButton } from "@/components/ui/anti-metal-button";
+import { MenuBar, MenuBarItem } from "@/components/ui/animated-menu-bar";
 import { Language } from "@/types";
 import { translations } from "@/lib/translations";
 
@@ -27,8 +29,24 @@ export default function HomePage() {
   const router = useRouter();
   const [lang, setLang] = useState<Language>("ar");
   const [searchTag, setSearchTag] = useState("");
+  const [activeMenuItem, setActiveMenuItem] = useState<MenuBarItem>("dashboard");
   const isAr = lang === "ar";
   const t = translations[lang];
+
+  const handleMenuSelect = (item: MenuBarItem) => {
+    setActiveMenuItem(item);
+    if (item === "dashboard") {
+      router.push("/dashboard");
+    } else if (item === "notifications") {
+      document.getElementById("live-simulator")?.scrollIntoView({ behavior: "smooth" });
+    } else if (item === "settings") {
+      router.push("/admin/qr-engine");
+    } else if (item === "help") {
+      document.getElementById("pillars-section")?.scrollIntoView({ behavior: "smooth" });
+    } else if (item === "security") {
+      router.push("/demo");
+    }
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,27 +141,36 @@ export default function HomePage() {
               </button>
             </form>
 
-            {/* Quick Action Navigation Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-              <Link
-                href="/dashboard/activate"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all shadow-lg active:scale-95 group"
-              >
-                <PlusCircle className="w-4 h-4 text-black" />
-                <span>{isAr ? "تفعيل بطاقة جديدة بالبصمة" : "Activate New Card"}</span>
-                {isAr ? (
-                  <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
-                ) : (
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                )}
+            {/* Quick Action Navigation Buttons with 21st.dev AntiMetalButton */}
+            <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
+              <Link href="/dashboard/activate" className="transition-transform active:scale-95">
+                <AntiMetalButton
+                  label={isAr ? "تفعيل بالبصمة" : "Activate Tag"}
+                  accentFrom="#FFFFFF"
+                  accentTo="#D4D4D8"
+                  dotColor="#000000"
+                  className="w-44 h-11"
+                />
               </Link>
 
-              <Link
-                href="/t/TT-88219-X"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/30 text-white text-xs font-bold transition-all backdrop-blur-md active:scale-95 group"
-              >
-                <CheckCircle2 className="w-4 h-4 text-zinc-300" />
-                <span>{isAr ? "معاينة البوابة التجريبية الحية" : "Live Demo Portal"}</span>
+              <Link href="/t/TT-88219-X" className="transition-transform active:scale-95">
+                <AntiMetalButton
+                  label={isAr ? "البوابة الحية" : "Live Demo"}
+                  accentFrom="#71717A"
+                  accentTo="#27272A"
+                  dotColor="#FFFFFF"
+                  className="w-40 h-11"
+                />
+              </Link>
+
+              <Link href="/demo" className="transition-transform active:scale-95">
+                <AntiMetalButton
+                  label={isAr ? "مختبر التصميم" : "Component Lab"}
+                  accentFrom="#E4E4E7"
+                  accentTo="#A1A1AA"
+                  dotColor="#09090B"
+                  className="w-44 h-11"
+                />
               </Link>
             </div>
           </div>
@@ -219,6 +246,17 @@ export default function HomePage() {
             </div>
           </section>
         )}
+
+        {/* Floating Animated Navigation Dock (21st.dev Dynamic Menu Bar) */}
+        <div className="sticky bottom-6 z-40 flex justify-center w-full px-4 pointer-events-auto py-2">
+          <div className="shadow-[0_10px_35px_rgba(0,0,0,0.8)] rounded-2xl bg-black/80 backdrop-blur-2xl p-1.5 border border-white/15">
+            <MenuBar
+              active={activeMenuItem}
+              onSelect={handleMenuSelect}
+              lang={lang}
+            />
+          </div>
+        </div>
       </main>
 
       {/* Official Footer with Matany Group Signature */}

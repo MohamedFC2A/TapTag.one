@@ -37,7 +37,7 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
   };
 
   return (
-    <section className="w-full py-12 max-w-5xl mx-auto px-4 space-y-6">
+    <section id="live-simulator" className="w-full py-12 max-w-5xl mx-auto px-4 space-y-6">
       <div className="border border-white/10 rounded-2xl bg-gradient-to-b from-[#0B0B0E] to-[#040406] p-6 sm:p-10 relative overflow-hidden backdrop-blur-xl">
         {/* Subtle Ambient Radial Highlight */}
         <div className="absolute top-0 end-0 w-72 h-72 bg-white/[0.03] rounded-full blur-3xl pointer-events-none" />
