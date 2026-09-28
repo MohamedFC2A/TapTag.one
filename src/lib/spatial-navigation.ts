@@ -237,13 +237,11 @@ export function computeNavigationVector(
   const relativeBearing = normalizeAngleDiff(bearingToVehicle, currentDeviceHeading);
   const isDirectlyAligned = Math.abs(relativeBearing) <= 12;
 
-  // Anti-Disorientation Lockout threshold (2.5 meters)
-  // Inside this radius, GPS and compass vectors become ambiguous and will cause the arrow to spin.
-  // We lock out the arrow cleanly and instruct the user: "Look around your immediate vicinity".
-  const isWithinLockoutRange = distance <= 2.5;
+  // Stop arrow and switch to Precision Dot when distance <= 5.0 meters
+  const isWithinLockoutRange = distance <= 5.0;
 
-  // Active minimum range prompt rule: user must be at least 5m away for the 3D arrow guiding phase
-  const isBeyondActiveRange = distance >= 5.0;
+  // Active arrow tracking range (> 5.0 meters)
+  const isBeyondActiveRange = distance > 5.0;
 
   // Dynamic confidence score calculation:
   // Derived from GPS accuracy and distance ratio
