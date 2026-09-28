@@ -114,6 +114,67 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
       });
   }, [selectedTag.tagUid, vehiclePlate, vehicleMake, vehicleModel]);
 
+  // QA and Instant Preview Modes (?test=far or ?test=close)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const testMode = params.get("test");
+    if (testMode === "close") {
+      setNavVector({
+        distanceMeters: 3.2,
+        bearingToVehicle: 0,
+        relativeBearing: 0,
+        deviceHeading: 0,
+        confidencePercent: 96,
+        isDirectlyAligned: true,
+        isWithinLockoutRange: true,
+        isBeyondActiveRange: false,
+        accuracyRadius: 1.5,
+      });
+      setCalibration((prev) => prev || {
+        tagUid: selectedTag.tagUid,
+        vehiclePlate,
+        vehicleMake,
+        vehicleModel,
+        calibratedAt: new Date().toISOString(),
+        rawLat: 24.7136,
+        rawLng: 46.6753,
+        userHeading: 0,
+        accuracy: 2.0,
+        centroidLat: 24.7136,
+        centroidLng: 46.6753,
+        offsetDistanceMeters: 1.2,
+      });
+    } else if (testMode === "far") {
+      setNavVector({
+        distanceMeters: 14.5,
+        bearingToVehicle: 55,
+        relativeBearing: 55,
+        deviceHeading: 0,
+        confidencePercent: 94,
+        isDirectlyAligned: false,
+        isWithinLockoutRange: false,
+        isBeyondActiveRange: true,
+        accuracyRadius: 2.5,
+      });
+      setCalibration((prev) => prev || {
+        tagUid: selectedTag.tagUid,
+        vehiclePlate,
+        vehicleMake,
+        vehicleModel,
+        calibratedAt: new Date().toISOString(),
+        rawLat: 24.7136,
+        rawLng: 46.6753,
+        userHeading: 0,
+        accuracy: 2.0,
+        centroidLat: 24.7136,
+        centroidLng: 46.6753,
+        offsetDistanceMeters: 1.2,
+      });
+    }
+  }, [selectedTag.tagUid, vehiclePlate, vehicleMake, vehicleModel]);
+
+
   // Request compass permission (iOS 13+)
   const requestOrientationPermission = async () => {
     if (
