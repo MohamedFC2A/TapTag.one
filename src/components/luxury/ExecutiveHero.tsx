@@ -54,10 +54,10 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
           )}
         </h1>
 
-        <p className="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed font-sans">
+        <p className="text-xs sm:text-sm font-mono text-zinc-400 max-w-lg mx-auto leading-relaxed">
           {isAr
-            ? "بروتوكول مشفر يربط بطاقات الأكريليك المادية بأنظمة التنبيه الفوري للمركبات ومكالمات VoIP مع حجب تام لكافة أرقام الهواتف."
-            : "A cryptographically secured protocol connecting physical acrylic tags with instant multi-channel alerts and masked VoIP voice bridge."}
+            ? "بروتوكول وطني مشفر لحماية المركبات • خصوصية مطلقة بدون تطبيقات"
+            : "National Encrypted Protocol • Zero-Knowledge • Zero Friction"}
         </p>
       </div>
 

@@ -79,11 +79,10 @@ export async function mintPhysicalTag() {
     const secretHash = crypto.randomBytes(32).toString("hex");
     const activationToken = crypto.randomBytes(20).toString("base64url");
 
-    // Dynamic redirect URL printed on the QR code
-    const headerList = await headers();
-    const host = headerList.get("host") || "localhost:3000";
-    const protocol = host.includes("localhost") ? "http" : "https";
-    const redirectUrl = `${protocol}://${host}/r/${tagUid}`;
+    // Physical cards MUST ALWAYS encode the production domain, never localhost
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://taptag.one";
+    const cleanBaseUrl = baseUrl.includes("localhost") ? "https://taptag.one" : baseUrl.replace(/\/+$/, "");
+    const redirectUrl = `${cleanBaseUrl}/r/${tagUid}`;
 
     // Generate ISO 18004 Level H QR code
     const qrSvg = await generateQRCodeSVG(redirectUrl, {

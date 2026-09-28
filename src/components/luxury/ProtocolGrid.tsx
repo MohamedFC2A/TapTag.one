@@ -18,8 +18,8 @@ export function ProtocolGrid({ lang }: ProtocolGridProps) {
       icon: Radio,
       title: isAr ? "استجابة فورية دون تطبيقات (< 250ms)" : "Zero-App Direct Execution (< 250ms)",
       desc: isAr
-        ? "تقريب الهاتف الذكي أو تصوير رمز الـ QR يفتح بوابة المار فورياً عبر المتصفح الافتراضي خلال أجزاء من الثانية دون أي تنزيل."
-        : "NTAG216 contactless IC and ISO-18004 Level H QR launch the verified portal natively in any smartphone browser in under 250ms.",
+        ? "تقريب NFC أو مسح كود QR يفتح البوابة فورياً عبر المتصفح في أقل من 250 مللي ثانية."
+        : "NTAG216 contactless IC and Level H QR launch verified portal natively in under 250ms.",
       metaLeft: isAr ? "معيار ISO-18004" : "ISO-18004 Level H",
       metaRight: "NTAG 216",
     },
@@ -29,8 +29,8 @@ export function ProtocolGrid({ lang }: ProtocolGridProps) {
       icon: Lock,
       title: isAr ? "عزل وحجب كامل لبيانات المالك" : "Zero-PII Cryptographic Shield",
       desc: isAr
-        ? "رقم هاتفك وهويتك مشفران كلياً في الخادم السحابي المحمي ولا يظهران لأي متصفح خارجي على الإطلاق، لمنع التطفل والمضايقات."
-        : "Owner phone numbers and identities are strictly sealed behind HMAC-SHA256 tokens. Neither party ever sees private contact details.",
+        ? "حجب كامل لأرقام الهواتف وهويات الملاك وتشفير سحابي دائم عبر خوارزميات AES-256-GCM."
+        : "Zero-knowledge phone & identity shielding sealed with AES-256-GCM and HMAC tokens.",
       metaLeft: "AES-256-GCM",
       metaRight: isAr ? "خصوصية مطلقة" : "100% PII SHIELD",
     },
@@ -40,8 +40,8 @@ export function ProtocolGrid({ lang }: ProtocolGridProps) {
       icon: PhoneCall,
       title: isAr ? "مكالمات صوتية مشفرة بضغطة زر" : "Masked Browser-to-Browser VoIP",
       desc: isAr
-        ? "قناة اتصال صوتي مشفرة ثنائية الأطراف تنطلق مباشرة من المتصفح دون كشف رقم الجوال مع مؤقت تلقائي لمنع الإزعاج."
-        : "Instant encrypted peer-to-peer audio tunnel through WebRTC. Bystanders talk to the owner directly without exchanging numbers.",
+        ? "قناة صوتية مشفرة مباشرة عبر المتصفح بدون أرقام هواتف، مع مؤقت تلقائي لمنع الإزعاج."
+        : "Direct encrypted peer-to-peer audio tunnel through WebRTC with anti-spam cooldown.",
       metaLeft: "WebRTC E2EE",
       metaRight: isAr ? "مؤقت 3 دقائق" : "3-MIN COOLDOWN",
     },
@@ -51,8 +51,8 @@ export function ProtocolGrid({ lang }: ProtocolGridProps) {
       icon: Layers,
       title: isAr ? "أكريليك عالي الصلابة وعازل للمعادن" : "Anti-Metal Shielded Automotive Acrylic",
       desc: isAr
-        ? "هندسة ألمانية بخامة أكريليك 3 مم وطبقة فيريت مخصصة لعزل إشارات تردد المعادن، ومقاومة لأشعة الشمس وحرارة مقصورة السيارات حتى 85°C."
-        : "3mm precision-cut optical acrylic bonded with a 0.2mm sintered ferrite barrier to eliminate metal interference on vehicle surfaces.",
+        ? "أكريليك 3 مم مزود بطبقة فيريت عازلة لتردد المعادن، ومقاومة لحرارة الشمس حتى 85°C."
+        : "3mm optical acrylic with 0.2mm anti-metal ferrite barrier rated to -40°C ~ +85°C.",
       metaLeft: "-40°C ~ +85°C",
       metaRight: isAr ? "عازل للمعادن" : "FERRITE BARRIER",
     },

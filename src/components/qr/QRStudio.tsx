@@ -57,10 +57,8 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
   const [inventory, setInventory] = useState<InventoryTag[]>(initialInventory);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-  // Dynamic redirect destination for this card
-  const targetUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/r/${activeUid}`
-    : `https://taptag.one/r/${activeUid}`;
+  // Production redirect destination for physical acrylic cards (Never localhost)
+  const targetUrl = `https://taptag.one/r/${activeUid}`;
 
   useEffect(() => {
     QRCode.toDataURL(targetUrl, {
