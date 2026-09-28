@@ -17,9 +17,9 @@ const readexPro = Readex_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "TapTag.one - المنظومة المؤسسية للهوية الذكية وحماية الأصول",
+  title: "TapTag.one - منظومة الهوية الذكية",
   description:
-    "المنظومة المؤسسية المعتمدة للتحقق الذكي وحماية هوية المركبات والأصول عبر تقنيات NFC و QR المشفرة من TapTag.one مع حجب تام لكافة بيانات المالك.",
+    "منظومة الهوية الذكية المعتمدة للمركبات والأصول عبر تقنيات NFC و QR المشفرة من TapTag.one مع حجب تام لبيانات المالك الشخصية.",
 };
 
 export default function RootLayout({

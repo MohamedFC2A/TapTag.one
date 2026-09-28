@@ -1,7 +1,7 @@
 import crypto from "crypto";
 
 export function hashIpAddress(ip: string): string {
-  const salt = process.env.TAPTAG_SECRET_SALT || process.env.MOWTHOQ_SECRET_SALT || "taptag_salt_2026";
+  const salt = process.env.TAPTAG_SECRET_SALT || "taptag_salt_2026";
   return crypto.createHmac("sha256", salt).update(ip).digest("hex");
 }
 

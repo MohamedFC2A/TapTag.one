@@ -16,14 +16,19 @@ export default async function TagPage({ params }: TagPageProps) {
   const cleanTagUid = tagId.trim().toUpperCase();
 
   // 1. Fetch tag from Neon PostgreSQL
-  let tagRecord = await db.tag.findUnique({
-    where: { tagUid: cleanTagUid },
-    include: {
-      profile: true,
-    },
-  });
+  let tagRecord = null;
+  try {
+    tagRecord = await db.tag.findUnique({
+      where: { tagUid: cleanTagUid },
+      include: {
+        profile: true,
+      },
+    });
+  } catch (err) {
+    console.error("Tag query database warning:", err);
+  }
 
-  // If tag doesn't exist yet, check if it's a valid new hardware UID format (e.g. MW-...)
+  // If tag doesn't exist yet, check if it's a valid new hardware UID format (e.g. TT-...)
   // and prepare it for factory first-claim
   const isFactoryUnclaimed = !tagRecord;
 

@@ -26,15 +26,10 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
               <ShieldCheck className="w-5 h-5 text-[#00C853]" />
             </div>
             <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="text-base font-black text-white tracking-wide">
-                  {t.brand}
-                </span>
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded border border-[#27272A] bg-[#0E0E12] text-zinc-300 font-semibold">
-                  ENTERPRISE
-                </span>
-              </div>
-              <span className="text-[11px] text-[#A1A1AA] hidden sm:block">
+              <span className="text-base font-black text-white tracking-wide">
+                {t.brand}
+              </span>
+              <span className="text-[11px] text-[#A1A1AA]">
                 {t.brandSub}
               </span>
             </div>
@@ -53,21 +48,24 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
 
         {/* Navigation & Controls */}
         <div className="flex items-center gap-4">
-          <nav className="hidden sm:flex items-center gap-5 text-xs font-semibold text-[#A1A1AA]">
-            <Link
-              href="/dashboard"
-              className="hover:text-white transition-colors"
-            >
-              {lang === "ar" ? "لوحة الأسطول" : "Dashboard"}
-            </Link>
-            <Link
-              href="/admin/qr-engine"
-              className="hover:text-white text-[#D4D4D8] transition-colors flex items-center gap-1.5 font-mono text-[11px]"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#00C853]" />
-              <span>{lang === "ar" ? "مصنع البطاقات (محلي)" : "Factory Mint (Local)"}</span>
-            </Link>
-          </nav>
+          {/* Admin links visible ONLY locally during development */}
+          {process.env.NODE_ENV !== "production" && (
+            <nav className="hidden sm:flex items-center gap-4 text-xs font-semibold text-[#A1A1AA]">
+              <Link
+                href="/dashboard"
+                className="hover:text-white transition-colors"
+              >
+                {lang === "ar" ? "لوحة الأسطول" : "Dashboard"}
+              </Link>
+              <Link
+                href="/admin/qr-engine"
+                className="hover:text-white text-[#D4D4D8] transition-colors flex items-center gap-1.5 font-mono text-[11px]"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#00C853]" />
+                <span>{lang === "ar" ? "مصنع البطاقات" : "Factory Mint"}</span>
+              </Link>
+            </nav>
+          )}
 
           <LanguageToggle currentLang={lang} onLanguageChange={onLanguageChange} />
         </div>

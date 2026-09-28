@@ -48,20 +48,15 @@ export default function HomePage() {
           <div className="h-1.5 w-full bg-[#00C853] rounded-full mb-8" />
 
           <div className="max-w-2xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#00C853]/40 bg-[#00C853]/10 text-[#00C853] text-xs font-mono font-bold">
-              <ShieldCheck className="w-4 h-4 text-[#00C853]" />
-              <span>OFFICIAL ENTERPRISE ASSET PROTOCOL</span>
-            </div>
-
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white leading-tight">
               {isAr
-                ? "منظومة TapTag.one المؤسسية لهوية وحماية المركبات (NFC / QR)"
-                : "TapTag.one: Enterprise Smart Identity & NFC/QR Asset System"}
+                ? "منظومة TapTag.one لهوية وحماية المركبات (NFC / QR)"
+                : "TapTag.one: Smart Identity & NFC/QR Asset System"}
             </h1>
 
             <p className="text-xs md:text-sm text-[#A1A1AA] leading-relaxed">
               {isAr
-                ? "بروتوكول وطني ومؤسسي مشفر يربط بطاقات الأكريليك المطبوعة بأنظمة التنبيه الفوري للمركبات مع حجب تام لكافة بيانات المالك الشخصية (Zero-Knowledge Privacy Barrier)."
+                ? "بروتوكول وطني ومؤسسي مشفر يربط بطاقات الأكريليك الذكية بأنظمة التنبيه الفوري للمركبات مع حجب تام لكافة بيانات المالك الشخصية (Zero-Knowledge Privacy Barrier)."
                 : "A cryptographically secured protocol connecting physical acrylic tags with instant multi-channel dispatch, encrypted VoIP audio bridges, and zero-knowledge owner privacy."}
             </p>
 
@@ -88,7 +83,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Quick Action Navigation Buttons */}
+        {/* Public Action Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
             href="/dashboard/activate"
@@ -103,8 +98,8 @@ export default function HomePage() {
               </h3>
               <p className="text-xs text-[#A1A1AA] leading-relaxed">
                 {isAr
-                  ? "سجّل بطاقتك الخاصة واربطها برقم اللوحة ورقم هاتفك المشفر لبدء الاختبار."
-                  : "Pair your physical tag UID with your vehicle plate and encrypted contact."}
+                  ? "سجّل بطاقتك الخاصة واربطها برقم اللوحة وبصمة جهازك المشفرة لتفعيل الحماية."
+                  : "Pair your physical tag UID with your vehicle plate and encrypted biometric identity."}
               </p>
             </div>
             <div className="mt-4 pt-2 border-t border-[#00C853]/20 flex items-center justify-between text-xs text-[#00C853] font-bold">
@@ -114,51 +109,82 @@ export default function HomePage() {
           </Link>
 
           <Link
-            href="/dashboard"
+            href="/t/TT-88219-X"
             className="p-5 rounded-xl border border-[#1F2228] bg-[#08080A] hover:border-zinc-600 transition-all flex flex-col justify-between group"
           >
             <div>
               <div className="w-9 h-9 rounded-lg border border-[#1F2228] bg-[#0D0D12] flex items-center justify-center text-zinc-300 mb-3">
-                <Sliders className="w-5 h-5 text-[#00C853]" />
+                <CheckCircle2 className="w-5 h-5 text-[#00C853]" />
               </div>
               <h3 className="text-sm font-bold text-white mb-1">
-                {isAr ? "مركز قيادة الأسطول (Dashboard)" : "Fleet Command Center"}
+                {isAr ? "بوابة تجربة المسح المباشر" : "Interactive Tag Portal Demo"}
               </h3>
               <p className="text-xs text-[#A1A1AA] leading-relaxed">
                 {isAr
-                  ? "متابعة الحالات التشغيلية، بروتوكول الرد التلقائي، ومسار تدقيق البلاغات الفوري."
-                  : "Monitor real-time tag states, auto-reply protocols, and incident audit logs."}
+                  ? "جرّب تجربة المار عند مسح بطاقة تجريبية (تنبيه بالتحريك، بلاغ عاجل، أو مكالمة مشفرة)."
+                  : "Experience the real bystander portal flow (movement alert, incident dispatch, VoIP)."}
               </p>
             </div>
             <div className="mt-4 pt-2 border-t border-[#1F2228] flex items-center justify-between text-xs text-zinc-300 font-semibold group-hover:text-white">
-              <span>{isAr ? "دخول لوحة التحكم" : "Open Dashboard"}</span>
+              <span>{isAr ? "معاينة البوابة التجريبية" : "Inspect Demo Tag"}</span>
               {isAr ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
             </div>
           </Link>
 
-          <Link
-            href="/admin/qr-engine"
-            className="p-5 rounded-xl border border-[#1F2228] bg-[#08080A] hover:border-[#00C853]/60 transition-all flex flex-col justify-between group"
+          <div
+            className="p-5 rounded-xl border border-[#1F2228] bg-[#08080A] flex flex-col justify-between"
           >
             <div>
               <div className="w-9 h-9 rounded-lg border border-[#1F2228] bg-[#0D0D12] flex items-center justify-center text-zinc-300 mb-3">
-                <Printer className="w-5 h-5 text-[#00C853]" />
+                <Lock className="w-5 h-5 text-[#00C853]" />
               </div>
               <h3 className="text-sm font-bold text-white mb-1">
-                {isAr ? "مصنع بطاقات الأكريليك (7×5 سم)" : "7x5 cm Precision Print Studio"}
+                {isAr ? "حاجز الخصوصية الصارم (Zero PII)" : "Strict Privacy Protection"}
               </h3>
               <p className="text-xs text-[#A1A1AA] leading-relaxed">
                 {isAr
-                  ? "تصدير أصول فيكتور SVG و 300 DPI PNG مجهزة لماكينات الليزر وطابعات UV."
-                  : "Export print-ready SVG vector and 300 DPI PNG assets for UV flatbed printing."}
+                  ? "حظر شامل لكافة بيانات المالك. لا يتم كشف رقم الهاتف أو الهوية لأي طرف على الإطلاق."
+                  : "Owner identity and phone numbers are completely masked and never disclosed."}
               </p>
             </div>
-            <div className="mt-4 pt-2 border-t border-[#1F2228] flex items-center justify-between text-xs text-zinc-300 font-semibold group-hover:text-white">
-              <span>{isAr ? "فتح مصنع البطاقات" : "Open Studio"}</span>
-              {isAr ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
+            <div className="mt-4 pt-2 border-t border-[#1F2228] flex items-center justify-between text-xs text-[#00C853] font-semibold">
+              <span>{isAr ? "بروتوكول مشفر ومعتمد" : "Encrypted Protocol"}</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-[#00C853]" />
             </div>
-          </Link>
+          </div>
         </div>
+
+        {/* Local Dev / Admin Controls - Rendered ONLY on Local Server */}
+        {process.env.NODE_ENV !== "production" && (
+          <div className="border border-dashed border-[#27272A] rounded-xl p-5 bg-[#090A0D]/70 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-mono text-[#00C853] font-bold">
+              <span className="w-2 h-2 rounded-full bg-[#00C853]" />
+              <span>{isAr ? "أدوات الإدارة والطباعة (محلياً فقط - مخفية كلياً في الموقع العام)" : "ADMIN & PRINT CONTROLS (LOCAL ONLY - HIDDEN IN PRODUCTION)"}</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Link
+                href="/dashboard"
+                className="p-4 rounded-lg border border-[#1F2228] bg-[#0D0D12] hover:border-zinc-500 transition-all flex items-center justify-between group"
+              >
+                <div>
+                  <h4 className="text-xs font-bold text-white mb-0.5">{isAr ? "لوحة الأسطول ومراقبة البلاغات" : "Fleet Dashboard"}</h4>
+                  <p className="text-[11px] text-[#A1A1AA]">{isAr ? "متابعة الحالات التشغيلية ومسار التدقيق" : "Monitor tags and incident audit logs"}</p>
+                </div>
+                {isAr ? <ArrowLeft className="w-4 h-4 text-zinc-400 group-hover:text-white" /> : <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:text-white" />}
+              </Link>
+              <Link
+                href="/admin/qr-engine"
+                className="p-4 rounded-lg border border-[#1F2228] bg-[#0D0D12] hover:border-[#00C853] transition-all flex items-center justify-between group"
+              >
+                <div>
+                  <h4 className="text-xs font-bold text-white mb-0.5">{isAr ? "مصنع بطاقات الأكريليك (7×5 سم)" : "7x5 cm Print Studio"}</h4>
+                  <p className="text-[11px] text-[#A1A1AA]">{isAr ? "تصدير أصول SVG و 300 DPI للطباعة والليزر" : "Export SVG and 300 DPI print assets"}</p>
+                </div>
+                {isAr ? <ArrowLeft className="w-4 h-4 text-[#00C853]" /> : <ArrowRight className="w-4 h-4 text-[#00C853]" />}
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* 3 Architectural Pillars */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
@@ -178,15 +204,15 @@ export default function HomePage() {
 
           <div className="p-6 rounded-xl border border-[#1F2228] bg-[#08080A] space-y-3">
             <div className="w-10 h-10 rounded-lg border border-[#1F2228] bg-[#0D0D12] flex items-center justify-center text-[#00C853]">
-              <Printer className="w-5 h-5 text-[#00C853]" />
+              <Radio className="w-5 h-5 text-[#00C853]" />
             </div>
             <h3 className="text-sm font-bold text-white">
-              {isAr ? "محرك طباعة 7×5 سم (ISO 18004)" : "Vector UV Print Studio"}
+              {isAr ? "بطاقات أكريليك ذكية (NFC / QR)" : "Smart Acrylic Tags (NFC/QR)"}
             </h3>
             <p className="text-xs text-[#A1A1AA] leading-relaxed">
               {isAr
-                ? "تصدير أصول بطاقات الأكريليك المادية بصيغتي SVG فيكتور و 300 DPI PNG مع مستوى تصحيح الخطأ Level H (30%) المقاوم لأشعة الشمس والخدوش."
-                : "Generates high-precision 70mm x 50mm vector SVG and 300 DPI PNG assets with Level H error correction for laser cutting and UV printing."}
+                ? "بطاقات فاخرة مقاومة لأشعة الشمس والخدوش والحرارة، تدعم التقريب الذكي NFC ومسح QR بدقة عالية ومستوى تصحيح خطأ 30% معتمد دولياً."
+                : "Premium weather-resistant acrylic tags engineered with embedded NFC chips and high-res QR codes with 30% error correction."}
             </p>
           </div>
 

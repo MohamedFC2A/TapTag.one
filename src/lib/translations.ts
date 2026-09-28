@@ -1,7 +1,7 @@
 export const translations = {
   ar: {
     brand: "TapTag.one",
-    brandSub: "منظومة الهوية الذكية وحماية الأصول",
+    brandSub: "منظومة الهوية الذكية",
     officialSeal: "هوية مركبة معتمدة رسمياً",
     tagVerification: "بطاقة TapTag موثقة ومشفرة ضد التلاعب",
     privacyNotice: "نظام مشفر بالكامل: لا يتم مشاركة هوية المالك أو رقم هاتفه لحماية الخصوصية والأمان.",
@@ -79,7 +79,7 @@ export const translations = {
   },
   en: {
     brand: "TapTag.one",
-    brandSub: "Smart NFC/QR Identity & Asset Protection",
+    brandSub: "Smart Identity System",
     officialSeal: "Officially Verified Vehicle Tag",
     tagVerification: "Cryptographically Sealed & Tamper-Proof TapTag",
     privacyNotice: "End-to-End Privacy Barrier: Owner identity and personal phone numbers are completely masked.",
