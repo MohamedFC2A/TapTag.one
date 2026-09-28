@@ -179,15 +179,22 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
     setIsGpsAcquiring(true);
     setErrorMessage("");
 
-    const handleOrientation = (e: DeviceOrientationEvent) => {
+    let usingAbsolute = false;
+    const handleOrientation = (e: DeviceOrientationEvent, isAbsoluteEvent: boolean) => {
+      let heading: number | null = null;
       const eCompass = e as unknown as { webkitCompassHeading?: number };
-      let heading = 0;
 
-      if (typeof eCompass.webkitCompassHeading === "number") {
+      if (typeof eCompass.webkitCompassHeading === "number" && !isNaN(eCompass.webkitCompassHeading)) {
         heading = eCompass.webkitCompassHeading;
-      } else if (e.alpha !== null) {
-        // Full 3D Tilt-Compensated Heading
-        heading = computeTiltCompensatedHeading(e.alpha, e.beta, e.gamma);
+      } else if (e.alpha !== null && !isNaN(e.alpha)) {
+        if (isAbsoluteEvent || e.absolute) {
+          usingAbsolute = true;
+        } else if (usingAbsolute) {
+          return;
+        }
+        const b = typeof e.beta === "number" ? e.beta : 0;
+        const g = typeof e.gamma === "number" ? e.gamma : 0;
+        heading = computeTiltCompensatedHeading(e.alpha, b, g);
       } else {
         setHasCompassSupport(false);
         return;
@@ -199,10 +206,15 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       latestHeadingRef.current = heading;
     };
 
+    const onAbsolute = (e: DeviceOrientationEvent) => handleOrientation(e, true);
+    const onStandard = (e: DeviceOrientationEvent) => handleOrientation(e, false);
+
     if (typeof window !== "undefined") {
       const win = window as any;
-      win.addEventListener("deviceorientationabsolute", handleOrientation, true);
-      win.addEventListener("deviceorientation", handleOrientation, true);
+      if ("ondeviceorientationabsolute" in win) {
+        win.addEventListener("deviceorientationabsolute", onAbsolute, true);
+      }
+      win.addEventListener("deviceorientation", onStandard, true);
     }
 
     if (typeof navigator !== "undefined" && navigator.geolocation) {
@@ -257,8 +269,8 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
     return () => {
       if (typeof window !== "undefined") {
         const win = window as any;
-        win.removeEventListener("deviceorientationabsolute", handleOrientation);
-        win.removeEventListener("deviceorientation", handleOrientation);
+        win.removeEventListener("deviceorientationabsolute", onAbsolute);
+        win.removeEventListener("deviceorientation", onStandard);
       }
       if (watchIdRef.current !== null && navigator.geolocation) {
         navigator.geolocation.clearWatch(watchIdRef.current);

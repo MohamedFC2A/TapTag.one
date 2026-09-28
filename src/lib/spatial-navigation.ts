@@ -202,9 +202,10 @@ export class ExponentialFilter {
       return value;
     }
     const delta = Math.abs(value - this.current);
-    // Dynamic tracking: If delta > 1.5m (user actively walking), track quickly (alpha=0.75)
-    // If delta < 0.6m (sub-meter noise), smooth gently (alpha=0.35)
-    const effectiveAlpha = delta > 1.5 ? 0.75 : delta > 0.6 ? 0.55 : 0.35;
+    // Dynamic tracking: If delta > 0.8m (walking step), track rapidly (alpha=0.80)
+    // If delta > 0.3m (intermediate movement), track with alpha=0.65
+    // If delta <= 0.3m (sub-meter noise), smooth gently with alpha=0.45
+    const effectiveAlpha = delta > 0.8 ? 0.80 : delta > 0.3 ? 0.65 : 0.45;
     this.current = effectiveAlpha * value + (1 - effectiveAlpha) * this.current;
     return this.current;
   }
@@ -269,8 +270,9 @@ export function computeNavigationVector(
 }
 
 /**
- * 3D Tilt-Compensated Compass Heading
- * Solves raw alpha drift when the user tilts the smartphone in their hand
+ * 3D Tilt-Compensated Compass Heading for Mobile Web (Android & iOS)
+ * Calculates the horizontal compass azimuth [0, 360) of the top of the smartphone.
+ * 0° = North, 90° = East, 180° = South, 270° = West.
  */
 export function computeTiltCompensatedHeading(
   alpha: number,
@@ -278,29 +280,18 @@ export function computeTiltCompensatedHeading(
   gamma: number | null
 ): number {
   if (beta === null || gamma === null) {
-    return (360 - alpha) % 360;
+    let flat = (360 - alpha) % 360;
+    if (flat < 0) flat += 360;
+    return flat;
   }
 
-  const toRad = Math.PI / 180;
-  const _x = beta * toRad; // pitch
-  const _y = gamma * toRad; // roll
-  const _z = alpha * toRad; // yaw
-
-  const cX = Math.cos(_x);
-  const cY = Math.cos(_y);
-  const cZ = Math.cos(_z);
-  const sX = Math.sin(_x);
-  const sY = Math.sin(_y);
-  const sZ = Math.sin(_z);
-
-  // 3D projection of phone pointing vector onto horizontal earth plane
-  const Vx = -cZ * sY - sZ * sX * cY;
-  const Vy = -sZ * sY + cZ * sX * cY;
-
-  let heading = Math.atan2(Vx, Vy) * (180 / Math.PI);
+  // W3C DeviceOrientation standard:
+  // When holding phone in hand tilted (pitch beta, roll gamma):
+  // Adjust for hand roll tilt compensation:
+  let heading = (360 - alpha - (beta * gamma) / 90) % 360;
   if (heading < 0) heading += 360;
 
-  return (360 - heading) % 360;
+  return Math.round(heading);
 }
 
 /**

@@ -13,6 +13,8 @@ import {
   ChevronDown,
   Navigation,
   Radio,
+  CarFront,
+  Check,
 } from "lucide-react";
 import {
   SpatialCalibration,
@@ -223,17 +225,28 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
 
     requestOrientationPermission().catch(() => {});
 
-    // A. Compass orientation listener with 3D Tilt Compensation
-    const handleOrientation = (e: DeviceOrientationEvent) => {
-      let rawHeading = 0;
-
+    // A. Compass orientation listener with absolute priority & 3D Tilt Compensation
+    let usingAbsolute = false;
+    const handleOrientation = (e: DeviceOrientationEvent, isAbsoluteEvent: boolean) => {
+      let rawHeading: number | null = null;
       const eCompass = e as unknown as { webkitCompassHeading?: number };
-      if (typeof eCompass.webkitCompassHeading === "number") {
+
+      if (typeof eCompass.webkitCompassHeading === "number" && !isNaN(eCompass.webkitCompassHeading)) {
+        // iOS Safari hardware-calibrated heading
         rawHeading = eCompass.webkitCompassHeading;
-      } else if (e.alpha !== null) {
-        // Full 3D Tilt-Compensation for Android
-        rawHeading = computeTiltCompensatedHeading(e.alpha, e.beta, e.gamma);
+      } else if (e.alpha !== null && !isNaN(e.alpha)) {
+        // Android: prioritize deviceorientationabsolute
+        if (isAbsoluteEvent || e.absolute) {
+          usingAbsolute = true;
+        } else if (usingAbsolute) {
+          return; // Ignore relative orientation events if absolute is already streaming
+        }
+        const b = typeof e.beta === "number" ? e.beta : 0;
+        const g = typeof e.gamma === "number" ? e.gamma : 0;
+        rawHeading = computeTiltCompensatedHeading(e.alpha, b, g);
       }
+
+      if (rawHeading === null) return;
 
       const smoothedHeading = kalmanHeadingRef.current.update(rawHeading);
       currentHeadingRef.current = smoothedHeading;
@@ -252,71 +265,83 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
       });
     };
 
+    const onAbsolute = (e: DeviceOrientationEvent) => handleOrientation(e, true);
+    const onStandard = (e: DeviceOrientationEvent) => handleOrientation(e, false);
+
     if (typeof window !== "undefined") {
       const win = window as any;
-      win.addEventListener("deviceorientationabsolute", handleOrientation, true);
-      win.addEventListener("deviceorientation", handleOrientation, true);
+      if ("ondeviceorientationabsolute" in win) {
+        win.addEventListener("deviceorientationabsolute", onAbsolute, true);
+      }
+      win.addEventListener("deviceorientation", onStandard, true);
     }
 
-    // B. Live Geolocation watchPosition
-    if (typeof navigator !== "undefined" && navigator.geolocation) {
-      watchIdRef.current = navigator.geolocation.watchPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          const accuracy = pos.coords.accuracy;
+    // B. Live Geolocation with dual-feed: watchPosition + high-frequency active poll
+    const handleGpsPosition = (pos: GeolocationPosition) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const accuracy = pos.coords.accuracy;
 
-          const rawVector = computeNavigationVector(
-            lat,
-            lng,
-            currentHeadingRef.current,
-            calibration,
-            accuracy
-          );
+      const rawVector = computeNavigationVector(
+        lat,
+        lng,
+        currentHeadingRef.current,
+        calibration,
+        accuracy
+      );
 
-          const smoothedDistance = distanceFilterRef.current.update(rawVector.distanceMeters);
-          const isWithinLockoutRange = smoothedDistance <= 5.0;
+      const smoothedDistance = distanceFilterRef.current.update(rawVector.distanceMeters);
+      const isWithinLockoutRange = smoothedDistance <= 5.0;
 
-          // Proximity Sonar & Arrival Chime Engine
-          const now = Date.now();
-          if (isWithinLockoutRange) {
-            // Arrival in Close-Range (<= 5.0m): Play Apple Pay arrival chime once
-            if (!lastArrivalTriggerRef.current) {
-              lastArrivalTriggerRef.current = true;
-              if (soundEnabled) {
-                playNavigationSound("apple_pay_arrival");
-              }
-            }
-          } else {
-            lastArrivalTriggerRef.current = false;
+      // Proximity Sonar & Arrival Chime Engine
+      const now = Date.now();
+      if (isWithinLockoutRange) {
+        // Arrival in Close-Range (<= 5.0m): Play Apple Pay arrival chime and vibrate
+        if (!lastArrivalTriggerRef.current) {
+          lastArrivalTriggerRef.current = true;
+          if (soundEnabled) {
+            playNavigationSound("apple_pay_arrival");
+          }
+          if (typeof navigator !== "undefined" && navigator.vibrate) {
+            try {
+              navigator.vibrate([100, 50, 100]);
+            } catch {}
+          }
+        }
+      } else {
+        lastArrivalTriggerRef.current = false;
 
-            // Proximity Sonar: Frequency escalates as user approaches
-            if (soundEnabled && smoothedDistance <= 25.0) {
-              let sonarInterval = 2500;
-              let pitchMod = 0.9;
+        // Proximity Sonar: Frequency escalates as user approaches
+        if (soundEnabled && smoothedDistance <= 25.0) {
+          let sonarInterval = 2500;
+          let pitchMod = 0.9;
 
-              if (smoothedDistance <= 10.0) {
-                sonarInterval = 750; // High rate when 5-10m
-                pitchMod = 1.6;
-              } else if (smoothedDistance <= 18.0) {
-                sonarInterval = 1400; // Medium rate when 10-18m
-                pitchMod = 1.2;
-              }
-
-              if (now - lastSonarPingTimeRef.current >= sonarInterval) {
-                lastSonarPingTimeRef.current = now;
-                playNavigationSound("sonar_ping", pitchMod);
-              }
-            }
+          if (smoothedDistance <= 10.0) {
+            sonarInterval = 750; // High rate when 5-10m
+            pitchMod = 1.6;
+          } else if (smoothedDistance <= 18.0) {
+            sonarInterval = 1400; // Medium rate when 10-18m
+            pitchMod = 1.2;
           }
 
-          setNavVector({
-            ...rawVector,
-            distanceMeters: smoothedDistance,
-            isWithinLockoutRange,
-            isBeyondActiveRange: smoothedDistance > 5.0,
-          });
-        },
+          if (now - lastSonarPingTimeRef.current >= sonarInterval) {
+            lastSonarPingTimeRef.current = now;
+            playNavigationSound("sonar_ping", pitchMod);
+          }
+        }
+      }
+
+      setNavVector({
+        ...rawVector,
+        distanceMeters: smoothedDistance,
+        isWithinLockoutRange,
+        isBeyondActiveRange: smoothedDistance > 5.0,
+      });
+    };
+
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      watchIdRef.current = navigator.geolocation.watchPosition(
+        handleGpsPosition,
         (err) => {
           console.warn("GPS watch position note:", err);
         },
@@ -328,14 +353,33 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
       );
     }
 
+    // Active continuous poll every 1200ms to eliminate Android background GPS stalls
+    let gpsPollInterval: NodeJS.Timeout | null = null;
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      gpsPollInterval = setInterval(() => {
+        navigator.geolocation.getCurrentPosition(
+          handleGpsPosition,
+          () => {},
+          {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 2500,
+          }
+        );
+      }, 1200);
+    }
+
     return () => {
       if (typeof window !== "undefined") {
         const win = window as any;
-        win.removeEventListener("deviceorientationabsolute", handleOrientation);
-        win.removeEventListener("deviceorientation", handleOrientation);
+        win.removeEventListener("deviceorientationabsolute", onAbsolute);
+        win.removeEventListener("deviceorientation", onStandard);
       }
       if (watchIdRef.current !== null && navigator.geolocation) {
         navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+      if (gpsPollInterval) {
+        clearInterval(gpsPollInterval);
       }
     };
   }, [calibration, soundEnabled]);
@@ -369,28 +413,18 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
   return (
     <div
       dir="rtl"
-      className={`relative h-screen h-[100dvh] w-full overflow-hidden select-none flex flex-col justify-between transition-colors duration-500 font-sans ${
-        isCloseRange ? "bg-[#19C354] text-white" : "bg-[#000000] text-white"
-      }`}
+      className="relative h-screen h-[100dvh] w-full overflow-hidden select-none flex flex-col justify-between font-sans bg-[#000000] text-white"
     >
       {/* 1. Header: FINDING + Vehicle identifier (Filtered for Real Vehicles) */}
       <header className="pt-8 px-6 z-20 flex items-start justify-between">
         <div>
-          <div
-            className={`text-xs font-mono tracking-widest uppercase font-semibold ${
-              isCloseRange ? "text-white/80" : "text-[#8E8E93]"
-            }`}
-          >
+          <div className="text-xs font-mono tracking-widest uppercase font-semibold text-[#8E8E93]">
             تحديد موقع
           </div>
           <h1 className="text-2xl font-black text-white tracking-tight mt-0.5">
             {vehiclePlate}
           </h1>
-          <div
-            className={`text-xs font-medium ${
-              isCloseRange ? "text-white/85" : "text-zinc-400"
-            }`}
-          >
+          <div className="text-xs font-medium text-zinc-400">
             {vehicleMake} {vehicleModel}
           </div>
           {isMounted && calibration && (
@@ -416,11 +450,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
                   setNavVector(null);
                 }
               }}
-              className={`text-xs rounded-full px-3 py-1.5 pr-7 appearance-none font-medium focus:outline-none border ${
-                isCloseRange
-                  ? "bg-black/20 border-white/30 text-white"
-                  : "bg-[#1A1A1A] border-[#2A2A2A] text-zinc-300"
-              }`}
+              className="text-xs rounded-full px-3 py-1.5 pr-7 appearance-none font-medium focus:outline-none border bg-[#1A1A1A] border-[#2A2A2A] text-zinc-300"
             >
               {allTags.map((t) => (
                 <option key={t.id} value={t.tagUid} className="bg-black text-white">
@@ -460,24 +490,37 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
             </Link>
           </div>
         ) : isCloseRange ? (
-          /* CLOSE RANGE (< 5.0m) - Apple Vibrant Green Screen with Precision Forward Arrow & Target Dot */
-          <div className="flex flex-col items-center justify-center relative w-full">
-            <div className="relative flex flex-col items-center justify-center">
-              {/* Solid Precision White Target Dot */}
-              <div className="w-6 h-6 rounded-full bg-white shadow-xl animate-pulse mb-6" />
+          /* CLOSE RANGE (<= 5.0m) - Smart Precision Concentric Pulse Circle & Bullseye Target */
+          <div className="flex flex-col items-center justify-center relative w-full select-none animate-in fade-in zoom-in-95 duration-500">
+            <div className="relative flex items-center justify-center w-[280px] h-[280px]">
+              {/* Layer 1: Expanding Ripple Waves (Radar Pulse) */}
+              <div className="absolute inset-0 rounded-full border border-[#00C853]/35 animate-ping duration-1000 pointer-events-none" />
+              <div
+                className="absolute inset-6 rounded-full border border-white/20 animate-ping pointer-events-none"
+                style={{ animationDuration: "2.2s", animationDelay: "0.6s" }}
+              />
 
-              {/* Bold Precision Forward Arrow */}
-              <svg
-                width="140"
-                height="140"
-                viewBox="0 0 100 100"
-                className="transition-transform duration-300 drop-shadow-md"
-              >
-                <path
-                  d="M 50 15 L 82 58 C 84 61 82 65 78 64 L 56 57 L 56 85 C 56 88 53 90 50 90 C 47 90 44 88 44 85 L 44 57 L 22 64 C 18 65 16 61 18 58 Z"
-                  fill="#FFFFFF"
-                />
-              </svg>
+              {/* Layer 2: Concentric Radar Rings */}
+              <div className="absolute w-[260px] h-[260px] rounded-full border border-zinc-800/80 bg-zinc-950/50 backdrop-blur-sm" />
+              <div className="absolute w-[185px] h-[185px] rounded-full border border-zinc-700/60 border-dashed" />
+              <div className="absolute w-[120px] h-[120px] rounded-full border border-[#00C853]/40 bg-[#00C853]/5" />
+
+              {/* Layer 3: Dynamic Pulsing Core Target with Car Icon */}
+              <div className="relative w-20 h-20 rounded-full bg-gradient-to-b from-white to-zinc-200 text-black flex flex-col items-center justify-center shadow-[0_0_35px_rgba(255,255,255,0.4)] animate-pulse">
+                <CarFront className="w-9 h-9 text-black fill-black/10 stroke-[2.2]" />
+              </div>
+
+              {/* Layer 4: Orbital Precision Ticks */}
+              <div className="absolute top-2.5 w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+              <div className="absolute bottom-2.5 w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+              <div className="absolute left-2.5 w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+              <div className="absolute right-2.5 w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+            </div>
+
+            {/* Arrival Badge */}
+            <div className="mt-4 flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900/90 border border-[#00C853]/40 text-[#00C853] text-xs font-bold shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-[#00C853] animate-ping" />
+              <span>أنت بجوار المركبة تماماً (هنا)</span>
             </div>
           </div>
         ) : (
@@ -548,21 +591,37 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
         {calibration && navVector ? (
           <div className="space-y-1">
             {/* Big Crisp Distance */}
-            <div className="text-5xl font-black tracking-tight leading-none text-white">
-              {navVector.distanceMeters.toFixed(1)}{" "}
-              <span className="text-3xl font-bold opacity-80">م</span>
+            <div className="text-5xl font-black tracking-tight leading-none text-white flex items-baseline gap-2">
+              {isCloseRange ? (
+                <>
+                  <span className="text-[#00C853]">هنا</span>
+                  <span className="text-2xl font-mono text-zinc-400 font-normal">
+                    (± {navVector.distanceMeters.toFixed(1)} م)
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>{navVector.distanceMeters.toFixed(1)}</span>
+                  <span className="text-3xl font-bold opacity-80">م</span>
+                </>
+              )}
             </div>
 
             {/* Natural Language Direction */}
-            <div
-              className={`text-2xl font-bold leading-tight ${
-                isCloseRange ? "text-white/95" : "text-[#A1A1AA]"
-              }`}
-            >
-              {naturalDirection}
+            <div className="text-2xl font-bold leading-tight text-[#A1A1AA]">
+              {isCloseRange ? (
+                <span className="text-white font-extrabold flex items-center gap-2">
+                  <span>وصلت لموقع سيارتك</span>
+                  <span className="text-xs px-2 py-0.5 rounded bg-[#00C853]/20 text-[#00C853] font-mono font-bold">
+                    نطاق مباشر
+                  </span>
+                </span>
+              ) : (
+                naturalDirection
+              )}
               {isCloseRange && (
-                <span className="block text-xs font-semibold text-white/80 mt-1">
-                  (أقل من 5 أمتار - انظر حولك في محيطك المباشر)
+                <span className="block text-xs font-semibold text-zinc-400 mt-1">
+                  السيارة في محيطك الفوري المباشر (أقل من 5 أمتار)
                 </span>
               )}
             </div>

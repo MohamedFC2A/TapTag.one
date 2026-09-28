@@ -114,12 +114,24 @@ function runSpatialTestSuite() {
   const smoothAroundZero = kalman.update(1);
   assert(smoothAroundZero > 350 || smoothAroundZero < 10, `Kalman Filter: Wrap-around 359° -> 1° without discontinuity (Value: ${smoothAroundZero.toFixed(1)}°)`);
 
-  // Test 9: 3D Tilt-Compensated Heading
+  // Test 9: 3D Tilt-Compensated Heading across all cardinal directions & tilts
   const flatNorth = computeTiltCompensatedHeading(0, 0, 0);
   assert(Math.abs(flatNorth - 0) < 0.1, "3D Tilt Heading: Flat phone facing North yields 0.0°");
 
+  const flatEast = computeTiltCompensatedHeading(270, 0, 0);
+  assert(Math.abs(flatEast - 90) < 0.1, `3D Tilt Heading: Flat phone facing East yields 90.0° (got ${flatEast}°)`);
+
+  const flatSouth = computeTiltCompensatedHeading(180, 0, 0);
+  assert(Math.abs(flatSouth - 180) < 0.1, `3D Tilt Heading: Flat phone facing South yields 180.0° (got ${flatSouth}°)`);
+
+  const flatWest = computeTiltCompensatedHeading(90, 0, 0);
+  assert(Math.abs(flatWest - 270) < 0.1, `3D Tilt Heading: Flat phone facing West yields 270.0° (got ${flatWest}°)`);
+
   const tiltedNorth = computeTiltCompensatedHeading(0, 45, 0);
   assert(Math.abs(tiltedNorth - 0) < 0.1 || Math.abs(tiltedNorth - 360) < 0.1, "3D Tilt Heading: 45° Pitch Tilt maintains True North 0.0°");
+
+  const tiltedRollNorth = computeTiltCompensatedHeading(0, 45, 10);
+  assert(Math.abs(tiltedRollNorth - 355) < 1.0, `3D Tilt Heading: 45° Pitch with 10° Roll adjusts smoothly to 355° (got ${tiltedRollNorth}°)`);
 
   // Test 10: Weighted GNSS Multi-Burst Centroid
   const sampleBurst = [
