@@ -54,6 +54,11 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
   const [selectedTag, setSelectedTag] = useState<TagItem>(initialTag);
   const [existingCalibration, setExistingCalibration] = useState<SpatialCalibration | null>(null);
   const [isReCalibrating, setIsReCalibrating] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Live dynamic relative time state (e.g. "الآن (منذ لحظات)", "منذ دقيقة", etc.)
   const [liveRelativeTime, setLiveRelativeTime] = useState<string>("");
@@ -91,6 +96,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
 
   // 1. Check local storage and Neon Cloud database for existing calibration
   useEffect(() => {
+    if (!isMounted) return;
     setIsReCalibrating(false);
 
     // A. Local-first 0-delay load
@@ -451,7 +457,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col justify-between max-w-md mx-auto w-full p-4 pb-6 space-y-4">
         {/* Active Existing Calibration Notice Card */}
-        {existingCalibration && !isReCalibrating && step === "IDLE" ? (
+        {isMounted && existingCalibration && !isReCalibrating && step === "IDLE" ? (
           <div className="space-y-4">
             <div className="bg-[#0A140D] border border-[#00C853]/40 rounded-2xl p-4 space-y-3 shadow-xl">
               <div className="flex items-center gap-2.5 text-[#00C853] text-sm font-bold">

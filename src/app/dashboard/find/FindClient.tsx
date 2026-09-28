@@ -57,6 +57,11 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
   const [calibration, setCalibration] = useState<SpatialCalibration | null>(null);
   const [isLoadingPoint, setIsLoadingPoint] = useState(true);
   const [liveFindRelativeTime, setLiveFindRelativeTime] = useState<string>("");
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Live vector
   const [navVector, setNavVector] = useState<NavigationVector | null>(null);
@@ -77,6 +82,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
 
   // 1. Instant Local-First Load + Cloud Dynamic Synchronization
   useEffect(() => {
+    if (!isMounted) return;
     setIsLoadingPoint(true);
     const tagUid = selectedTag.tagUid;
 
@@ -387,7 +393,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           >
             {vehicleMake} {vehicleModel}
           </div>
-          {calibration && (
+          {isMounted && calibration && (
             <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono text-zinc-400">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
               <span>موقف مثبت: {formatCalibrationDateTime(calibration.calibratedAt).fullFormatted}</span>
