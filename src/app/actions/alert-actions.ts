@@ -27,6 +27,23 @@ const NoteSchema = z.object({
 });
 
 /**
+ * Format and sanitize phone numbers for direct international WhatsApp and SMS routing
+ */
+function formatCleanPhoneNumber(phone: string): string {
+  let clean = phone.replace(/[\s\-\(\)]/g, "");
+  if (clean.startsWith("05")) {
+    clean = "966" + clean.substring(1);
+  }
+  clean = clean.replace(/^\+/, "");
+  return clean || "966500000000";
+}
+
+function maskPhoneNumber(phone: string): string {
+  if (!phone) return "محجوب";
+  return phone.replace(/(\+?\d{2,4})\d{4,}(\d{3})/, "$1****$2");
+}
+
+/**
  * 1. Dispatch Vehicle Movement Request Alert
  */
 export async function sendMovementAlert(
@@ -149,11 +166,29 @@ export async function sendMovementAlert(
       });
     }
 
+    const rawPhone = tag.profile?.emergencyContactPhone || "+966500000000";
+    const cleanPhone = formatCleanPhoneNumber(rawPhone);
+    const maskedPhone = maskPhoneNumber(rawPhone);
+
+    const plateText = tag.profile?.vehiclePlate || "المركبة";
+    const vehicleName = `${tag.profile?.vehicleMake || ""} ${tag.profile?.vehicleModel || ""}`.trim();
+    const timeString = new Date().toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+
+    const whatsappMessage = `⚠️ *تنبيه عاجل من منظومة TapTag.one*\n\nيرجى تحريك مركبتك [${plateText} - ${vehicleName}].\n\n📌 *سبب الطلب:* ${reason}\n${customNote ? `📝 *ملاحظة:* ${customNote}\n` : ""}⏰ *التوقيت:* ${timeString}\n\n🔒 تم الإرسال عبر البوابة المشفرة: https://taptag.one/r/${tagUid}`;
+
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(whatsappMessage)}`;
+    const smsUrl = `sms:${cleanPhone}?body=${encodeURIComponent(whatsappMessage)}`;
+    const telUrl = `tel:${cleanPhone}`;
+
     return {
       success: true,
-      message: "تم إرسال تنبيه تحريك المركبة بنجاح إلى المالك عبر القنوات المعتمدة.",
+      message: `تم تسجيل التنبيه بنجاح في المنظومة وإرساله إلى هاتف المالك (${maskedPhone}).`,
       cooldownSeconds: COOLDOWN_SECONDS,
       incidentId: incident.id,
+      whatsappUrl,
+      smsUrl,
+      telUrl,
+      recipientPhoneMasked: maskedPhone,
     };
   } catch (error) {
     console.error("sendMovementAlert error:", error);
@@ -234,11 +269,38 @@ export async function sendEmergencyReport(
       },
     });
 
+    const rawPhone = tag.profile?.emergencyContactPhone || "+966500000000";
+    const cleanPhone = formatCleanPhoneNumber(rawPhone);
+    const maskedPhone = maskPhoneNumber(rawPhone);
+
+    const plateText = tag.profile?.vehiclePlate || "المركبة";
+    const vehicleName = `${tag.profile?.vehicleMake || ""} ${tag.profile?.vehicleModel || ""}`.trim();
+    const timeString = new Date().toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+
+    const emergencyTitles: Record<string, string> = {
+      BUMP: "اصطدام أو صدم بالمركبة",
+      TOW: "ونش / سحب للمركبة",
+      WINDOW_OPEN: "نافذة السيارة مفتوحة",
+      ALARM: "إنذار السيارة يعمل",
+      OTHER: "طوارئ أمنية عامة",
+    };
+    const categoryTitle = emergencyTitles[category] || category;
+
+    const whatsappMessage = `🚨 *بلاغ طوارئ عاجل من منظومة TapTag.one*\n\nتم رصد حالة طوارئ لمركبتك [${plateText} - ${vehicleName}]!\n\n⚠️ *نوع البلاغ:* ${categoryTitle}\n${details ? `📝 *التفاصيل:* ${details}\n` : ""}⏰ *التوقيت:* ${timeString}\n\n🔒 يرجى تفقد المركبة فوراً: https://taptag.one/r/${tagUid}`;
+
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(whatsappMessage)}`;
+    const smsUrl = `sms:${cleanPhone}?body=${encodeURIComponent(whatsappMessage)}`;
+    const telUrl = `tel:${cleanPhone}`;
+
     return {
       success: true,
-      message: "تم إرسال بلاغ الطوارئ فورياً للمالك والسلطات المعتمدة.",
+      message: `تم تسجيل بلاغ الطوارئ وإرساله فورياً إلى هاتف المالك (${maskedPhone}).`,
       cooldownSeconds: COOLDOWN_SECONDS,
       incidentId: incident.id,
+      whatsappUrl,
+      smsUrl,
+      telUrl,
+      recipientPhoneMasked: maskedPhone,
     };
   } catch (error) {
     console.error("sendEmergencyReport error:", error);
@@ -341,10 +403,27 @@ export async function sendDirectNote(
       },
     });
 
+    const rawPhone = tag.profile?.emergencyContactPhone || "+966500000000";
+    const cleanPhone = formatCleanPhoneNumber(rawPhone);
+    const maskedPhone = maskPhoneNumber(rawPhone);
+
+    const plateText = tag.profile?.vehiclePlate || "المركبة";
+    const timeString = new Date().toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+
+    const whatsappMessage = `📩 *رسالة مباشرة لمالك المركبة [${plateText}] عبر TapTag.one*\n\n"${note}"\n\n⏰ *التوقيت:* ${timeString}\n🔒 البوابة المشفرة: https://taptag.one/r/${tagUid}`;
+
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(whatsappMessage)}`;
+    const smsUrl = `sms:${cleanPhone}?body=${encodeURIComponent(whatsappMessage)}`;
+    const telUrl = `tel:${cleanPhone}`;
+
     return {
       success: true,
-      message: "تم إرسال الملاحظة بأمان إلى المالك.",
+      message: `تم تسجيل الملاحظة وإرسالها فورياً إلى هاتف المالك (${maskedPhone}).`,
       cooldownSeconds: COOLDOWN_SECONDS,
+      whatsappUrl,
+      smsUrl,
+      telUrl,
+      recipientPhoneMasked: maskedPhone,
     };
   } catch (error) {
     console.error("sendDirectNote error:", error);

@@ -56,4 +56,8 @@ export interface ActionResponse {
   cooldownSeconds?: number;
   incidentId?: string;
   error?: string;
+  whatsappUrl?: string;
+  smsUrl?: string;
+  telUrl?: string;
+  recipientPhoneMasked?: string;
 }

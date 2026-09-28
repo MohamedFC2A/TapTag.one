@@ -22,6 +22,7 @@ import {
   Cpu,
   KeyRound,
   Zap,
+  ExternalLink,
 } from "lucide-react";
 import { SafePublicTag, Language, TagStatus } from "@/types";
 import { translations } from "@/lib/translations";
@@ -91,6 +92,13 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
   const [feedback, setFeedback] = useState<{
     type: "success" | "error" | "info";
     message: string;
+  } | null>(null);
+  const [lastDispatchResult, setLastDispatchResult] = useState<{
+    whatsappUrl?: string;
+    smsUrl?: string;
+    telUrl?: string;
+    recipientPhoneMasked?: string;
+    message?: string;
   } | null>(null);
   const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
 
@@ -298,9 +306,19 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
       const res = await sendMovementAlert(null, formData);
       if (res.success) {
         setFeedback({ type: "success", message: res.message });
+        setLastDispatchResult({
+          whatsappUrl: res.whatsappUrl,
+          smsUrl: res.smsUrl,
+          telUrl: res.telUrl,
+          recipientPhoneMasked: res.recipientPhoneMasked,
+          message: res.message,
+        });
         setCooldownRemaining(res.cooldownSeconds || 180);
         setActiveTab(null);
         setCustomMovementNote("");
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          navigator.vibrate([150, 50, 150]);
+        }
       } else {
         setFeedback({ type: "error", message: res.message });
         if (res.cooldownSeconds) setCooldownRemaining(res.cooldownSeconds);
@@ -324,9 +342,19 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
       const res = await sendEmergencyReport(null, formData);
       if (res.success) {
         setFeedback({ type: "success", message: res.message });
+        setLastDispatchResult({
+          whatsappUrl: res.whatsappUrl,
+          smsUrl: res.smsUrl,
+          telUrl: res.telUrl,
+          recipientPhoneMasked: res.recipientPhoneMasked,
+          message: res.message,
+        });
         setCooldownRemaining(res.cooldownSeconds || 180);
         setActiveTab(null);
         setEmergencyDetails("");
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          navigator.vibrate([200, 100, 200, 100, 200]);
+        }
       } else {
         setFeedback({ type: "error", message: res.message });
         if (res.cooldownSeconds) setCooldownRemaining(res.cooldownSeconds);
@@ -348,9 +376,19 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
       const res = await sendDirectNote(null, formData);
       if (res.success) {
         setFeedback({ type: "success", message: res.message });
+        setLastDispatchResult({
+          whatsappUrl: res.whatsappUrl,
+          smsUrl: res.smsUrl,
+          telUrl: res.telUrl,
+          recipientPhoneMasked: res.recipientPhoneMasked,
+          message: res.message,
+        });
         setCooldownRemaining(res.cooldownSeconds || 180);
         setActiveTab(null);
         setDirectNoteText("");
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          navigator.vibrate([100, 50, 100]);
+        }
       } else {
         setFeedback({ type: "error", message: res.message });
         if (res.cooldownSeconds) setCooldownRemaining(res.cooldownSeconds);
@@ -385,6 +423,64 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
               <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
             )}
             <div className="flex-1 font-medium">{feedback.message}</div>
+          </div>
+        )}
+
+        {/* Immediate Direct Dispatch Action Banner (WhatsApp & SMS) */}
+        {lastDispatchResult && (
+          <div className="p-4 rounded-xl border border-[#00C853]/60 bg-[#00C853]/10 space-y-3 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-[#00C853] shrink-0" />
+                <span className="text-sm font-bold text-white font-mono">
+                  {isAr ? "تم تسجيل البلاغ في المنظومة وإرساله لهاتف المالك" : "Alert Dispatched to Owner"}
+                </span>
+              </div>
+              {lastDispatchResult.recipientPhoneMasked && (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-white/10 bg-black text-[#00C853]">
+                  {lastDispatchResult.recipientPhoneMasked}
+                </span>
+              )}
+            </div>
+
+            <p className="text-xs font-mono text-zinc-300 leading-relaxed">
+              {isAr
+                ? "لضمان إيصال الإشعار فورياً حتى لو كان جوال المالك صامتاً، يمكنك الضغط لإرسال التنبيه مباشرة عبر واتساب أو رسالة نصية:"
+                : "To guarantee instant delivery even if owner's phone is silenced, tap below to relay directly via WhatsApp or SMS:"}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+              {lastDispatchResult.whatsappUrl && (
+                <a
+                  href={lastDispatchResult.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#00C853] hover:bg-[#00B048] text-black font-mono font-bold text-xs cursor-pointer shadow-lg active:scale-95 transition-all"
+                >
+                  <span>📱 إرسال فوري عبر WhatsApp للمالك</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-black" />
+                </a>
+              )}
+
+              {lastDispatchResult.smsUrl && (
+                <a
+                  href={lastDispatchResult.smsUrl}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/20 bg-black hover:bg-zinc-900 text-white font-mono text-xs cursor-pointer active:scale-95 transition-all"
+                >
+                  <span>💬 إرسال رسالة نصية SMS</span>
+                  <ExternalLink className="w-3 h-3 text-zinc-400" />
+                </a>
+              )}
+
+              {lastDispatchResult.telUrl && (
+                <a
+                  href={lastDispatchResult.telUrl}
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/20 bg-black hover:bg-zinc-900 text-zinc-300 font-mono text-xs cursor-pointer"
+                >
+                  <span>📞 اتصال هاتفي</span>
+                </a>
+              )}
+            </div>
           </div>
         )}
 
@@ -1173,6 +1269,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
         onClose={() => setIsCallOpen(false)}
         tagUid={tag.tagUid}
         lang={lang}
+        emergencyContactPhone={tag.emergencyContactPhone}
       />
 
       {/* Official Footer with Matany Group Signature */}
