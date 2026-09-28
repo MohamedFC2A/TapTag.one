@@ -31,7 +31,10 @@ export function IsometricStanceDiagram({
       </div>
 
       {/* Photorealistic 3D Luxury Car Render (Uncluttered, No Messy Overlays) */}
-      <div className="relative w-full aspect-[16/9] bg-black overflow-hidden">
+      <div
+        className="relative w-full aspect-[16/9] bg-black overflow-hidden"
+        style={{ position: "relative", width: "100%", aspectRatio: "16 / 9", overflow: "hidden" }}
+      >
         <Image
           src="/images/car-stance-guide.jpg"
           alt="3D Car Stance Alignment Guide"
