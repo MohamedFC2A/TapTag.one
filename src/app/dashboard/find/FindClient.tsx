@@ -19,6 +19,7 @@ import {
   KalmanAngleFilter,
   ExponentialFilter,
   computeNavigationVector,
+  computeTiltCompensatedHeading,
   loadCalibrationLocally,
   saveCalibrationLocally,
   restartSpatialCalibrationLocally,
@@ -58,12 +59,13 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
-  // Filter refs
+  // Filter & Sensor refs
   const kalmanHeadingRef = useRef<KalmanAngleFilter>(new KalmanAngleFilter(0.08, 1.8));
   const distanceFilterRef = useRef<ExponentialFilter>(new ExponentialFilter(0.25));
   const watchIdRef = useRef<number | null>(null);
   const currentHeadingRef = useRef<number>(0);
   const lastArrivalTriggerRef = useRef<boolean>(false);
+  const lastSonarPingTimeRef = useRef<number>(0);
 
   const vehiclePlate = selectedTag.profile?.vehiclePlate || selectedTag.tagUid;
   const vehicleMake = selectedTag.profile?.vehicleMake || "المركبة";
@@ -82,7 +84,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
       return;
     }
 
-    // B. Fallback to Neon PostgreSQL if new device or empty storage
+    // B. Fallback to Cloud Database if new device or cleared cache
     getLatestVehicleSpatialPoint(tagUid)
       .then((res) => {
         if (res.success && res.point) {
@@ -107,7 +109,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
         }
       })
       .catch((err) => {
-        console.warn("Neon fallback note:", err);
+        console.warn("Cloud fallback note:", err);
       })
       .finally(() => {
         setIsLoadingPoint(false);
@@ -174,7 +176,6 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
     }
   }, [selectedTag.tagUid, vehiclePlate, vehicleMake, vehicleModel]);
 
-
   // Request compass permission (iOS 13+)
   const requestOrientationPermission = async () => {
     if (
@@ -191,21 +192,22 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
     return true;
   };
 
-  // 2. High-Frequency Realtime 60fps Tracking Engine
+  // 2. High-Frequency Realtime 60fps Tracking Engine with 3D Tilt Compensation
   useEffect(() => {
     if (!calibration) return;
 
     requestOrientationPermission().catch(() => {});
 
-    // A. Compass orientation listener (Android absolute + iOS webkit)
+    // A. Compass orientation listener with 3D Tilt Compensation
     const handleOrientation = (e: DeviceOrientationEvent) => {
-      const eCompass = e as unknown as { webkitCompassHeading?: number };
       let rawHeading = 0;
 
-      if (typeof eCompass.webkitCompassHeading === "number") {
+      const eCompass = e as unknown as { webkitCompassHeading?: number };
+      if (typeof eCompass.webkitCompassHeading === "number" && (e.beta === null || Math.abs(e.beta || 0) < 15)) {
         rawHeading = eCompass.webkitCompassHeading;
       } else if (e.alpha !== null) {
-        rawHeading = (360 - e.alpha) % 360;
+        // Full 3D Tilt-Compensation
+        rawHeading = computeTiltCompensatedHeading(e.alpha, e.beta, e.gamma);
       }
 
       const smoothedHeading = kalmanHeadingRef.current.update(rawHeading);
@@ -250,14 +252,37 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           const smoothedDistance = distanceFilterRef.current.update(rawVector.distanceMeters);
           const isWithinLockoutRange = smoothedDistance <= 5.0;
 
-          // Arrival chime trigger once when entering <= 5.0m
-          if (isWithinLockoutRange && !lastArrivalTriggerRef.current) {
-            lastArrivalTriggerRef.current = true;
-            if (soundEnabled) {
-              playNavigationSound("lockout");
+          // Proximity Sonar & Arrival Chime Engine
+          const now = Date.now();
+          if (isWithinLockoutRange) {
+            // Arrival in Close-Range (<= 5.0m): Play Apple Pay arrival chime once
+            if (!lastArrivalTriggerRef.current) {
+              lastArrivalTriggerRef.current = true;
+              if (soundEnabled) {
+                playNavigationSound("apple_pay_arrival");
+              }
             }
-          } else if (!isWithinLockoutRange) {
+          } else {
             lastArrivalTriggerRef.current = false;
+
+            // Proximity Sonar: Frequency escalates as user approaches
+            if (soundEnabled && smoothedDistance <= 25.0) {
+              let sonarInterval = 2500;
+              let pitchMod = 0.9;
+
+              if (smoothedDistance <= 10.0) {
+                sonarInterval = 750; // High rate when 5-10m
+                pitchMod = 1.6;
+              } else if (smoothedDistance <= 18.0) {
+                sonarInterval = 1400; // Medium rate when 10-18m
+                pitchMod = 1.2;
+              }
+
+              if (now - lastSonarPingTimeRef.current >= sonarInterval) {
+                lastSonarPingTimeRef.current = now;
+                playNavigationSound("sonar_ping", pitchMod);
+              }
+            }
           }
 
           setNavVector({
@@ -268,7 +293,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           });
         },
         (err) => {
-          console.warn("GPS watch position error:", err);
+          console.warn("GPS watch position note:", err);
         },
         {
           enableHighAccuracy: true,
@@ -297,7 +322,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
     setCalibration(null);
     setNavVector(null);
 
-    // Delete in Neon cloud asynchronously
+    // Delete in Cloud asynchronously
     deleteVehicleSpatialCalibration(selectedTag.tagUid).catch(() => {});
 
     // Redirect to calibrate page
@@ -323,7 +348,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
         isCloseRange ? "bg-[#19C354] text-white" : "bg-[#000000] text-white"
       }`}
     >
-      {/* 1. Header: FINDING + Vehicle identifier */}
+      {/* 1. Header: FINDING + Vehicle identifier (Filtered for Real Vehicles) */}
       <header className="pt-8 px-6 z-20 flex items-start justify-between">
         <div>
           <div
@@ -345,7 +370,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           </div>
         </div>
 
-        {/* Vehicle Switcher if multiple */}
+        {/* Vehicle Switcher (Only Valid Registered Vehicles) */}
         {allTags.length > 1 && (
           <div className="relative">
             <select
@@ -390,14 +415,14 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
             <div className="space-y-1">
               <h2 className="text-base font-bold text-white">المركبة غير معايرة بعد</h2>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                يرجى تسجيل موقف سيارتك لمرة واحدة فقط للبدء في استخدام الملاحة الفضائية بدقة 1 متر.
+                يرجى تثبيت موقف سيارتك عبر إجراء المعايرة الفضائية (7 ثوانٍ) للبدء في استخدام الملاحة بدقة فائقة.
               </p>
             </div>
             <Link
               href={`/dashboard/calibrate?tag=${selectedTag.tagUid}`}
               className="inline-flex items-center justify-center w-full py-3 rounded-full bg-white text-black font-black text-xs hover:bg-zinc-200 transition-colors shadow-lg"
             >
-              بدء المعايرة الآن (0 تأخير)
+              بدء المعايرة الفضائية الآن
             </Link>
           </div>
         ) : isCloseRange ? (
@@ -414,7 +439,6 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
                 viewBox="0 0 100 100"
                 className="transition-transform duration-300 drop-shadow-md"
               >
-                {/* Clean Apple Precision Find Arrow Shape */}
                 <path
                   d="M 50 15 L 82 58 C 84 61 82 65 78 64 L 56 57 L 56 85 C 56 88 53 90 50 90 C 47 90 44 88 44 85 L 44 57 L 22 64 C 18 65 16 61 18 58 Z"
                   fill="#FFFFFF"
@@ -475,7 +499,6 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
                 viewBox="0 0 100 100"
                 className="drop-shadow-lg"
               >
-                {/* Pure Chevron Precision Arrow */}
                 <path
                   d="M 50 12 L 84 56 C 86 59 84 63 80 62 L 57 55 L 57 88 C 57 91 54 93 50 93 C 46 93 43 91 43 88 L 43 55 L 20 62 C 16 63 14 59 16 56 Z"
                   fill="#FFFFFF"
@@ -515,18 +538,27 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
 
       {/* 4. Bottom Controls Glass Bar */}
       <footer className="px-6 pb-8 pt-4 z-20 flex items-center justify-between">
-        {/* Left: Circle Exit Button */}
-        <Link
-          href="/dashboard"
+        {/* Left: Sound / Proximity Sonar Toggle */}
+        <button
+          type="button"
+          onClick={() => {
+            const next = !soundEnabled;
+            setSoundEnabled(next);
+            if (next) playNavigationSound("tick");
+          }}
           className={`w-14 h-14 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
             isCloseRange
               ? "bg-black/25 text-white backdrop-blur-md"
               : "bg-[#1C1C1E] text-white hover:bg-[#2C2C2E]"
           }`}
-          title="العودة للوحة التحكم"
+          title={soundEnabled ? "كتم الصوت" : "تشغيل الصوت والسونار"}
         >
-          <X className="w-6 h-6 stroke-[2.5]" />
-        </Link>
+          {soundEnabled ? (
+            <Volume2 className="w-6 h-6 stroke-[2.5]" />
+          ) : (
+            <VolumeX className="w-6 h-6 stroke-[2.5] text-zinc-400" />
+          )}
+        </button>
 
         {/* Center: Protected Restart Button */}
         {calibration && (
@@ -544,27 +576,18 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           </button>
         )}
 
-        {/* Right: Sound / Haptic Toggle */}
-        <button
-          type="button"
-          onClick={() => {
-            const next = !soundEnabled;
-            setSoundEnabled(next);
-            if (next) playNavigationSound("tick");
-          }}
+        {/* Right: Circle Exit Button */}
+        <Link
+          href="/dashboard"
           className={`w-14 h-14 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
             isCloseRange
               ? "bg-black/25 text-white backdrop-blur-md"
               : "bg-[#1C1C1E] text-white hover:bg-[#2C2C2E]"
           }`}
-          title={soundEnabled ? "كتم الصوت" : "تشغيل الصوت"}
+          title="العودة للوحة التحكم"
         >
-          {soundEnabled ? (
-            <Volume2 className="w-6 h-6 stroke-[2.5]" />
-          ) : (
-            <VolumeX className="w-6 h-6 stroke-[2.5] text-zinc-400" />
-          )}
-        </button>
+          <X className="w-6 h-6 stroke-[2.5]" />
+        </Link>
       </footer>
 
       {/* Confirmation Dialog for Irreversible Restart */}

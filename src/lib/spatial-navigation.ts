@@ -264,10 +264,103 @@ export function computeNavigationVector(
 }
 
 /**
- * Web Audio Synthesizer for native Apple-like tactile feedback without external media
+ * 3D Tilt-Compensated Compass Heading
+ * Solves raw alpha drift when the user tilts the smartphone in their hand
+ */
+export function computeTiltCompensatedHeading(
+  alpha: number,
+  beta: number | null,
+  gamma: number | null
+): number {
+  if (beta === null || gamma === null) {
+    return (360 - alpha) % 360;
+  }
+
+  const toRad = Math.PI / 180;
+  const _x = beta * toRad; // pitch
+  const _y = gamma * toRad; // roll
+  const _z = alpha * toRad; // yaw
+
+  const cX = Math.cos(_x);
+  const cY = Math.cos(_y);
+  const cZ = Math.cos(_z);
+  const sX = Math.sin(_x);
+  const sY = Math.sin(_y);
+  const sZ = Math.sin(_z);
+
+  // 3D projection of phone pointing vector onto horizontal earth plane
+  const Vx = -cZ * sY - sZ * sX * cY;
+  const Vy = -sZ * sY + cZ * sX * cY;
+
+  let heading = Math.atan2(Vx, Vy) * (180 / Math.PI);
+  if (heading < 0) heading += 360;
+
+  return (360 - heading) % 360;
+}
+
+/**
+ * Weighted GNSS Centroid Averaging (Timed 5-7s Calibration Engine)
+ * Takes a burst of GPS samples and weights each sample by 1 / (accuracy^2)
+ */
+export function computeWeightedGNSSCentroid(
+  samples: Array<{ lat: number; lng: number; accuracy: number; heading: number }>
+): {
+  avgLat: number;
+  avgLng: number;
+  avgAccuracy: number;
+  avgHeading: number;
+  sampleCount: number;
+} {
+  if (samples.length === 0) {
+    throw new Error("No GNSS samples collected");
+  }
+
+  // Filter out multi-path outlier readings (accuracy > 15m)
+  const validSamples = samples.filter((s) => s.accuracy <= 15);
+  const pool = validSamples.length >= 3 ? validSamples : samples;
+
+  let sumWeight = 0;
+  let weightedLat = 0;
+  let weightedLng = 0;
+  let weightedAcc = 0;
+
+  let sinSum = 0;
+  let cosSum = 0;
+
+  for (const s of pool) {
+    const safeAcc = Math.max(0.5, s.accuracy);
+    const weight = 1 / (safeAcc * safeAcc);
+
+    weightedLat += s.lat * weight;
+    weightedLng += s.lng * weight;
+    weightedAcc += s.accuracy * weight;
+    sumWeight += weight;
+
+    const headRad = toRadians(s.heading);
+    sinSum += Math.sin(headRad) * weight;
+    cosSum += Math.cos(headRad) * weight;
+  }
+
+  const avgLat = weightedLat / sumWeight;
+  const avgLng = weightedLng / sumWeight;
+  const avgAccuracy = weightedAcc / sumWeight;
+  const avgHeading = (toDegrees(Math.atan2(sinSum, cosSum)) + 360) % 360;
+
+  return {
+    avgLat,
+    avgLng,
+    avgAccuracy,
+    avgHeading,
+    sampleCount: pool.length,
+  };
+}
+
+/**
+ * Web Audio Synthesizer: Proximity Sonar & Authentic Apple Pay Arrival Chime
  */
 export function playNavigationSound(
-  type: "tick" | "align" | "lockout" | "calibrate_complete"
+  type: "tick" | "align" | "lockout" | "calibrate_complete" | "sonar_ping" | "apple_pay_arrival",
+  frequencyMod = 1.0
 ) {
   if (typeof window === "undefined") return;
 
@@ -277,16 +370,66 @@ export function playNavigationSound(
     if (!AudioContextClass) return;
 
     const ctx = new AudioContextClass();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
     const now = ctx.currentTime;
 
-    if (type === "tick") {
+    if (type === "sonar_ping") {
+      // Dynamic Proximity Sonar Bell (Higher frequency as distance decreases)
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      const targetFreq = 880 * Math.max(0.85, Math.min(2.2, frequencyMod));
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(targetFreq, now);
+      osc.frequency.exponentialRampToValueAtTime(targetFreq * 0.96, now + 0.09);
+
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+
+      osc.start(now);
+      osc.stop(now + 0.12);
+    } else if (type === "apple_pay_arrival" || type === "lockout") {
+      // Iconic Apple Pay Harmonic Arrival Chime (Two-Tone Sine Bell)
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+
+      osc1.type = "sine";
+      osc1.frequency.setValueAtTime(1046.5, now); // C6
+      gain1.gain.setValueAtTime(0.20, now);
+      gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+
+      osc1.start(now);
+      osc1.stop(now + 0.35);
+
+      // Higher Affirmative Chord Note at 1318.51 Hz (E6)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+
+      osc2.type = "sine";
+      osc2.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+      gain2.gain.setValueAtTime(0.0001, now);
+      gain2.gain.setValueAtTime(0.25, now + 0.08);
+      gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
+
+      osc2.start(now + 0.08);
+      osc2.stop(now + 0.65);
+
+      // Haptic bump
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        navigator.vibrate([60, 40, 100]);
+      }
+    } else if (type === "tick") {
       // Subtle precision tick
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
       osc.type = "sine";
       osc.frequency.setValueAtTime(880, now);
       osc.frequency.exponentialRampToValueAtTime(440, now + 0.04);
@@ -296,6 +439,11 @@ export function playNavigationSound(
       osc.stop(now + 0.04);
     } else if (type === "align") {
       // Harmonic resonance when pointing directly at the car
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
       osc.type = "sine";
       osc.frequency.setValueAtTime(523.25, now); // C5
       osc.frequency.setValueAtTime(659.25, now + 0.06); // E5
@@ -305,6 +453,11 @@ export function playNavigationSound(
       osc.stop(now + 0.15);
     } else if (type === "calibrate_complete") {
       // Upward affirmative chord
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
       osc.type = "triangle";
       osc.frequency.setValueAtTime(440, now);
       osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
@@ -312,15 +465,6 @@ export function playNavigationSound(
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
       osc.start(now);
       osc.stop(now + 0.25);
-    } else if (type === "lockout") {
-      // Apple-like celebratory arrival chime (two-tone)
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(659.25, now); // E5
-      osc.frequency.setValueAtTime(1046.5, now + 0.12); // C6
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-      osc.start(now);
-      osc.stop(now + 0.35);
     }
   } catch {
     // AudioContext might be blocked until user interaction

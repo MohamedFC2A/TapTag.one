@@ -12,6 +12,8 @@ import {
   getNaturalDirectionText,
   KalmanAngleFilter,
   ExponentialFilter,
+  computeTiltCompensatedHeading,
+  computeWeightedGNSSCentroid,
 } from "../src/lib/spatial-navigation.ts";
 
 function runSpatialTestSuite() {
@@ -109,6 +111,24 @@ function runSpatialTestSuite() {
   kalman.update(359);
   const smoothAroundZero = kalman.update(1);
   assert(smoothAroundZero > 350 || smoothAroundZero < 10, `Kalman Filter: Wrap-around 359° -> 1° without discontinuity (Value: ${smoothAroundZero.toFixed(1)}°)`);
+
+  // Test 9: 3D Tilt-Compensated Heading
+  const flatNorth = computeTiltCompensatedHeading(0, 0, 0);
+  assert(Math.abs(flatNorth - 0) < 0.1, "3D Tilt Heading: Flat phone facing North yields 0.0°");
+
+  const tiltedNorth = computeTiltCompensatedHeading(0, 45, 0);
+  assert(Math.abs(tiltedNorth - 0) < 0.1 || Math.abs(tiltedNorth - 360) < 0.1, "3D Tilt Heading: 45° Pitch Tilt maintains True North 0.0°");
+
+  // Test 10: Weighted GNSS Multi-Burst Centroid
+  const sampleBurst = [
+    { lat: 24.713600, lng: 46.675300, accuracy: 1.5, heading: 45 },
+    { lat: 24.713602, lng: 46.675301, accuracy: 1.8, heading: 46 },
+    { lat: 24.713610, lng: 46.675310, accuracy: 8.5, heading: 50 }, // Low accuracy, should be heavily down-weighted
+  ];
+  const { avgLat, avgAccuracy, sampleCount } = computeWeightedGNSSCentroid(sampleBurst);
+  assert(sampleCount === 3, "Multi-GNSS Centroid: All 3 samples processed");
+  assert(avgAccuracy < 2.5, `Multi-GNSS Centroid: Weighted accuracy is heavily influenced by high-accuracy fix (got ${avgAccuracy.toFixed(2)}m)`);
+  assert(Math.abs(avgLat - 24.713601) < 0.000005, "Multi-GNSS Centroid: Weighted latitude strongly adheres to sub-meter cluster");
 
   console.log("\n-------------------------------------------------");
   console.log(`Spatial Test Suite Summary: ${passed} Passed | ${failed} Failed`);

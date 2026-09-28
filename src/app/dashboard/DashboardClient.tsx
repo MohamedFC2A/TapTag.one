@@ -224,8 +224,8 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
             </div>
             <p className="text-xs text-[#A1A1AA] mt-1 font-medium">
               {isAr
-                ? "مراقبة وإدارة أسطول المركبات والتحكم الفوري في حالات البطاقات الذكية عبر Neon PostgreSQL"
-                : "Real-time fleet monitoring and operational controls backed by Neon PostgreSQL."}
+                ? "مراقبة وإدارة أسطول المركبات والتحكم الفوري في حالات البطاقات الذكية عبر المنظومة السحابية المعتمدة"
+                : "Real-time fleet monitoring and operational controls backed by secure cloud infrastructure."}
             </p>
           </div>
 

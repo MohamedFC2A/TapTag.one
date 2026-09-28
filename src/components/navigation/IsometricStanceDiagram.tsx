@@ -82,7 +82,7 @@ export function IsometricStanceDiagram({
               {isAr ? "انقر زر المعايرة" : "Tap Calibrate Button"}
             </span>
             <span className="text-zinc-400 text-[11px] leading-tight block mt-0.5">
-              {isAr ? "حفظ سحابي فوري لنقطة السيارة في Neon بدقة عالية" : "Instant cloud save to Neon database"}
+              {isAr ? "تثبيت سحابي مشفر للنقطة الفضائية بدقة متناهية" : "Instant encrypted cloud synchronization"}
             </span>
           </div>
         </div>

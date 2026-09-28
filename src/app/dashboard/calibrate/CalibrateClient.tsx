@@ -12,11 +12,16 @@ import {
   RotateCw,
   Navigation2,
   ChevronDown,
+  Timer,
+  Satellite,
+  ShieldCheck,
 } from "lucide-react";
 import { IsometricStanceDiagram } from "@/components/navigation/IsometricStanceDiagram";
 import {
   SpatialCalibration,
   computeVehicleCentroid,
+  computeTiltCompensatedHeading,
+  computeWeightedGNSSCentroid,
   saveCalibrationLocally,
   loadCalibrationLocally,
   playNavigationSound,
@@ -42,7 +47,12 @@ interface CalibrateClientProps {
 export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateClientProps) {
   const router = useRouter();
   const [selectedTag, setSelectedTag] = useState<TagItem>(initialTag);
-  const [step, setStep] = useState<"IDLE" | "SUCCESS" | "ERROR">("IDLE");
+  const [existingCalibration, setExistingCalibration] = useState<SpatialCalibration | null>(null);
+
+  // States: IDLE, SAMPLING (7 seconds multi-GNSS burst), SUCCESS, ERROR
+  const [step, setStep] = useState<"IDLE" | "SAMPLING" | "SUCCESS" | "ERROR">("IDLE");
+  const [countdown, setCountdown] = useState<number>(7);
+  const [samplesCount, setSamplesCount] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState("");
   const [isGpsAcquiring, setIsGpsAcquiring] = useState(true);
 
@@ -50,9 +60,9 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
   const [currentAccuracy, setCurrentAccuracy] = useState<number | null>(null);
   const [currentHeading, setCurrentHeading] = useState<number>(0);
   const [hasCompassSupport, setHasCompassSupport] = useState<boolean>(true);
-  const [hasActiveCalibration, setHasActiveCalibration] = useState<boolean>(false);
 
   const watchIdRef = useRef<number | null>(null);
+  const samplesRef = useRef<Array<{ lat: number; lng: number; accuracy: number; heading: number }>>([]);
   const latestGpsRef = useRef<{
     lat: number;
     lng: number;
@@ -60,6 +70,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
     altitude: number | null;
   } | null>(null);
   const latestHeadingRef = useRef<number>(0);
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const vehiclePlate = selectedTag.profile?.vehiclePlate || selectedTag.tagUid;
   const vehicleMake = selectedTag.profile?.vehicleMake || "المركبة";
@@ -68,7 +79,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
   // Check if this vehicle is already calibrated
   useEffect(() => {
     const existing = loadCalibrationLocally(selectedTag.tagUid);
-    setHasActiveCalibration(!!existing);
+    setExistingCalibration(existing);
   }, [selectedTag.tagUid]);
 
   // Request compass permission (iOS 13+)
@@ -87,7 +98,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
     return true;
   };
 
-  // Passive Live Sensors Acquisition
+  // Passive Live Sensors Acquisition with 3D Tilt-Compensation
   useEffect(() => {
     setIsGpsAcquiring(true);
     setErrorMessage("");
@@ -99,14 +110,16 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       if (typeof eCompass.webkitCompassHeading === "number") {
         heading = eCompass.webkitCompassHeading;
       } else if (e.alpha !== null) {
-        heading = (360 - e.alpha) % 360;
+        // Full 3D Tilt-Compensated Heading
+        heading = computeTiltCompensatedHeading(e.alpha, e.beta, e.gamma);
       } else {
         setHasCompassSupport(false);
         return;
       }
 
       setHasCompassSupport(true);
-      setCurrentHeading(Math.round(heading));
+      const rounded = Math.round(heading);
+      setCurrentHeading(rounded);
       latestHeadingRef.current = heading;
     };
 
@@ -122,25 +135,38 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
           setIsGpsAcquiring(false);
           const acc = pos.coords.accuracy;
           setCurrentAccuracy(acc);
-          latestGpsRef.current = {
+
+          const sample = {
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
             accuracy: acc,
             altitude: pos.coords.altitude,
           };
+          latestGpsRef.current = sample;
+
+          // If currently in the 7-second high-rate sampling phase, record sample
+          if (step === "SAMPLING") {
+            samplesRef.current.push({
+              lat: sample.lat,
+              lng: sample.lng,
+              accuracy: sample.accuracy,
+              heading: latestHeadingRef.current,
+            });
+            setSamplesCount(samplesRef.current.length);
+          }
         },
         (err) => {
           setIsGpsAcquiring(false);
           if (err.code === 1) {
-            setErrorMessage("صلاحية الوصول للموقع الجغرافي مرفوضة. يرجى تفعيل الموقع الدقيق.");
+            setErrorMessage("صلاحية الوصول للموقع الجغرافي مرفوضة. يرجى تفعيل الموقع الدقيق من إعدادات المتصفح.");
           } else {
-            setErrorMessage("تعذر التقاط إشارة GPS. تأكد من تفعيل خدمة الموقع بدقة عالية.");
+            setErrorMessage("تعذر التقاط إشارة الأقمار الصناعية. تأكد من تفعيل خدمة الموقع بدقة عالية.");
           }
         },
         {
           enableHighAccuracy: true,
           timeout: 20000,
-          maximumAge: 4000,
+          maximumAge: 1000,
         }
       );
     } else {
@@ -157,13 +183,16 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       if (watchIdRef.current !== null && navigator.geolocation) {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
     };
-  }, [selectedTag.tagUid]);
+  }, [selectedTag.tagUid, step]);
 
   /**
-   * 0-Delay Calibration Execution
+   * Start 7-Second High-Precision Multi-GNSS Sampling Engine
    */
-  const handlePerformCalibration = async () => {
+  const handleStartTimedCalibration = async () => {
     setErrorMessage("");
 
     try {
@@ -172,60 +201,110 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       // Continue
     }
 
-    const currentGps = latestGpsRef.current;
-    if (!currentGps) {
-      setErrorMessage("لم يتم التقاط إشارة الأقمار الصناعية بعد. يرجى الانتظار ثوانٍ في مكان مفتوح.");
+    if (!latestGpsRef.current) {
+      setErrorMessage("لم يتم التقاط إشارة الأقمار الصناعية بعد. يرجى الانتظار في مكان مكشوف حتى يتم استقبال الترددات.");
       setStep("ERROR");
       return;
     }
 
-    const heading = latestHeadingRef.current;
+    // Initialize 7-Second Sampling
+    samplesRef.current = [
+      {
+        lat: latestGpsRef.current.lat,
+        lng: latestGpsRef.current.lng,
+        accuracy: latestGpsRef.current.accuracy,
+        heading: latestHeadingRef.current,
+      },
+    ];
+    setSamplesCount(1);
+    setCountdown(7);
+    setStep("SAMPLING");
+    playNavigationSound("tick");
 
-    // Shift to vehicle centroid (1.2m offset to right)
-    const { centroidLat, centroidLng } = computeVehicleCentroid(
-      currentGps.lat,
-      currentGps.lng,
-      heading,
-      1.2
-    );
+    let remaining = 7;
+    timerIntervalRef.current = setInterval(() => {
+      remaining -= 1;
+      setCountdown(remaining);
+      playNavigationSound("tick");
 
-    const calibration: SpatialCalibration = {
-      tagUid: selectedTag.tagUid,
-      vehiclePlate,
-      vehicleMake,
-      vehicleModel,
-      calibratedAt: new Date().toISOString(),
-      rawLat: currentGps.lat,
-      rawLng: currentGps.lng,
-      userHeading: heading,
-      accuracy: currentGps.accuracy,
-      altitude: currentGps.altitude,
-      centroidLat,
-      centroidLng,
-      offsetDistanceMeters: 1.2,
-    };
+      // Push latest reading in each tick as an additional multi-burst sample
+      if (latestGpsRef.current) {
+        samplesRef.current.push({
+          lat: latestGpsRef.current.lat,
+          lng: latestGpsRef.current.lng,
+          accuracy: latestGpsRef.current.accuracy,
+          heading: latestHeadingRef.current,
+        });
+        setSamplesCount(samplesRef.current.length);
+      }
 
-    // 1. Instant 0-Delay Local-First Save
-    saveCalibrationLocally(calibration);
-    playNavigationSound("calibrate_complete");
-    setHasActiveCalibration(true);
-    setStep("SUCCESS");
+      if (remaining <= 0) {
+        if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+        finalizeMultiGNSSCalibration();
+      }
+    }, 1000);
+  };
 
-    // 2. Asynchronous Non-Blocking Cloud Persistence to Neon
-    saveVehicleSpatialCalibration({
-      tagUid: selectedTag.tagUid,
-      deviceId: "verified_owner",
-      rawLat: currentGps.lat,
-      rawLng: currentGps.lng,
-      userHeading: heading,
-      accuracy: currentGps.accuracy,
-      altitude: currentGps.altitude,
-      centroidLat,
-      centroidLng,
-      offsetDistanceMeters: 1.2,
-    }).catch((err) => {
-      console.warn("Neon background sync note:", err);
-    });
+  /**
+   * Finalize Weighted Centroid & Save
+   */
+  const finalizeMultiGNSSCalibration = () => {
+    try {
+      const samples = samplesRef.current;
+      if (samples.length === 0) {
+        throw new Error("لم يتم تجميع عينات كافية");
+      }
+
+      // Compute weighted inverse-variance centroid
+      const { avgLat, avgLng, avgAccuracy, avgHeading } = computeWeightedGNSSCentroid(samples);
+
+      // Shift to vehicle true centroid (1.2m offset to the right from driver stance)
+      const { centroidLat, centroidLng } = computeVehicleCentroid(
+        avgLat,
+        avgLng,
+        avgHeading,
+        1.2
+      );
+
+      const calibration: SpatialCalibration = {
+        tagUid: selectedTag.tagUid,
+        vehiclePlate,
+        vehicleMake,
+        vehicleModel,
+        calibratedAt: new Date().toISOString(),
+        rawLat: avgLat,
+        rawLng: avgLng,
+        userHeading: avgHeading,
+        accuracy: avgAccuracy,
+        centroidLat,
+        centroidLng,
+        offsetDistanceMeters: 1.2,
+      };
+
+      // 1. Instant 0-Delay Local-First Persistence
+      saveCalibrationLocally(calibration);
+      setExistingCalibration(calibration);
+      playNavigationSound("calibrate_complete");
+      setStep("SUCCESS");
+
+      // 2. Background Sync to Cloud Database (Non-blocking)
+      saveVehicleSpatialCalibration({
+        tagUid: selectedTag.tagUid,
+        deviceId: "verified_owner",
+        rawLat: avgLat,
+        rawLng: avgLng,
+        userHeading: avgHeading,
+        accuracy: avgAccuracy,
+        centroidLat,
+        centroidLng,
+        offsetDistanceMeters: 1.2,
+      }).catch((err) => {
+        console.warn("Cloud background sync note:", err);
+      });
+    } catch (err: any) {
+      setErrorMessage(err.message || "حدث خطأ أثناء معالجة عينات الأقمار الصناعية.");
+      setStep("ERROR");
+    }
   };
 
   return (
@@ -233,7 +312,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       dir="rtl"
       className="min-h-screen min-h-[100dvh] bg-[#000000] text-white flex flex-col font-sans select-none overflow-y-auto"
     >
-      {/* Top Mobile Bar */}
+      {/* Top Header Bar */}
       <header className="sticky top-0 z-40 bg-[#000000]/95 backdrop-blur-md border-b border-[#1A1A1A] px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link
@@ -253,7 +332,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
           </div>
         </div>
 
-        {/* Vehicle Switcher if multiple */}
+        {/* Vehicle Switcher (Only Valid Registered Vehicles) */}
         {allTags.length > 1 && (
           <div className="relative">
             <select
@@ -265,42 +344,101 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                   setStep("IDLE");
                 }
               }}
-              className="bg-[#111111] border border-[#222222] text-xs text-zinc-300 rounded px-2 py-1 pr-6 appearance-none focus:outline-none focus:border-zinc-500 font-medium"
+              className="bg-[#111111] border border-[#222222] text-xs text-zinc-300 rounded-full px-3 py-1.5 pr-7 appearance-none focus:outline-none focus:border-zinc-500 font-medium"
             >
               {allTags.map((t) => (
-                <option key={t.id} value={t.tagUid}>
+                <option key={t.id} value={t.tagUid} className="bg-black text-white">
                   {t.profile?.vehiclePlate || t.tagUid}
                 </option>
               ))}
             </select>
-            <ChevronDown className="w-3.5 h-3.5 text-zinc-400 absolute left-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <ChevronDown className="w-3.5 h-3.5 text-zinc-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         )}
       </header>
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col justify-between max-w-md mx-auto w-full p-4 pb-6 space-y-4">
-        {/* Step Indicator & Stance Diagram */}
-        <div className="space-y-3">
-          <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl p-3">
-            <IsometricStanceDiagram
-              vehicleMake={vehicleMake}
-              vehicleModel={vehicleModel}
-              lang="ar"
-            />
-          </div>
+        {/* Active Existing Calibration Notice Card */}
+        {existingCalibration && step === "IDLE" ? (
+          <div className="space-y-4">
+            <div className="bg-[#0A140D] border border-[#00C853]/40 rounded-2xl p-4 space-y-3 shadow-xl">
+              <div className="flex items-center gap-2.5 text-[#00C853] text-sm font-bold">
+                <CheckCircle2 className="w-5 h-5" />
+                <span>المركبة معايرة حالياً ومثبتة بنجاح</span>
+              </div>
+              <div className="text-xs text-zinc-300 space-y-1.5 bg-[#050B07] p-3 rounded-xl border border-[#00C853]/20 font-mono text-[11px]">
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">لوحة المركبة:</span>
+                  <span className="text-white font-bold">{existingCalibration.vehiclePlate}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">تاريخ المعايرة:</span>
+                  <span className="text-zinc-200">
+                    {new Date(existingCalibration.calibratedAt).toLocaleTimeString("ar-SA", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">دقة التمركز:</span>
+                  <span className="text-[#00C853] font-bold">± {existingCalibration.accuracy.toFixed(1)} م</span>
+                </div>
+              </div>
 
-          {/* Stance Instruction */}
-          <div className="bg-[#111111] border border-[#1F1F1F] rounded-lg p-3 text-xs text-zinc-300 space-y-1.5">
-            <div className="font-bold text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              <span>طريقة المعايرة الصحيحة:</span>
+              <div className="pt-2 flex flex-col gap-2.5">
+                <Link
+                  href={`/dashboard/find?tag=${selectedTag.tagUid}`}
+                  className="w-full py-3.5 rounded-xl bg-[#00C853] hover:bg-[#00B048] text-black font-black text-sm flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-lg"
+                >
+                  <Navigation2 className="w-4 h-4 fill-black" />
+                  <span>الانتقال للبحث عن السيارة الآن</span>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => setExistingCalibration(null)}
+                  className="w-full py-2.5 rounded-xl border border-zinc-700 bg-zinc-900/80 text-xs text-zinc-300 hover:text-white flex items-center justify-center gap-2 transition-colors"
+                >
+                  <RotateCw className="w-3.5 h-3.5" />
+                  <span>إجراء معايرة أخرى / تحديث مكان الوقوف</span>
+                </button>
+              </div>
             </div>
-            <p className="text-zinc-400 leading-relaxed text-[11px]">
-              قف بجانب باب السائق (الجانب الأيسر للمركبة)، واجعل مقدمة هاتفك موجهة للأمام تماماً في نفس اتجاه مقدمة السيارة، ثم اضغط زر التثبيت.
-            </p>
+
+            <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl p-3">
+              <IsometricStanceDiagram
+                vehicleMake={vehicleMake}
+                vehicleModel={vehicleModel}
+                lang="ar"
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          /* Stance Guide & Setup */
+          <div className="space-y-3">
+            <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl p-3">
+              <IsometricStanceDiagram
+                vehicleMake={vehicleMake}
+                vehicleModel={vehicleModel}
+                lang="ar"
+              />
+            </div>
+
+            {/* Step Instructions */}
+            <div className="bg-[#111111] border border-[#1F1F1F] rounded-lg p-3 text-xs text-zinc-300 space-y-1.5">
+              <div className="font-bold text-white flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                <span>إجراء المعايرة الدقيقة الفائقة (7 ثوانٍ):</span>
+              </div>
+              <p className="text-zinc-400 leading-relaxed text-[11px]">
+                قف بجانب باب السائق (يسار السيارة)، وجّه أعلى الهاتف لمقدمة السيارة، ثم اضغط زر المسح الفضائي وانتظر 7 ثوانٍ حتى يقوم النظام بتجميع عينات الأقمار الصناعية وتصفية دقة التمركز.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Live GNSS & Sensor Telemetry */}
         <div className="grid grid-cols-2 gap-2 text-xs">
@@ -348,15 +486,51 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
           </div>
         )}
 
-        {/* Success View */}
+        {/* SAMPLING VIEW (7-Second Multi-GNSS Burst) */}
+        {step === "SAMPLING" && (
+          <div className="p-5 rounded-2xl border border-zinc-700 bg-[#0E0E10] space-y-4 text-center">
+            <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-4 border-zinc-700 animate-ping opacity-25" />
+              <div className="w-16 h-16 rounded-full bg-[#1A1A1E] border border-zinc-500 flex items-center justify-center font-mono text-2xl font-black text-white">
+                {countdown}
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-white">جاري المسح الفضائي وتجميع الإشارات...</h3>
+              <p className="text-xs text-zinc-400">
+                يرجى الثبات في مكانك مع توجيه الهاتف للأمام بمحاذاة السيارة
+              </p>
+            </div>
+
+            {/* Progress Bar & Samples Count */}
+            <div className="space-y-1.5 pt-1">
+              <div className="w-full bg-zinc-800 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-white h-full transition-all duration-300"
+                  style={{ width: `${((7 - countdown) / 7) * 100}%` }}
+                />
+              </div>
+              <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                <span className="flex items-center gap-1">
+                  <Satellite className="w-3 h-3 text-[#00C853]" />
+                  <span>تم التقاط {samplesCount} عينة دقيقة</span>
+                </span>
+                <span>باقي {countdown} ثوانٍ</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* SUCCESS VIEW */}
         {step === "SUCCESS" && (
           <div className="p-4 rounded-xl border border-zinc-800 bg-[#0C0C0C] space-y-3">
             <div className="flex items-center gap-2 text-[#00C853] text-sm font-bold">
               <CheckCircle2 className="w-5 h-5" />
-              <span>تم تثبيت نقطة المعايرة بنجاح (0 تأخير)!</span>
+              <span>تم تثبيت المعايرة بدقة الأقمار الفائقة!</span>
             </div>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              تم قفل موقع سيارتك بدقة في الذاكرة السريعة مع نسخة سحابية مؤمنة. يمكنك الآن البحث عنها في أي وقت دون الحاجة لإنترنت سريع.
+              تم حساب التمركز الموزون وقفل موقع سيارتك بدقة في الذاكرة السريعة مع نسخة سحابية مشفرة.
             </p>
             <div className="pt-2 flex flex-col gap-2">
               <Link
@@ -371,18 +545,18 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                 onClick={() => setStep("IDLE")}
                 className="w-full py-2.5 rounded-lg border border-[#222222] bg-[#141414] text-xs text-zinc-400 hover:text-white transition-colors"
               >
-                معايرة مرة أخرى
+                معايرة أخرى
               </button>
             </div>
           </div>
         )}
 
-        {/* Action Button */}
-        {step !== "SUCCESS" && (
+        {/* ACTION BUTTON (When Not Sampling and Not Success and Not showing active existing card) */}
+        {step === "IDLE" && !existingCalibration && (
           <div className="space-y-2">
             <button
               type="button"
-              onClick={handlePerformCalibration}
+              onClick={handleStartTimedCalibration}
               disabled={isGpsAcquiring && !latestGpsRef.current}
               className={`w-full py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all active:scale-95 ${
                 isGpsAcquiring && !latestGpsRef.current
@@ -390,23 +564,13 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                   : "bg-white hover:bg-zinc-200 text-black shadow-lg"
               }`}
             >
-              <Compass className="w-4 h-4" />
+              <Timer className="w-4 h-4" />
               <span>
                 {isGpsAcquiring && !latestGpsRef.current
                   ? "جاري تثبيت إشارة GPS..."
-                  : "تثبيت نقطة المعايرة الآن (0 تأخير)"}
+                  : "بدء المعايرة الفضائية الفائقة (مسح 7 ثوانٍ)"}
               </span>
             </button>
-
-            {hasActiveCalibration && (
-              <Link
-                href={`/dashboard/find?tag=${selectedTag.tagUid}`}
-                className="w-full py-2.5 rounded-lg border border-[#222222] bg-[#0A0A0A] text-xs text-zinc-400 hover:text-white flex items-center justify-center gap-1.5 transition-colors"
-              >
-                <Navigation2 className="w-3.5 h-3.5" />
-                <span>السيارة معايرة مسبقاً - الذهاب للبحث مباشرة</span>
-              </Link>
-            )}
           </div>
         )}
       </main>

@@ -27,31 +27,34 @@ export default async function FindPage({ searchParams }: FindPageProps) {
     console.error("FindPage tags fetch error:", err);
   }
 
-  // Fallback demo tag if database has no registered tags
-  if (!tags || tags.length === 0) {
-    tags = [
-      {
-        id: "tt-demo-1",
-        tagUid: "TT-88219-X",
-        profile: {
-          vehiclePlate: "أ ب ج 1234",
-          vehicleMake: "Toyota",
-          vehicleModel: "Land Cruiser",
-          vehicleColor: "White Pearl",
-        },
-      },
-    ];
-  }
+  // Filter strictly for registered vehicles (never show factory placeholders like "غير مسجل")
+  const validTags = tags.filter((t) => {
+    const plate = t.profile?.vehiclePlate || "";
+    return plate.trim() !== "" && !plate.includes("غير مسجل") && !plate.includes("جاهز للتفعيل");
+  });
 
-  // Find active tag or default to first
+  const finalTags = validTags.length > 0 ? validTags : [
+    {
+      id: "tt-demo-1",
+      tagUid: "TT-88219-X",
+      profile: {
+        vehiclePlate: "أ ب ج 1234",
+        vehicleMake: "Toyota",
+        vehicleModel: "Land Cruiser GR Sport",
+        vehicleColor: "White Pearl (أبيض لؤلؤي)",
+      },
+    },
+  ];
+
+  // Find active tag or default to first valid registered vehicle
   const activeTag = targetTagUid
-    ? tags.find((t) => t.tagUid.toUpperCase() === targetTagUid.toUpperCase()) || tags[0]
-    : tags[0];
+    ? finalTags.find((t) => t.tagUid.toUpperCase() === targetTagUid.toUpperCase()) || finalTags[0]
+    : finalTags[0];
 
   return (
     <FindClient
       activeTag={activeTag}
-      allTags={tags}
+      allTags={finalTags}
     />
   );
 }
