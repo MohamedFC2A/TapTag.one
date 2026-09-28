@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useId } from "react";
+import Link from "next/link";
 import { ArrowUp, ShieldCheck } from "lucide-react";
 import { Language } from "@/types";
 
@@ -60,6 +61,28 @@ export function Footer({ lang = "ar" }: FooterProps) {
 
   return (
     <footer className="w-full border-t border-[#1C1C20] bg-[#000000] py-8 px-4 text-xs text-[#A1A1AA]">
+      {/* Quick Navigation Links */}
+      <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2 pb-6 mb-6 border-b border-white/[0.08] font-mono text-[11px]">
+        <Link href="/" className="text-zinc-400 hover:text-white transition-colors">
+          {isAr ? "الرئيسية" : "Home"}
+        </Link>
+        <Link href="/admin" className="text-[#00C853] hover:underline font-bold transition-colors">
+          {isAr ? "مركز الإدارة (Admin Hub)" : "Admin Hub"}
+        </Link>
+        <Link href="/admin/qr-engine" className="text-zinc-400 hover:text-white transition-colors">
+          {isAr ? "استوديو الطباعة والسك" : "Print Studio"}
+        </Link>
+        <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors">
+          {isAr ? "لوحة الأسطول" : "Fleet Dashboard"}
+        </Link>
+        <Link href="/dashboard/activate" className="text-zinc-400 hover:text-white transition-colors">
+          {isAr ? "تفعيل بالبصمة" : "Biometric Claim"}
+        </Link>
+        <Link href="/demo" className="text-zinc-400 hover:text-white transition-colors">
+          {isAr ? "تجربة تفاعلية" : "Interactive Demo"}
+        </Link>
+      </div>
+
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Brand System Notice */}
         <div className="flex items-center gap-2 text-center sm:text-start">

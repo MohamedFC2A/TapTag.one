@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, Shield, Fingerprint, ArrowRight, ArrowLeft } from "lucide-react";
+import { Search, Shield, Fingerprint, ArrowRight, ArrowLeft, Terminal } from "lucide-react";
 import { Language } from "@/types";
 import { PhysicalAcrylicArtifact } from "./PhysicalAcrylicArtifact";
 
@@ -103,6 +103,14 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
           >
             <Shield className="w-3.5 h-3.5 text-[#00C853]" />
             <span>{isAr ? "البوابة الحية (تجربة حية)" : "Live Gateway Demo"}</span>
+          </Link>
+
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/20 hover:border-white/50 bg-[#060608] hover:bg-zinc-900 text-white text-xs font-mono font-semibold transition-all active:scale-95"
+          >
+            <Terminal className="w-3.5 h-3.5 text-[#00C853]" />
+            <span>{isAr ? "مركز القيادة (Admin)" : "Admin Hub"}</span>
           </Link>
         </div>
       </div>

@@ -28,12 +28,12 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
       active: pathname === "/",
     },
     {
-      href: "#pillars-section",
+      href: "/#pillars-section",
       label: isAr ? "المعمارية الأمنية" : "Architecture",
       active: false,
     },
     {
-      href: "#live-simulator",
+      href: "/#live-simulator",
       label: isAr ? "غرفة العمليات" : "Operations",
       active: false,
     },
@@ -43,9 +43,14 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
       active: pathname.startsWith("/dashboard"),
     },
     {
+      href: "/admin",
+      label: isAr ? "مركز الإدارة (Admin)" : "Admin Hub",
+      active: pathname === "/admin",
+    },
+    {
       href: "/admin/qr-engine",
-      label: isAr ? "استوديو الطباعة" : "Print Studio",
-      active: pathname.startsWith("/admin"),
+      label: isAr ? "استوديو الطباعة والسك" : "Print Studio",
+      active: pathname.startsWith("/admin/qr-engine"),
     },
   ];
 
