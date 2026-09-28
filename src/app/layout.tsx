@@ -54,7 +54,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className="min-h-screen bg-[#000000] text-[#E4E4E7] antialiased selection:bg-[#00C853] selection:text-black font-sans">
+      <body className="min-h-screen bg-[#000000] text-[#E4E4E7] antialiased selection:bg-white selection:text-black font-sans">
         {children}
         <PWAInstallAndPermissionsModal />
       </body>

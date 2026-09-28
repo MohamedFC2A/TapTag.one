@@ -199,7 +199,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
     const contentH = 571 - contentY + 2;
 
     const barGrad = ctx.createLinearGradient(rightBarX, contentY, rightBarX + rightBarW, contentY + contentH);
-    barGrad.addColorStop(0, "#00C853");
+    barGrad.addColorStop(0, "#FFFFFF");
     barGrad.addColorStop(1, "#059669");
     ctx.fillStyle = barGrad;
     ctx.fillRect(rightBarX, contentY, rightBarW, contentH);
@@ -219,7 +219,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
     const qrContainerSize = 250;
 
     // Green framed background for QR
-    ctx.fillStyle = "#00C853";
+    ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(qrSectionX, qrContainerY, qrContainerSize, qrContainerSize);
 
     const qrImg = new Image();
@@ -239,7 +239,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
       ctx.strokeRect(qrSectionX, uidBoxY, qrContainerSize, 64);
 
       ctx.font = "bold 11px monospace";
-      ctx.fillStyle = "#00C853";
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillText("SERIAL TAG UID", qrSectionX + 16, uidBoxY + 22);
 
       ctx.font = "bold 20px monospace";
@@ -257,7 +257,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
 
       // Contactless wave indicator
       ctx.font = "bold 14px monospace";
-      ctx.fillStyle = "#00C853";
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillText("TOUCH SENSOR  (((•)))  13.56 MHz", centerX + 155, contentY + 40);
 
       ctx.font = "12px sans-serif";
@@ -274,7 +274,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
 
       // Label
       ctx.font = "bold 12px sans-serif";
-      ctx.fillStyle = "#00C853";
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillText("READY-FOR-SALE • جاهزة للتفعيل الفوري", centerX + 20, assetBoxY + 30);
 
       // Title
@@ -321,12 +321,12 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
       .solar-cell { stroke: #1E2433; stroke-width: 1; }
       .solar-wire { stroke: #38435C; stroke-width: 1.5; }
       .nfc-title { font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; font-size: 64px; font-weight: 900; fill: #FFFFFF; }
-      .nfc-sub { font-family: monospace; font-size: 12px; fill: #00C853; font-weight: bold; }
+      .nfc-sub { font-family: monospace; font-size: 12px; fill: #FFFFFF; font-weight: bold; }
       .card-title { font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; font-size: 20px; font-weight: bold; fill: #FFFFFF; }
       .card-sub { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; fill: #D4D4D8; }
       .card-desc { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 11px; fill: #71717A; }
       .uid-val { font-family: monospace; font-size: 18px; font-weight: bold; fill: #FFFFFF; }
-      .uid-lbl { font-family: monospace; font-size: 10px; fill: #00C853; font-weight: bold; }
+      .uid-lbl { font-family: monospace; font-size: 10px; fill: #FFFFFF; font-weight: bold; }
       .vertical-bar-txt { font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #FFFFFF; letter-spacing: 2px; }
       .glass-bevel { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 1; }
     </style>
@@ -352,13 +352,13 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
   <line x1="623" y1="16" x2="623" y2="62" class="solar-cell"/>
 
   <!-- Right Vertical Green Bar -->
-  <rect x="636" y="72" width="46" height="414" rx="4" ry="4" fill="#00C853"/>
+  <rect x="636" y="72" width="46" height="414" rx="4" ry="4" fill="#FFFFFF"/>
   <g transform="translate(664, 98) rotate(90)">
     <text x="0" y="0" class="vertical-bar-txt">TAPTAG.ONE</text>
   </g>
 
   <!-- Left QR Code Section -->
-  <rect x="20" y="72" width="216" height="216" rx="6" ry="6" fill="#00C853"/>
+  <rect x="20" y="72" width="216" height="216" rx="6" ry="6" fill="#FFFFFF"/>
   <rect x="26" y="78" width="204" height="204" rx="4" ry="4" fill="#FFFFFF"/>
   <image href="${qrDataUrl}" x="32" y="84" width="192" height="192" />
 
@@ -373,7 +373,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
   <text x="390" y="132" font-family="sans-serif" font-size="11px" fill="#9CA3AF">SMART IDENTITY SHIELD • NO APP REQUIRED</text>
 
   <rect x="260" y="155" width="355" height="120" rx="6" ry="6" fill="#090A0D" stroke="#1F2228" stroke-width="1.5"/>
-  <text x="276" y="180" font-family="monospace" font-size="11px" fill="#00C853" font-weight="bold">READY-FOR-SALE • جاهزة للتفعيل الفوري</text>
+  <text x="276" y="180" font-family="monospace" font-size="11px" fill="#FFFFFF" font-weight="bold">READY-FOR-SALE • جاهزة للتفعيل الفوري</text>
   <text x="276" y="210" class="card-title">هوية ذكية مشفرة للمركبة والأصول</text>
   <text x="276" y="236" class="card-sub">ربط فوري لبيانات المركبة وقفل الملكية بالبصمة البيومترية</text>
   <text x="276" y="258" class="card-desc">تشفير كامل لحجب رقم الهاتف والبيانات الشخصية عن المارة</text>
@@ -394,11 +394,11 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
       <div className="border border-[#1F2228] bg-[#08080A] rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-[#00C853]" />
+            <Zap className="w-5 h-5 text-[#FFFFFF]" />
             <h1 className="text-base font-bold text-white tracking-wide">
               {isAr ? "مصنع بطاقات الأكريليك الذكية (Factory Card Minting Engine)" : "Factory Smart Acrylic Minting Studio"}
             </h1>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-[#00C853]/40 bg-[#00C853]/10 text-[#00C853] font-bold">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-[#FFFFFF]/40 bg-[#FFFFFF]/10 text-[#FFFFFF] font-bold">
               LOCAL FACTORY ONLY
             </span>
           </div>
@@ -415,7 +415,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
             type="button"
             onClick={handleMintSingle}
             disabled={isPending}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[#00C853] bg-[#00C853] hover:bg-[#00B048] text-black text-xs font-black uppercase transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[#FFFFFF] bg-[#FFFFFF] hover:bg-[#E4E4E7] text-black text-xs font-black uppercase transition-colors disabled:opacity-50"
           >
             <Sparkles className="w-4 h-4 text-black" />
             <span>{isPending ? "جارٍ السك في Neon..." : "سك بطاقة جديدة وحفظها"}</span>
@@ -427,7 +427,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
             disabled={isPending}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[#27272A] bg-[#121216] hover:bg-[#1C1C22] text-white text-xs font-bold transition-colors disabled:opacity-50"
           >
-            <Layers className="w-4 h-4 text-[#00C853]" />
+            <Layers className="w-4 h-4 text-[#FFFFFF]" />
             <span>سك دفعة مصنع (5 بطاقات)</span>
           </button>
         </div>
@@ -438,7 +438,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
         <div
           className={`p-4 rounded-lg border text-xs flex items-center justify-between font-medium ${
             feedback.type === "success"
-              ? "border-[#00C853]/40 bg-[#00C853]/10 text-[#00C853]"
+              ? "border-[#FFFFFF]/40 bg-[#FFFFFF]/10 text-[#FFFFFF]"
               : "border-red-800/40 bg-red-950/40 text-red-300"
           }`}
         >
@@ -453,13 +453,13 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
         <div className="lg:col-span-8 space-y-4">
           <div className="flex items-center justify-between border-b border-[#1C1C1F] pb-2">
             <div className="flex items-center gap-2">
-              <Printer className="w-4 h-4 text-[#00C853]" />
+              <Printer className="w-4 h-4 text-[#FFFFFF]" />
               <h2 className="text-sm font-bold text-white uppercase tracking-wider">
                 {isAr ? "معاينة البطاقة الأكريليك الجاهزة للبيع (70mm × 50mm)" : "Factory Acrylic Card Preview (70mm × 50mm)"}
               </h2>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono text-[#00C853] font-bold">UID: {activeUid}</span>
+              <span className="text-[11px] font-mono text-[#FFFFFF] font-bold">UID: {activeUid}</span>
             </div>
           </div>
 
@@ -491,7 +491,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
                 {/* 1. LEFT: 35% QR Code & Serial Tag UID (Unified Column, NO awkward gap!) */}
                 <div className="w-[195px] flex flex-col gap-2 shrink-0">
                   {/* QR Container in Crisp Emerald Frame */}
-                  <div className="w-[195px] h-[195px] rounded-lg bg-[#00C853] p-2 flex items-center justify-center">
+                  <div className="w-[195px] h-[195px] rounded-lg bg-[#FFFFFF] p-2 flex items-center justify-center">
                     <div className="w-full h-full bg-white rounded-md flex items-center justify-center p-1.5">
                       {qrDataUrl ? (
                         <img
@@ -509,7 +509,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
 
                   {/* Serial Hardware Tag UID directly beneath QR */}
                   <div className="w-[195px] py-2 px-3 rounded-lg border border-[#1F2228] bg-[#090A0D] flex flex-col justify-center">
-                    <span className="text-[9px] font-mono uppercase text-[#00C853] font-bold tracking-wider">
+                    <span className="text-[9px] font-mono uppercase text-[#FFFFFF] font-bold tracking-wider">
                       SERIAL TAG UID
                     </span>
                     <span className="text-sm font-mono font-black text-white tracking-widest truncate">
@@ -526,8 +526,8 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
                       <div className="text-5xl font-black tracking-tight text-white leading-none font-mono">
                         NFC
                       </div>
-                      <div className="text-[10px] font-mono text-[#00C853] tracking-wider mt-1 flex items-center gap-1 font-bold">
-                        <Radio className="w-3 h-3 text-[#00C853]" />
+                      <div className="text-[10px] font-mono text-[#FFFFFF] tracking-wider mt-1 flex items-center gap-1 font-bold">
+                        <Radio className="w-3 h-3 text-[#FFFFFF]" />
                         <span>TOUCH SENSOR 13.56 MHz</span>
                       </div>
                     </div>
@@ -539,7 +539,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
 
                   {/* Factory Sealed Box (Pure Arabic, No awkward broken English hyphens!) */}
                   <div className="p-3.5 rounded-lg border border-[#1F2228] bg-[#090A0D] space-y-1.5" dir="rtl">
-                    <div className="text-[10px] font-mono text-[#00C853] font-bold tracking-wider">
+                    <div className="text-[10px] font-mono text-[#FFFFFF] font-bold tracking-wider">
                       READY-FOR-SALE • جاهزة للتفعيل الفوري
                     </div>
                     <div className="text-base font-bold text-white tracking-wide leading-snug">
@@ -560,7 +560,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
                 </div>
 
                 {/* 3. RIGHT: Vertical Green Bar (TAPTAG.ONE) */}
-                <div className="w-11 bg-gradient-to-b from-[#00C853] to-[#059669] rounded-md flex items-center justify-center shrink-0 relative overflow-hidden">
+                <div className="w-11 bg-gradient-to-b from-[#FFFFFF] to-[#059669] rounded-md flex items-center justify-center shrink-0 relative overflow-hidden">
                   <span
                     className="font-bold text-sm tracking-widest text-white whitespace-nowrap select-none font-mono"
                     style={{
@@ -588,18 +588,18 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
               <button
                 type="button"
                 onClick={exportVectorSVG}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#1F2228] bg-[#0A0A0E] text-white text-xs font-bold hover:border-[#00C853] transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#1F2228] bg-[#0A0A0E] text-white text-xs font-bold hover:border-[#FFFFFF] transition-colors"
               >
-                <FileCode className="w-4 h-4 text-[#00C853]" />
+                <FileCode className="w-4 h-4 text-[#FFFFFF]" />
                 <span>تصدير فيكتور لقص الليزر (SVG)</span>
               </button>
 
               <button
                 type="button"
                 onClick={export300DpiPNG}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#1F2228] bg-[#0A0A0E] text-white text-xs font-bold hover:border-[#00C853] transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#1F2228] bg-[#0A0A0E] text-white text-xs font-bold hover:border-[#FFFFFF] transition-colors"
               >
-                <ImageIcon className="w-4 h-4 text-[#00C853]" />
+                <ImageIcon className="w-4 h-4 text-[#FFFFFF]" />
                 <span>تصدير طباعة دقيقة (300 DPI PNG)</span>
               </button>
             </div>
@@ -609,7 +609,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
                 type="checkbox"
                 checked={showCutMarks}
                 onChange={(e) => setShowCutMarks(e.target.checked)}
-                className="rounded border-[#27272A] text-[#00C853] focus:ring-0 bg-[#0A0A0E]"
+                className="rounded border-[#27272A] text-[#FFFFFF] focus:ring-0 bg-[#0A0A0E]"
               />
               <span>إظهار إرشادات القص بالليزر (Laser Cut Guides)</span>
             </label>
@@ -620,7 +620,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
         <div className="lg:col-span-4 space-y-5">
           <div className="border border-[#1F2228] rounded-lg bg-[#08080A] p-5 space-y-4">
             <div className="flex items-center gap-2 border-b border-[#1C1C1F] pb-3">
-              <ShieldCheck className="w-4 h-4 text-[#00C853]" />
+              <ShieldCheck className="w-4 h-4 text-[#FFFFFF]" />
               <h3 className="text-xs font-bold text-white uppercase tracking-wider">
                 المعايير الهندسية لبطاقة المتجر
               </h3>
@@ -633,11 +633,11 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
               </div>
               <div className="flex items-center justify-between border-b border-[#1C1C1F]/60 pb-2">
                 <span className="text-[#A1A1AA]">مستوى تصحيح خطأ الـ QR:</span>
-                <span className="font-mono text-[#00C853] font-bold">Level H (30% Resilience)</span>
+                <span className="font-mono text-[#FFFFFF] font-bold">Level H (30% Resilience)</span>
               </div>
               <div className="flex items-center justify-between border-b border-[#1C1C1F]/60 pb-2">
                 <span className="text-[#A1A1AA]">منع التصادم (Collision-Free):</span>
-                <span className="font-mono text-[#00C853] font-bold">Atomic Neon DB Check</span>
+                <span className="font-mono text-[#FFFFFF] font-bold">Atomic Neon DB Check</span>
               </div>
               <div className="flex items-center justify-between border-b border-[#1C1C1F]/60 pb-2">
                 <span className="text-[#A1A1AA]">بوابة التوجيه الديناميكي:</span>
@@ -649,7 +649,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[#A1A1AA]">حماية الخصوصية بالبطاقة:</span>
-                <span className="font-mono text-[#00C853] font-bold">Zero PII Printed</span>
+                <span className="font-mono text-[#FFFFFF] font-bold">Zero PII Printed</span>
               </div>
             </div>
           </div>
@@ -657,7 +657,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
           {/* Quick How It Works in Shops */}
           <div className="border border-[#1F2228] rounded-lg bg-[#08080A] p-5 space-y-3 text-xs">
             <h4 className="font-bold text-white flex items-center gap-2">
-              <Lock className="w-4 h-4 text-[#00C853]" />
+              <Lock className="w-4 h-4 text-[#FFFFFF]" />
               <span>دورة حياة البطاقة في المتاجر:</span>
             </h4>
             <ol className="list-decimal list-inside space-y-2 text-[#D4D4D8] leading-relaxed">
@@ -675,12 +675,12 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
       <div className="border border-[#1F2228] rounded-lg bg-[#08080A] overflow-hidden">
         <div className="p-4 border-b border-[#1F2228] flex items-center justify-between bg-[#040406]">
           <div className="flex items-center gap-2">
-            <Cpu className="w-4 h-4 text-[#00C853]" />
+            <Cpu className="w-4 h-4 text-[#FFFFFF]" />
             <h2 className="text-sm font-bold text-white uppercase tracking-wider">
               سجل بطاقات المصنع والمخزون في قاعدة بيانات Neon ({inventory.length} أصل)
             </h2>
           </div>
-          <span className="text-xs font-mono text-[#00C853] font-bold">LIVE POSTGRESQL SYNC</span>
+          <span className="text-xs font-mono text-[#FFFFFF] font-bold">LIVE POSTGRESQL SYNC</span>
         </div>
 
         <div className="overflow-x-auto">
@@ -706,18 +706,18 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
                   <tr
                     key={item.id}
                     className={`hover:bg-[#0D0D12] transition-colors ${
-                      item.tagUid === activeUid ? "bg-[#00C853]/5" : ""
+                      item.tagUid === activeUid ? "bg-[#FFFFFF]/5" : ""
                     }`}
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2 font-mono font-bold text-white">
-                        <span className="w-2 h-2 rounded-full bg-[#00C853]" />
+                        <span className="w-2 h-2 rounded-full bg-[#FFFFFF]" />
                         <span>{item.tagUid}</span>
                       </div>
                     </td>
                     <td className="p-3">
                       {item.isActivated ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded border border-[#00C853]/40 bg-[#00C853]/10 text-[#00C853] font-mono text-[10px] font-bold">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded border border-[#FFFFFF]/40 bg-[#FFFFFF]/10 text-[#FFFFFF] font-mono text-[10px] font-bold">
                           <CheckCircle2 className="w-3 h-3" />
                           <span>مباعة ومقترنة بالبصمة (ACTIVE)</span>
                         </span>
@@ -743,7 +743,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
                         <button
                           type="button"
                           onClick={() => setActiveUid(item.tagUid)}
-                          className="px-3 py-1 rounded border border-[#1F2228] bg-[#0A0A0E] hover:border-[#00C853] text-white text-xs font-medium transition-colors"
+                          className="px-3 py-1 rounded border border-[#1F2228] bg-[#0A0A0E] hover:border-[#FFFFFF] text-white text-xs font-medium transition-colors"
                         >
                           معاينة البطاقة
                         </button>
@@ -751,7 +751,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
                           href={`/r/${item.tagUid}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="p-1.5 rounded border border-[#1F2228] bg-[#0A0A0E] hover:border-[#00C853] text-[#00C853] hover:text-white transition-colors"
+                          className="p-1.5 rounded border border-[#1F2228] bg-[#0A0A0E] hover:border-[#FFFFFF] text-[#FFFFFF] hover:text-white transition-colors"
                           title="تجربة التوجيه الذكي للـ QR"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />

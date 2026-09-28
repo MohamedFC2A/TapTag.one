@@ -51,7 +51,7 @@ export function HardwareSpecsBar({ lang }: HardwareSpecsBarProps) {
                 className="space-y-1 text-start p-2.5 rounded-lg border border-white/[0.04] bg-black"
               >
                 <div className="flex items-center gap-1.5 text-zinc-400">
-                  <Icon className="w-3.5 h-3.5 text-[#00C853]" />
+                  <Icon className="w-3.5 h-3.5 text-zinc-300" />
                   <span className="text-[9px] font-mono tracking-wider uppercase text-zinc-500">
                     {item.label}
                   </span>

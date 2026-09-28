@@ -95,8 +95,8 @@ export function CallModal({
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-[#00C853]" />
-            <span className="text-xs font-mono uppercase text-[#00C853] font-bold tracking-wider">
+            <Shield className="w-4 h-4 text-white" />
+            <span className="text-xs font-mono uppercase text-white font-bold tracking-wider">
               {lang === "ar" ? "قناة صوتية مشفرة (VoIP Tunnel)" : "Encrypted VoIP Tunnel"}
             </span>
           </div>
@@ -109,14 +109,14 @@ export function CallModal({
             <div className="w-20 h-20 rounded-full border border-white/20 bg-black flex items-center justify-center">
               <Phone
                 className={`w-8 h-8 ${
-                  callState === "active" ? "text-[#00C853] animate-pulse" : "text-zinc-400"
+                  callState === "active" ? "text-white animate-pulse" : "text-zinc-400"
                 }`}
               />
             </div>
             {callState === "active" && (
               <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#00C853] animate-ping opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#00C853]"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-white animate-ping opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-white"></span>
               </span>
             )}
           </div>
@@ -129,7 +129,7 @@ export function CallModal({
             </h3>
 
             {callState === "active" ? (
-              <div className="flex items-center justify-center gap-2 text-[#00C853] font-mono text-sm font-bold">
+              <div className="flex items-center justify-center gap-2 text-white font-mono text-sm font-bold">
                 <Radio className="w-3.5 h-3.5 animate-pulse" />
                 <span>{formatDuration(durationSeconds)}</span>
               </div>
@@ -148,7 +148,7 @@ export function CallModal({
               {[35, 80, 55, 95, 70, 90, 50, 75, 60, 85].map((h, i) => (
                 <div
                   key={i}
-                  className="w-1 bg-[#00C853] rounded-sm transition-all duration-300"
+                  className="w-1 bg-white rounded-sm transition-all duration-300"
                   style={{
                     height: `${isMuted ? 4 : h}%`,
                     opacity: isMuted ? 0.2 : 0.9,
@@ -196,7 +196,7 @@ export function CallModal({
                 </span>
                 <a
                   href={`tel:${cleanPhone}`}
-                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-[#00C853]/40 bg-[#00C853]/10 hover:bg-[#00C853]/20 text-[#00C853] font-mono text-xs font-bold transition-colors"
+                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-white font-mono text-xs font-bold transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5" />
                   <span>{lang === "ar" ? "اتصال هاتفي مباشر بالمالك (GSM)" : "Direct Phone Call"}</span>

@@ -24,14 +24,14 @@ export function AcrylicCardHolo({
         {/* Smart Emerald Laser Scanner Line (1.5px Hairline Beam - Zero Blur) */}
         {isScanning && (
           <div
-            className="absolute left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#00C853] to-transparent pointer-events-none animate-laser-sweep z-20"
+            className="absolute left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FFFFFF] to-transparent pointer-events-none animate-laser-sweep z-20"
           />
         )}
 
         {/* Top Architectural Sensor Bar */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF]" />
             <span className="text-[10px] font-mono font-semibold tracking-wider text-zinc-400 uppercase">
               ACTIVE HARDWARE PROTOCOL
             </span>
@@ -50,7 +50,7 @@ export function AcrylicCardHolo({
             </span>
             <div className="flex items-center gap-2">
               <span className="text-xl sm:text-2xl font-black tracking-tight text-white lowercase">
-                taptag<span className="text-[#00C853]">.</span>one
+                taptag<span className="text-[#FFFFFF]">.</span>one
               </span>
               <ContactlessWaves className="w-5 h-5 text-white" />
             </div>
@@ -111,7 +111,7 @@ export function AcrylicCardHolo({
             <span className="text-[10px] text-zinc-500 uppercase">UID</span>
             <span className="text-white font-bold tracking-wider">{tagUid}</span>
           </div>
-          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-[#00C853]/30 bg-[#00C853]/10 text-[#00C853] text-[10px] font-mono">
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-[#FFFFFF]/30 bg-[#FFFFFF]/10 text-[#FFFFFF] text-[10px] font-mono">
             <Check className="w-3 h-3" />
             <span>VERIFIED</span>
           </div>

@@ -314,7 +314,7 @@ export function SpatialCalibrationModal({
 
             {/* Accuracy Badge */}
             {liveGps ? (
-              <span className="text-xs font-mono font-bold text-[#00C853]">
+              <span className="text-xs font-mono font-bold text-white">
                 {isAr ? `دقة ±${liveGps.accuracy.toFixed(1)}م` : `±${liveGps.accuracy.toFixed(1)}m`}
               </span>
             ) : isGpsAcquiring ? (
@@ -350,7 +350,7 @@ export function SpatialCalibrationModal({
         {step === "SUCCESS" && savedCalibration && (
           <div className="p-4 rounded-xl border border-zinc-800 bg-[#111111] space-y-2 animate-in zoom-in-95">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-[#00C853] shrink-0" />
+              <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
               <span className="text-sm font-bold text-white">
                 {isAr ? "تمت المعايرة وحفظ النقطة في Neon بنجاح!" : "Calibrated & Saved to Neon Cloud!"}
               </span>
@@ -372,7 +372,7 @@ export function SpatialCalibrationModal({
         )}
       </div>
 
-      {/* Bottom Sticky Action Button (Clean Solid Apple Green or Neutral) */}
+      {/* Bottom Sticky Action Button (Clean Monochrome) */}
       <div className="p-4 border-t border-zinc-800 bg-[#0A0A0A] shrink-0 max-w-lg w-full mx-auto flex items-center justify-between gap-3">
         <button
           type="button"
@@ -387,7 +387,7 @@ export function SpatialCalibrationModal({
             type="button"
             onClick={handlePerformCalibration}
             disabled={step === "CALIBRATING" || !liveGps}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#00C853] hover:bg-[#00B048] text-black font-black text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer active:scale-95"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer active:scale-95"
           >
             <Zap className="w-4 h-4 text-black" />
             <span>

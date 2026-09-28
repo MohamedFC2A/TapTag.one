@@ -248,8 +248,8 @@ export function AdminClient({
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-xl border border-white/15 bg-[#060608]">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#00C853] animate-pulse" />
-            <span className="text-xs font-mono font-bold uppercase text-[#00C853] tracking-widest">
+            <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+            <span className="text-xs font-mono font-bold uppercase text-white tracking-widest">
               TAPTAG ROOT PROTOCOL • MASTER ADMIN CONSOLE
             </span>
           </div>
@@ -264,9 +264,9 @@ export function AdminClient({
         {/* Global Controls & DB Latency Badge */}
         <div className="flex flex-wrap items-center gap-2.5">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 bg-black text-xs font-mono text-zinc-300">
-            <Database className="w-3.5 h-3.5 text-[#00C853]" />
+            <Database className="w-3.5 h-3.5 text-zinc-400" />
             <span>NEON POOLER:</span>
-            <span className="text-[#00C853] font-bold font-mono">
+            <span className="text-white font-bold font-mono">
               {metrics.dbLatencyMs > 0 ? `${metrics.dbLatencyMs}ms` : "CONNECTED"}
             </span>
           </div>
@@ -299,13 +299,13 @@ export function AdminClient({
         <div
           className={`p-3.5 rounded-lg border text-xs font-mono flex items-center justify-between ${
             feedback.type === "success"
-              ? "border-[#00C853]/40 bg-[#00C853]/10 text-white"
+              ? "border-zinc-700 bg-zinc-900/60 text-white"
               : "border-red-800 bg-red-950/40 text-red-200"
           }`}
         >
           <div className="flex items-center gap-2">
             {feedback.type === "success" ? (
-              <CheckCircle2 className="w-4 h-4 text-[#00C853]" />
+              <CheckCircle2 className="w-4 h-4 text-white" />
             ) : (
               <ShieldAlert className="w-4 h-4 text-red-400" />
             )}
@@ -336,7 +336,7 @@ export function AdminClient({
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             البطاقات النشطة (ACTIVE)
           </div>
-          <div className="text-xl sm:text-2xl font-black font-mono text-[#00C853]">
+          <div className="text-xl sm:text-2xl font-black font-mono text-white">
             {metrics.activeTags}
           </div>
           <div className="text-[10px] font-mono text-zinc-500">جاهزة للاستجابة فورياً</div>
@@ -485,7 +485,7 @@ export function AdminClient({
                               title="نسخ المعرف"
                             >
                               {copiedUid === tag.tagUid ? (
-                                <Check className="w-3.5 h-3.5 text-[#00C853]" />
+                                <Check className="w-3.5 h-3.5 text-white" />
                               ) : (
                                 <Copy className="w-3.5 h-3.5" />
                               )}
@@ -518,7 +518,7 @@ export function AdminClient({
                               variant="outline"
                               className={`text-[10px] font-mono cursor-pointer transition-transform group-hover:scale-105 ${
                                 tag.status === "ACTIVE"
-                                  ? "border-[#00C853]/40 bg-[#00C853]/10 text-[#00C853]"
+                                  ? "border-zinc-700 bg-zinc-800 text-white"
                                   : tag.status === "AWAY"
                                   ? "border-yellow-600/40 bg-yellow-950/20 text-yellow-400"
                                   : "border-red-600/40 bg-red-950/20 text-red-400"
@@ -532,7 +532,7 @@ export function AdminClient({
                         {/* Activation */}
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           {tag.isActivated ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] text-cyan-400">
+                            <span className="inline-flex items-center gap-1 text-[11px] text-zinc-200">
                               <CheckCircle2 className="w-3.5 h-3.5" />
                               <span>مفعلة بالبصمة</span>
                             </span>
@@ -557,13 +557,13 @@ export function AdminClient({
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-white/10 bg-black hover:border-white/30 text-white text-[10px] transition-colors"
                           >
-                            <ExternalLink className="w-3 h-3 text-[#00C853]" />
+                            <ExternalLink className="w-3 h-3 text-zinc-300" />
                             <span>اختبار البوابة</span>
                           </a>
 
                           <Link
                             href={`/admin/qr-engine`}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-[#00C853]/30 bg-[#00C853]/10 hover:bg-[#00C853]/20 text-[#00C853] text-[10px] transition-colors"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] transition-colors"
                           >
                             <Printer className="w-3 h-3" />
                             <span>طباعة QR</span>
@@ -584,7 +584,7 @@ export function AdminClient({
             {/* 1-Click Minting Card */}
             <div className="p-6 rounded-xl border border-white/15 bg-[#060608] space-y-4">
               <div className="flex items-center gap-2 text-white">
-                <PlusCircle className="w-5 h-5 text-[#00C853]" />
+                <PlusCircle className="w-5 h-5 text-white" />
                 <h3 className="text-base font-mono font-bold">سك بطاقة فيزيائية فردية فورية</h3>
               </div>
               <p className="text-xs text-zinc-400 font-mono leading-relaxed">
@@ -597,7 +597,7 @@ export function AdminClient({
                 <Button
                   onClick={handleMintSingle}
                   disabled={isPending}
-                  className="w-full bg-[#00C853] hover:bg-[#00B045] text-black font-mono font-bold text-xs py-5 cursor-pointer"
+                  className="w-full bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer"
                 >
                   <PlusCircle className="w-4 h-4 ml-2" />
                   <span>{isPending ? "جارٍ التوليد والتخزين في Neon..." : "سك بطاقة واحدة فورا (1-Click Mint)"}</span>
@@ -638,9 +638,9 @@ export function AdminClient({
           </div>
 
           {/* Quick Studio Jump Banner */}
-          <div className="p-4 rounded-xl border border-[#00C853]/30 bg-[#00C853]/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="p-4 rounded-xl border border-zinc-700 bg-zinc-900/60 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Printer className="w-5 h-5 text-[#00C853] shrink-0" />
+              <Printer className="w-5 h-5 text-white shrink-0" />
               <div className="text-xs font-mono">
                 <span className="font-bold text-white block">
                   هل ترغب في تصدير تصاميم الأكريليك وحفر الليزر بدقة 300 DPI؟
@@ -654,7 +654,7 @@ export function AdminClient({
             <Link href="/admin/qr-engine">
               <Button
                 size="sm"
-                className="bg-[#00C853] hover:bg-[#00B045] text-black font-mono font-bold text-xs shrink-0 cursor-pointer"
+                className="bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs shrink-0 cursor-pointer"
               >
                 <span>فتح استوديو الطباعة</span>
                 <ArrowUpRight className="w-3.5 h-3.5 mr-1" />
@@ -668,7 +668,7 @@ export function AdminClient({
           <div className="rounded-xl border border-white/10 bg-[#060608] overflow-hidden">
             <div className="p-4 border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-[#00C853]" />
+                <Activity className="w-4 h-4 text-white" />
                 <h3 className="text-xs font-mono font-bold text-white">سجل التيليمترية وبلاغات الأمان المباشرة</h3>
               </div>
               <span className="text-[10px] font-mono text-zinc-400">REAL-TIME AUDIT LOG</span>
@@ -715,7 +715,7 @@ export function AdminClient({
                             variant="outline"
                             className={`text-[9px] font-mono ${
                               inc.status === "RESOLVED"
-                                ? "border-[#00C853]/40 bg-[#00C853]/10 text-[#00C853]"
+                                ? "border-zinc-700 bg-zinc-800 text-white"
                                 : "border-yellow-600/40 bg-yellow-950/20 text-yellow-400"
                             }`}
                           >
@@ -749,7 +749,7 @@ export function AdminClient({
             {/* Controls */}
             <div className="p-5 rounded-xl border border-white/15 bg-[#060608] space-y-4">
               <div className="flex items-center gap-2 text-white">
-                <Radio className="w-5 h-5 text-[#00C853]" />
+                <Radio className="w-5 h-5 text-white" />
                 <h3 className="text-sm font-mono font-bold">محاكي لمس الـ NFC والمسح الحي</h3>
               </div>
 
@@ -758,7 +758,7 @@ export function AdminClient({
                 <select
                   value={simTagUid}
                   onChange={(e) => setSimTagUid(e.target.value)}
-                  className="w-full bg-black border border-white/20 rounded-lg p-2.5 text-xs font-mono text-white focus:outline-none focus:border-[#00C853]"
+                  className="w-full bg-black border border-white/20 rounded-lg p-2.5 text-xs font-mono text-white focus:outline-none focus:border-white"
                 >
                   {tags.map((t) => (
                     <option key={t.id} value={t.tagUid}>
@@ -782,7 +782,7 @@ export function AdminClient({
                 </div>
                 {simLogs.map((log, idx) => (
                   <div key={idx} className="text-zinc-300">
-                    <span className="text-[#00C853]">&gt;</span> {log}
+                    <span className="text-zinc-500">&gt;</span> {log}
                   </div>
                 ))}
               </div>
@@ -792,7 +792,7 @@ export function AdminClient({
             <div className="p-5 rounded-xl border border-white/15 bg-[#060608] flex flex-col items-center justify-center">
               <div className="w-full max-w-[280px] rounded-2xl border-2 border-white/20 bg-black p-4 space-y-3 text-center">
                 <div className="w-8 h-1 rounded-full bg-zinc-700 mx-auto mb-2" />
-                <div className="text-[10px] font-mono text-[#00C853] font-bold">
+                <div className="text-[10px] font-mono text-white font-bold">
                   TAPTAG SECURE GATEWAY
                 </div>
                 <div className="text-xs font-mono text-zinc-300">
@@ -804,7 +804,7 @@ export function AdminClient({
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-2">
                   <div className="p-2 rounded border border-white/10 bg-zinc-900 text-[10px] font-mono text-white flex items-center justify-center gap-1">
-                    <Car className="w-3 h-3 text-[#00C853]" />
+                    <Car className="w-3 h-3 text-white" />
                     <span>تحريك سيارة</span>
                   </div>
                   <div className="p-2 rounded border border-white/10 bg-zinc-900 text-[10px] font-mono text-white flex items-center justify-center gap-1">
@@ -817,7 +817,7 @@ export function AdminClient({
                     href={`https://taptag.one/r/${simTagUid}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[10px] font-mono text-[#00C853] hover:underline"
+                    className="inline-flex items-center gap-1 text-[10px] font-mono text-white hover:underline"
                   >
                     <span>فتح البوابة الحية للمستخدم</span>
                     <ExternalLink className="w-3 h-3" />
@@ -832,29 +832,29 @@ export function AdminClient({
         <TabsContent value="diagnostics" className="space-y-4">
           <div className="p-5 rounded-xl border border-white/15 bg-[#060608] space-y-4">
             <h3 className="text-sm font-mono font-bold text-white flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#00C853]" />
+              <CheckCircle2 className="w-4 h-4 text-white" />
               <span>فحص تكامل منظومة الإنتاج (Production Health Check)</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
               <div className="p-3 rounded-lg border border-white/10 bg-black flex items-center justify-between">
                 <span className="text-zinc-400">قاعدة بيانات Neon PostgreSQL:</span>
-                <span className="text-[#00C853] font-bold">متصلة وجاهزة (Online)</span>
+                <span className="text-white font-bold">متصلة وجاهزة (Online)</span>
               </div>
 
               <div className="p-3 rounded-lg border border-white/10 bg-black flex items-center justify-between">
                 <span className="text-zinc-400">خوارزميات التشفير:</span>
-                <span className="text-[#00C853] font-bold">AES-256-GCM + HMAC</span>
+                <span className="text-white font-bold">AES-256-GCM + HMAC</span>
               </div>
 
               <div className="p-3 rounded-lg border border-white/10 bg-black flex items-center justify-between">
                 <span className="text-zinc-400">النطاق والشهادة الأمنية SSL:</span>
-                <span className="text-[#00C853] font-bold">https://taptag.one (Valid)</span>
+                <span className="text-white font-bold">https://taptag.one (Valid)</span>
               </div>
 
               <div className="p-3 rounded-lg border border-white/10 bg-black flex items-center justify-between">
                 <span className="text-zinc-400">محرك استجابة الـ QR:</span>
-                <span className="text-[#00C853] font-bold">ISO-18004 Level H (30%)</span>
+                <span className="text-white font-bold">ISO-18004 Level H (30%)</span>
               </div>
             </div>
           </div>

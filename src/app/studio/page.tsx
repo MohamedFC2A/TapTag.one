@@ -6,7 +6,7 @@ import { getCardDesignAction } from "@/app/actions/card-customization-actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function QREnginePage() {
+export default async function StudioPage() {
   const inventoryRes = await getFactoryInventory();
   const activeUid = inventoryRes.tags?.[0]?.tagUid || "MW-88219-X";
   const designRes = await getCardDesignAction(activeUid);

@@ -82,7 +82,7 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, label, active, onClick })
       className={`flex items-center rounded-lg border transition-all focus:outline-none relative overflow-visible
         ${
           active
-            ? "border-[#00C853]/50 bg-[#00C853]/10 text-white font-medium"
+            ? "border-white/40 bg-white/10 text-white font-medium shadow-sm"
             : "border-transparent text-zinc-400 hover:text-white hover:bg-white/[0.05]"
         }
         duration-200

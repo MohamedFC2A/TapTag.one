@@ -429,10 +429,10 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           </div>
           {isMounted && calibration && (
             <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono text-zinc-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               <span>موقف مثبت: {formatCalibrationDateTime(calibration.calibratedAt).fullFormatted}</span>
               {liveFindRelativeTime && (
-                <span className="text-[#00C853] font-sans">({liveFindRelativeTime})</span>
+                <span className="text-zinc-300 font-mono">({liveFindRelativeTime})</span>
               )}
             </div>
           )}
@@ -494,7 +494,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           <div className="flex flex-col items-center justify-center relative w-full select-none animate-in fade-in zoom-in-95 duration-500">
             <div className="relative flex items-center justify-center w-[280px] h-[280px]">
               {/* Layer 1: Expanding Ripple Waves (Radar Pulse) */}
-              <div className="absolute inset-0 rounded-full border border-[#00C853]/35 animate-ping duration-1000 pointer-events-none" />
+              <div className="absolute inset-0 rounded-full border border-white/30 animate-ping duration-1000 pointer-events-none" />
               <div
                 className="absolute inset-6 rounded-full border border-white/20 animate-ping pointer-events-none"
                 style={{ animationDuration: "2.2s", animationDelay: "0.6s" }}
@@ -503,23 +503,23 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
               {/* Layer 2: Concentric Radar Rings */}
               <div className="absolute w-[260px] h-[260px] rounded-full border border-zinc-800/80 bg-zinc-950/50 backdrop-blur-sm" />
               <div className="absolute w-[185px] h-[185px] rounded-full border border-zinc-700/60 border-dashed" />
-              <div className="absolute w-[120px] h-[120px] rounded-full border border-[#00C853]/40 bg-[#00C853]/5" />
+              <div className="absolute w-[120px] h-[120px] rounded-full border border-zinc-600 bg-white/5" />
 
-              {/* Layer 3: Dynamic Pulsing Core Target with Car Icon */}
-              <div className="relative w-20 h-20 rounded-full bg-gradient-to-b from-white to-zinc-200 text-black flex flex-col items-center justify-center shadow-[0_0_35px_rgba(255,255,255,0.4)] animate-pulse">
+              {/* Layer 3: Dynamic Core Target with Car Icon */}
+              <div className="relative w-20 h-20 rounded-full bg-gradient-to-b from-white to-zinc-200 text-black flex flex-col items-center justify-center shadow-2xl">
                 <CarFront className="w-9 h-9 text-black fill-black/10 stroke-[2.2]" />
               </div>
 
               {/* Layer 4: Orbital Precision Ticks */}
-              <div className="absolute top-2.5 w-1.5 h-1.5 rounded-full bg-[#00C853]" />
-              <div className="absolute bottom-2.5 w-1.5 h-1.5 rounded-full bg-[#00C853]" />
-              <div className="absolute left-2.5 w-1.5 h-1.5 rounded-full bg-[#00C853]" />
-              <div className="absolute right-2.5 w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+              <div className="absolute top-2.5 w-1.5 h-1.5 rounded-full bg-white" />
+              <div className="absolute bottom-2.5 w-1.5 h-1.5 rounded-full bg-white" />
+              <div className="absolute left-2.5 w-1.5 h-1.5 rounded-full bg-white" />
+              <div className="absolute right-2.5 w-1.5 h-1.5 rounded-full bg-white" />
             </div>
 
             {/* Arrival Badge */}
-            <div className="mt-4 flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900/90 border border-[#00C853]/40 text-[#00C853] text-xs font-bold shadow-lg">
-              <span className="w-2 h-2 rounded-full bg-[#00C853] animate-ping" />
+            <div className="mt-4 flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-700 text-white text-xs font-bold shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
               <span>أنت بجوار المركبة تماماً (هنا)</span>
             </div>
           </div>
@@ -594,7 +594,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
             <div className="text-5xl font-black tracking-tight leading-none text-white flex items-baseline gap-2">
               {isCloseRange ? (
                 <>
-                  <span className="text-[#00C853]">هنا</span>
+                  <span className="text-white">هنا</span>
                   <span className="text-2xl font-mono text-zinc-400 font-normal">
                     (± {navVector.distanceMeters.toFixed(1)} م)
                   </span>
@@ -612,7 +612,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
               {isCloseRange ? (
                 <span className="text-white font-extrabold flex items-center gap-2">
                   <span>وصلت لموقع سيارتك</span>
-                  <span className="text-xs px-2 py-0.5 rounded bg-[#00C853]/20 text-[#00C853] font-mono font-bold">
+                  <span className="text-xs px-2 py-0.5 rounded bg-white/10 text-white border border-white/20 font-mono font-bold">
                     نطاق مباشر
                   </span>
                 </span>

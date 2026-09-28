@@ -20,43 +20,70 @@ body {
   overflow-x: hidden;
 }
 
-/* Strict Official Aesthetic: Zero diffuse lighting / Zero neon glow / Zero shadows / Flat matte surfaces */
-*, *::before, *::after {
-  box-shadow: none !important;
-  text-shadow: none !important;
-}
-
-/* Crisp institutional selection */
+/* Institutional Precision: Monochrome Studio Aesthetic - No Neon / No Green */
 ::selection {
-  background-color: #00C853;
+  background-color: #FFFFFF;
   color: #000000;
 }
 
 /* Subtle, sharp hairline borders */
 .hairline-border {
-  border: 1px solid #1C1C1F;
+  border: 1px solid #27272A;
 }
 
-/* Laser sweep animation for physical acrylic card */
-@keyframes laser-sweep {
-  0% {
-    top: 4%;
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    top: 96%;
-    opacity: 0;
-  }
+/* Studio & Physical Card Textures & Lighting */
+.acrylic-sheen {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.08) 80%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
 }
 
-.animate-laser-sweep {
-  animation: laser-sweep 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+.brushed-metal {
+  background: repeating-linear-gradient(
+    90deg,
+    #18181B 0px,
+    #27272A 2px,
+    #18181B 4px
+  );
+}
+
+.carbon-fiber {
+  background: 
+    linear-gradient(27deg, #121214 5px, transparent 5px) 0 5px,
+    linear-gradient(207deg, #121214 5px, transparent 5px) 10px 0px,
+    linear-gradient(27deg, #1E1E22 5px, transparent 5px) 0px 10px,
+    linear-gradient(207deg, #1E1E22 5px, transparent 5px) 10px 5px,
+    linear-gradient(90deg, #18181B 10px, #0F0F11 10px);
+  background-size: 20px 20px;
+}
+
+.chamfer-bevel {
+  box-shadow: 
+    inset 1px 1px 1px 0px rgba(255, 255, 255, 0.25),
+    inset -1px -1px 1px 0px rgba(0, 0, 0, 0.6),
+    0 20px 40px -15px rgba(0, 0, 0, 0.85);
+}
+
+.studio-card-shadow {
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.4),
+    0 12px 24px -4px rgba(0,0,0,0.6),
+    0 32px 64px -8px rgba(0,0,0,0.9),
+    0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.studio-spotlight {
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    transparent 70%
+  );
 }
 
 /* Oscillating audio frequency bars for VoIP call simulator */
@@ -91,7 +118,7 @@ body {
 .animate-audio-4 { animation: audio-wave-4 0.7s ease-in-out infinite 0.15s; }
 .animate-audio-5 { animation: audio-wave-5 0.8s ease-in-out infinite 0.25s; }
 
-/* Clean minimal scrollbar */
+/* Clean minimal monochrome scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -100,9 +127,10 @@ body {
   background: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #222226;
+  background: #27272A;
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00C853;
+  background: #52525B;
 }
+

@@ -121,6 +121,36 @@ async function runDatabaseTestSuite() {
     const tTags = performance.now() - t7;
     assert(Number(tagsCount[0].count) >= 0, `Fleet Tag Table Operational (${tagsCount[0].count} tags)`, tTags);
 
+    // 9. CardDesign Table Schema & Integrity Test
+    const t8 = performance.now();
+    const cardDesignCols = await db.$queryRawUnsafe(`
+      SELECT column_name, data_type
+      FROM information_schema.columns
+      WHERE table_name = 'CardDesign';
+    `);
+    const tCardDesignSchema = performance.now() - t8;
+    const cdColNames = cardDesignCols.map(c => c.column_name);
+    const requiredCdCols = ["id", "tagUid", "material", "dimensionStandard", "codeType", "logoPosition", "logoColor", "fontFamily", "plateStyle", "showNfcIcon"];
+    const allCdColsPresent = requiredCdCols.every(rc => cdColNames.includes(rc));
+    assert(allCdColsPresent, `CardDesign Physical Customization Schema Integrity (${cardDesignCols.length} columns verified)`, tCardDesignSchema);
+
+    // 10. CardDesign Upsert & Read Verification
+    const t9 = performance.now();
+    const testDesignId = "cd_test_" + Date.now();
+    await db.$executeRawUnsafe(`
+      INSERT INTO "CardDesign" (
+        "id", "tagUid", "material", "dimensionStandard", "codeType",
+        "logoPosition", "logoColor", "fontFamily", "plateStyle", "plateNumber",
+        "showNfcIcon", "showEmergency", "customText", "updatedAt"
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+      ON CONFLICT ("tagUid") DO UPDATE SET "material" = EXCLUDED."material";
+    `, testDesignId, "TEST-DESIGN-UID", "CARBON_FIBER", "CR80_STANDARD", "BARCODE", "TOP_RIGHT", "GOLD", "CAIRO", "SAUDI", "ق ر س 777", true, true, "VIP PROTOCOL");
+    
+    const readDesign = await db.$queryRawUnsafe(`SELECT * FROM "CardDesign" WHERE "tagUid" = $1;`, "TEST-DESIGN-UID");
+    await db.$executeRawUnsafe(`DELETE FROM "CardDesign" WHERE "tagUid" = $1;`, "TEST-DESIGN-UID");
+    const tCardDesignUpsert = performance.now() - t9;
+    assert(readDesign.length === 1 && readDesign[0].material === "CARBON_FIBER" && readDesign[0].codeType === "BARCODE", `CardDesign Real-Time Upsert & Read Persistence Verified`, tCardDesignUpsert);
+
   } catch (error) {
     console.error("Test Suite Runtime Error:", error);
     failed++;

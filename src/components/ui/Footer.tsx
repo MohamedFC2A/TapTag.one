@@ -62,35 +62,38 @@ export function Footer({ lang = "ar" }: FooterProps) {
   return (
     <footer className="w-full border-t border-[#1C1C20] bg-[#000000] py-8 px-4 text-xs text-[#A1A1AA]">
       {/* Quick Navigation Links */}
-      <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2 pb-6 mb-6 border-b border-white/[0.08] font-mono text-[11px]">
+      <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2 pb-6 mb-6 border-b border-zinc-800 font-mono text-[11px]">
         <Link href="/" className="text-zinc-400 hover:text-white transition-colors">
           {isAr ? "الرئيسية" : "Home"}
         </Link>
-        <Link href="/admin" className="text-[#00C853] hover:underline font-bold transition-colors">
-          {isAr ? "مركز الإدارة (Admin Hub)" : "Admin Hub"}
-        </Link>
-        <Link href="/admin/qr-engine" className="text-zinc-400 hover:text-white transition-colors">
-          {isAr ? "استوديو الطباعة والسك" : "Print Studio"}
-        </Link>
         <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors">
-          {isAr ? "لوحة الأسطول" : "Fleet Dashboard"}
+          {isAr ? "لوحة سياراتي" : "My Vehicles"}
         </Link>
-        <Link href="/dashboard/activate" className="text-zinc-400 hover:text-white transition-colors">
+        <Link href="/admin/qr-engine" className="text-white hover:underline font-bold transition-colors">
+          {isAr ? "استوديو تصميم البطاقات" : "Card Studio"}
+        </Link>
+        <Link href="/dashboard/find" className="text-zinc-400 hover:text-white transition-colors">
+          {isAr ? "تحديد مكان السيارة" : "Find Vehicle"}
+        </Link>
+        <Link href="/dashboard/calibrate" className="text-zinc-400 hover:text-white transition-colors">
+          {isAr ? "معايرة السيارة" : "Calibrate"}
+        </Link>
+        <Link href="/demo/activate" className="text-zinc-400 hover:text-white transition-colors">
           {isAr ? "تفعيل بالبصمة" : "Biometric Claim"}
         </Link>
-        <Link href="/demo" className="text-zinc-400 hover:text-white transition-colors">
-          {isAr ? "تجربة تفاعلية" : "Interactive Demo"}
+        <Link href="/admin" className="text-zinc-400 hover:text-white transition-colors">
+          {isAr ? "مركز الإدارة" : "Admin Hub"}
         </Link>
       </div>
 
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Brand System Notice */}
         <div className="flex items-center gap-2 text-center sm:text-start">
-          <ShieldCheck className="w-4 h-4 text-[#00C853] shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-white shrink-0" />
           <span className="font-mono text-[11px]">
             {isAr
-              ? "منظومة TapTag.one • الهوية الذكية وحماية الأصول عبر تقنيات NFC و QR المشفرة"
-              : "TapTag.one • Smart NFC/QR Identity & Privacy Asset System"}
+              ? "منظومة TapTag.one • الهوية الذكية وحماية السيارات بلمسة واحدة وتقنيات NFC المشفرة"
+              : "TapTag.one • Smart NFC/QR Identity & Vehicle Protection"}
           </span>
         </div>
 
@@ -101,11 +104,11 @@ export function Footer({ lang = "ar" }: FooterProps) {
             href="https://matanygroup.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-bold text-white hover:text-[#00C853] transition-colors group cursor-pointer"
+            className="inline-flex items-center gap-1.5 font-bold text-white hover:text-zinc-300 transition-colors group cursor-pointer"
             title="MATANY GROUP"
           >
             <LogoSvgM className="h-3.5 w-auto shrink-0 group-hover:scale-105 transition-transform" />
-            <span className="tracking-wide text-white group-hover:text-[#00C853] transition-colors">Matany Group</span>
+            <span className="tracking-wide text-white group-hover:text-zinc-200 transition-colors">Matany Group</span>
           </a>
         </div>
 

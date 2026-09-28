@@ -43,7 +43,7 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/[0.08]">
           <div className="space-y-1.5 max-w-xl text-start">
             <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded border border-white/10 bg-black text-[11px] font-mono text-zinc-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF]" />
               <span>{isAr ? "محاكي البث الحي المشفر" : "LIVE TELEMETRY SIMULATOR"}</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-white">
@@ -67,7 +67,7 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
                   : "text-zinc-400 hover:text-white"
               }`}
             >
-              <Car className="w-3.5 h-3.5 text-[#00C853]" />
+              <Car className="w-3.5 h-3.5 text-[#FFFFFF]" />
               <span>{isAr ? "تحريك مركبة" : "Move Car"}</span>
             </button>
 
@@ -80,7 +80,7 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
                   : "text-zinc-400 hover:text-white"
               }`}
             >
-              <AlertTriangle className="w-3.5 h-3.5 text-[#00C853]" />
+              <AlertTriangle className="w-3.5 h-3.5 text-[#FFFFFF]" />
               <span>{isAr ? "طوارئ" : "Emergency"}</span>
             </button>
 
@@ -93,7 +93,7 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
                   : "text-zinc-400 hover:text-white"
               }`}
             >
-              <PhoneCall className="w-3.5 h-3.5 text-[#00C853]" />
+              <PhoneCall className="w-3.5 h-3.5 text-[#FFFFFF]" />
               <span>{isAr ? "اتصال VoIP" : "VoIP Call"}</span>
             </button>
           </div>
@@ -101,19 +101,19 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
 
         {/* Live Audio Wave Visualizer (Active only when Call is selected or simulated) */}
         {selectedScenario === "call" && (
-          <div className="py-3 px-4 my-4 rounded-lg border border-[#00C853]/30 bg-[#00C853]/5 flex items-center justify-between text-xs font-mono">
+          <div className="py-3 px-4 my-4 rounded-lg border border-[#FFFFFF]/30 bg-[#FFFFFF]/5 flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-2 text-zinc-300">
-              <span className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-[#FFFFFF] animate-pulse" />
               <span>{isAr ? "قناة WebRTC الصوتية المشفرة متصلة" : "WebRTC Secure Audio Stream Active"}</span>
             </div>
 
             {/* Smart Oscillating Audio Frequency Bars */}
             <div className="flex items-center gap-1 h-6">
-              <div className="w-1 bg-[#00C853] rounded-full animate-audio-1" />
-              <div className="w-1 bg-[#00C853] rounded-full animate-audio-2" />
-              <div className="w-1 bg-[#00C853] rounded-full animate-audio-3" />
-              <div className="w-1 bg-[#00C853] rounded-full animate-audio-4" />
-              <div className="w-1 bg-[#00C853] rounded-full animate-audio-5" />
+              <div className="w-1 bg-[#FFFFFF] rounded-full animate-audio-1" />
+              <div className="w-1 bg-[#FFFFFF] rounded-full animate-audio-2" />
+              <div className="w-1 bg-[#FFFFFF] rounded-full animate-audio-3" />
+              <div className="w-1 bg-[#FFFFFF] rounded-full animate-audio-4" />
+              <div className="w-1 bg-[#FFFFFF] rounded-full animate-audio-5" />
             </div>
           </div>
         )}
@@ -124,7 +124,7 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
           <div className="p-3.5 rounded-lg border border-white/10 bg-black space-y-1.5 text-start">
             <span className="text-[10px] font-mono text-zinc-500 uppercase block">STEP 01 • INGEST</span>
             <div className="flex items-center gap-2 text-white font-bold text-xs">
-              <Radio className="w-3.5 h-3.5 text-[#00C853]" />
+              <Radio className="w-3.5 h-3.5 text-[#FFFFFF]" />
               <span>{isAr ? "استشعار مسح البطاقة" : "Contactless Tap Trigger"}</span>
             </div>
             <p className="text-[11px] text-zinc-400">
@@ -136,7 +136,7 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
           <div className="p-3.5 rounded-lg border border-white/10 bg-black space-y-1.5 text-start">
             <span className="text-[10px] font-mono text-zinc-500 uppercase block">STEP 02 • CIPHER</span>
             <div className="flex items-center gap-2 text-white font-bold text-xs">
-              <Lock className="w-3.5 h-3.5 text-[#00C853]" />
+              <Lock className="w-3.5 h-3.5 text-[#FFFFFF]" />
               <span>{isAr ? "حجب الهوية (Zero-PII)" : "Zero-PII Shield"}</span>
             </div>
             <p className="text-[11px] text-zinc-400">
@@ -148,7 +148,7 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
           <div className="p-3.5 rounded-lg border border-white/10 bg-black space-y-1.5 text-start">
             <span className="text-[10px] font-mono text-zinc-500 uppercase block">STEP 03 • DISPATCH</span>
             <div className="flex items-center gap-2 text-white font-bold text-xs">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#00C853]" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#FFFFFF]" />
               <span>{isAr ? "تسليم التنبيه للمالك" : "Instant Owner Dispatch"}</span>
             </div>
             <p className="text-[11px] text-zinc-400">
@@ -162,9 +162,9 @@ export function LiveSimulator({ lang }: LiveSimulatorProps) {
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-md border border-white/15 bg-[#08080A] flex items-center justify-center text-white shrink-0">
               {simulationStep === "dispatching" ? (
-                <div className="w-3.5 h-3.5 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
+                <div className="w-3.5 h-3.5 border-2 border-[#FFFFFF] border-t-transparent rounded-full animate-spin" />
               ) : simulationStep === "delivered" ? (
-                <CheckCircle2 className="w-4 h-4 text-[#00C853]" />
+                <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" />
               ) : (
                 <Zap className="w-3.5 h-3.5 text-white" />
               )}

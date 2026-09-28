@@ -28,35 +28,40 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
       active: pathname === "/",
     },
     {
-      href: "/#pillars-section",
-      label: isAr ? "المعمارية الأمنية" : "Architecture",
-      active: false,
-    },
-    {
-      href: "/#live-simulator",
-      label: isAr ? "غرفة العمليات" : "Operations",
-      active: false,
-    },
-    {
       href: "/dashboard",
-      label: isAr ? "لوحة الأسطول" : "Fleet Dashboard",
-      active: pathname.startsWith("/dashboard"),
-    },
-    {
-      href: "/admin",
-      label: isAr ? "مركز الإدارة (Admin)" : "Admin Hub",
-      active: pathname === "/admin",
+      label: isAr ? "لوحة سياراتي" : "My Vehicles",
+      active: pathname === "/dashboard",
     },
     {
       href: "/admin/qr-engine",
-      label: isAr ? "استوديو الطباعة والسك" : "Print Studio",
+      label: isAr ? "استوديو تصميم البطاقات" : "Card Studio",
       active: pathname.startsWith("/admin/qr-engine"),
+    },
+    {
+      href: "/dashboard/find",
+      label: isAr ? "تحديد مكان السيارة" : "Find Vehicle",
+      active: pathname.startsWith("/dashboard/find"),
+    },
+    {
+      href: "/dashboard/calibrate",
+      label: isAr ? "معايرة السيارة" : "Calibrate",
+      active: pathname.startsWith("/dashboard/calibrate"),
+    },
+    {
+      href: "/demo/activate",
+      label: isAr ? "تفعيل كارت بالبصمة" : "Activate Card",
+      active: pathname.startsWith("/demo/activate"),
+    },
+    {
+      href: "/admin",
+      label: isAr ? "مركز الإدارة" : "Admin Hub",
+      active: pathname === "/admin",
     },
   ];
 
   return (
-    <header className="w-full border-b border-white/10 bg-[#000000] sticky top-0 z-50 select-none">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="w-full border-b border-zinc-800 bg-[#000000] sticky top-0 z-50 select-none">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3 group">
@@ -68,16 +73,16 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
           </Link>
         </div>
 
-        {/* Center Desktop Navigation Bar (Positioned Top as Requested) */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#060608] px-2 py-1 rounded-lg border border-white/10">
+        {/* Center Desktop Navigation Bar */}
+        <nav className="hidden md:flex items-center gap-1 bg-[#09090B] px-2 py-1 rounded-xl border border-zinc-800">
           {navLinks.map((link, idx) => (
             <Link
               key={idx}
               href={link.href}
-              className={`px-3 py-1.5 rounded text-xs font-mono transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
                 link.active
-                  ? "bg-white text-black font-bold"
-                  : "text-zinc-400 hover:text-white hover:bg-white/[0.05]"
+                  ? "bg-white text-black font-bold shadow-sm"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/60"
               }`}
             >
               {link.label}
@@ -87,16 +92,16 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
 
         {/* Right Controls */}
         <div className="flex items-center gap-3">
-          {/* Active Status Badge */}
-          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded border border-[#00C853]/30 bg-[#00C853]/10 text-[10px] font-mono text-[#00C853]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
-            <span className="font-bold">SYSTEM ONLINE</span>
+          {/* Subtle Institutional Status Indicator */}
+          <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-lg border border-zinc-800 bg-zinc-900/60 text-[10px] font-mono text-zinc-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-white" />
+            <span className="font-semibold">TAPTAG PROTOCOL</span>
           </div>
 
           {/* Center / Tag UID Badge if on tag page */}
           {tagUid && (
-            <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded border border-white/15 bg-[#08080A]">
-              <Cpu className="w-3.5 h-3.5 text-[#00C853]" />
+            <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg border border-zinc-800 bg-[#0C0C0E]">
+              <Cpu className="w-3.5 h-3.5 text-zinc-400" />
               <span className="text-xs text-white font-mono font-bold tracking-wider">
                 {tagUid}
               </span>

@@ -15,7 +15,7 @@ export default function HomePage() {
 
   return (
     <div
-      className={`min-h-screen bg-[#000000] text-[#E4E4E7] flex flex-col relative overflow-hidden selection:bg-[#00C853] selection:text-black ${
+      className={`min-h-screen bg-[#000000] text-[#E4E4E7] flex flex-col relative overflow-hidden ${
         isAr ? "rtl" : "ltr"
       }`}
       dir={isAr ? "rtl" : "ltr"}

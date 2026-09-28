@@ -471,12 +471,12 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
         {/* Active Existing Calibration Notice Card */}
         {isMounted && existingCalibration && !isReCalibrating && step === "IDLE" ? (
           <div className="space-y-4">
-            <div className="bg-[#0A140D] border border-[#00C853]/40 rounded-2xl p-4 space-y-3 shadow-xl">
-              <div className="flex items-center gap-2.5 text-[#00C853] text-sm font-bold">
-                <CheckCircle2 className="w-5 h-5" />
+            <div className="bg-[#0C0C0E] border border-zinc-700 rounded-2xl p-4 space-y-3 shadow-xl studio-card-shadow">
+              <div className="flex items-center gap-2.5 text-white text-sm font-bold">
+                <CheckCircle2 className="w-5 h-5 text-white" />
                 <span>المركبة معايرة حالياً ومثبتة بنجاح</span>
               </div>
-              <div className="text-xs text-zinc-300 space-y-2 bg-[#050B07] p-3 rounded-xl border border-[#00C853]/20 font-mono text-[11px]">
+              <div className="text-xs text-zinc-300 space-y-2 bg-black/60 p-3 rounded-xl border border-zinc-800 font-mono text-[11px]">
                 <div className="flex justify-between items-center">
                   <span className="text-zinc-400">لوحة المركبة:</span>
                   <span className="text-white font-bold">{existingCalibration.vehiclePlate}</span>
@@ -490,22 +490,22 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                 {liveRelativeTime && (
                   <div className="flex justify-between items-center">
                     <span className="text-zinc-400">حالة التحديث:</span>
-                    <span className="text-[#00C853] font-semibold flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
+                    <span className="text-zinc-200 font-semibold flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
                       <span>{liveRelativeTime}</span>
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between items-center">
                   <span className="text-zinc-400">دقة التمركز:</span>
-                  <span className="text-[#00C853] font-bold">± {existingCalibration.accuracy.toFixed(1)} م</span>
+                  <span className="text-white font-bold">± {existingCalibration.accuracy.toFixed(1)} م</span>
                 </div>
               </div>
 
               <div className="pt-2 flex flex-col gap-2.5">
                 <Link
                   href={`/dashboard/find?tag=${selectedTag.tagUid}`}
-                  className="w-full py-3.5 rounded-xl bg-[#00C853] hover:bg-[#00B048] text-black font-black text-sm flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-lg"
+                  className="w-full py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-sm flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-lg"
                 >
                   <Navigation2 className="w-4 h-4 fill-black" />
                   <span>الانتقال للبحث عن السيارة الآن</span>
@@ -576,7 +576,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                   isGpsAcquiring
                     ? "text-amber-400 animate-spin"
                     : currentAccuracy !== null && currentAccuracy <= 5
-                    ? "text-[#00C853]"
+                    ? "text-white"
                     : "text-zinc-400"
                 }`}
               />
@@ -640,7 +640,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
               </div>
               <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
                 <span className="flex items-center gap-1">
-                  <Satellite className="w-3 h-3 text-[#00C853]" />
+                  <Satellite className="w-3 h-3 text-white" />
                   <span>تم التقاط {samplesCount} عينة دقيقة</span>
                 </span>
                 <span>باقي {countdown} ثوانٍ</span>
@@ -652,8 +652,8 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
         {/* SUCCESS VIEW */}
         {step === "SUCCESS" && (
           <div className="p-4 rounded-xl border border-zinc-800 bg-[#0C0C0C] space-y-3">
-            <div className="flex items-center gap-2 text-[#00C853] text-sm font-bold">
-              <CheckCircle2 className="w-5 h-5" />
+            <div className="flex items-center gap-2 text-white text-sm font-bold">
+              <CheckCircle2 className="w-5 h-5 text-white" />
               <span>تم تثبيت المعايرة بدقة الأقمار الفائقة!</span>
             </div>
             <p className="text-xs text-zinc-400 leading-relaxed">
@@ -662,7 +662,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
             <div className="pt-2 flex flex-col gap-2">
               <Link
                 href={`/dashboard/find?tag=${selectedTag.tagUid}`}
-                className="w-full py-3 rounded-lg bg-[#00C853] hover:bg-[#00B048] text-black font-black text-sm flex items-center justify-center gap-2 transition-transform active:scale-95"
+                className="w-full py-3 rounded-lg bg-white hover:bg-zinc-200 text-black font-black text-sm flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-lg"
               >
                 <Navigation2 className="w-4 h-4 fill-black" />
                 <span>الانتقال فوراً للبحث عن السيارة</span>

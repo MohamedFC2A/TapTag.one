@@ -89,7 +89,7 @@ export function PhysicalAcrylicArtifact({
           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent pointer-events-none" />
 
           {/* 1.5px Laser Scanline Beam (Pure Emerald Precision) */}
-          <div className="absolute left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#00C853] to-transparent pointer-events-none animate-laser-sweep z-20" />
+          <div className="absolute left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FFFFFF] to-transparent pointer-events-none animate-laser-sweep z-20" />
 
           {/* ================= FRONT SIDE ================= */}
           {!isFlipped ? (
@@ -97,14 +97,14 @@ export function PhysicalAcrylicArtifact({
               {/* Top Architectural Circuit Header */}
               <div className="flex items-center justify-between gap-3 relative z-10">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#00C853] shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-[#FFFFFF] shrink-0" />
                   <span className="text-[10px] font-mono tracking-widest text-zinc-300 font-semibold uppercase">
                     TAPTAG SECURE IC • NTAG216
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-white/10 bg-black text-[9px] font-mono text-zinc-400">
-                  <Cpu className="w-3 h-3 text-[#00C853]" />
+                  <Cpu className="w-3 h-3 text-[#FFFFFF]" />
                   <span>13.56 MHz</span>
                 </div>
               </div>
@@ -115,7 +115,7 @@ export function PhysicalAcrylicArtifact({
                 <div className="flex flex-col space-y-1 text-start">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xl sm:text-2xl font-black tracking-tight text-white lowercase">
-                      taptag<span className="text-[#00C853]">.</span>one
+                      taptag<span className="text-[#FFFFFF]">.</span>one
                     </span>
                     <ContactlessWaves className="w-5 h-5 text-white" />
                   </div>
@@ -132,7 +132,7 @@ export function PhysicalAcrylicArtifact({
 
                 {/* Right Vector QR Matrix (Clickable to open dialog) */}
                 <div
-                  className="relative p-1 rounded-lg border border-white/20 bg-black shrink-0 hover:border-[#00C853] transition-colors"
+                  className="relative p-1 rounded-lg border border-white/20 bg-black shrink-0 hover:border-[#FFFFFF] transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
                     setQrModalOpen(true);
@@ -157,7 +157,7 @@ export function PhysicalAcrylicArtifact({
                   <span className="text-zinc-500">TAG ID</span>
                   <span className="text-white font-bold tracking-wider">{tagUid}</span>
                 </div>
-                <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-[#00C853]/40 bg-[#00C853]/10 text-[#00C853] text-[9px] font-bold">
+                <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-[#FFFFFF]/40 bg-[#FFFFFF]/10 text-[#FFFFFF] text-[9px] font-bold">
                   <Check className="w-3 h-3" />
                   <span>AUTHENTICATED</span>
                 </div>
@@ -168,7 +168,7 @@ export function PhysicalAcrylicArtifact({
             <div className="flex flex-col justify-between h-full relative z-10 [transform:rotateY(180deg)] text-start space-y-3">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <div className="flex items-center gap-2">
-                  <Layers className="w-3.5 h-3.5 text-[#00C853]" />
+                  <Layers className="w-3.5 h-3.5 text-[#FFFFFF]" />
                   <span className="text-[10px] font-mono font-bold text-white uppercase tracking-wider">
                     INTERNAL HARDWARE SHIELD
                   </span>
@@ -178,10 +178,10 @@ export function PhysicalAcrylicArtifact({
 
               {/* Helical RFID Antenna Simulation Graphic */}
               <div className="my-auto p-2.5 rounded-lg border border-white/10 bg-black flex flex-col items-center justify-center space-y-1.5">
-                <div className="w-full h-12 rounded border border-[#00C853]/30 bg-[#00C853]/5 flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-x-2 inset-y-1 rounded border border-[#00C853]/20" />
-                  <div className="absolute inset-x-4 inset-y-2 rounded border border-[#00C853]/40" />
-                  <span className="text-[9px] font-mono text-[#00C853] font-bold relative z-10">
+                <div className="w-full h-12 rounded border border-[#FFFFFF]/30 bg-[#FFFFFF]/5 flex items-center justify-center relative overflow-hidden">
+                  <div className="absolute inset-x-2 inset-y-1 rounded border border-[#FFFFFF]/20" />
+                  <div className="absolute inset-x-4 inset-y-2 rounded border border-[#FFFFFF]/40" />
+                  <span className="text-[9px] font-mono text-[#FFFFFF] font-bold relative z-10">
                     COPPER HELICAL COIL ANTENNA • 13.56 MHz
                   </span>
                 </div>
@@ -193,7 +193,7 @@ export function PhysicalAcrylicArtifact({
 
               <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[9px] font-mono text-zinc-400">
                 <span>BATCH: M-2026-X1</span>
-                <span className="text-[#00C853]">ISO 14443-A • IP68 RATED</span>
+                <span className="text-[#FFFFFF]">ISO 14443-A • IP68 RATED</span>
               </div>
             </div>
           )}
@@ -207,7 +207,7 @@ export function PhysicalAcrylicArtifact({
           onClick={() => setIsFlipped(!isFlipped)}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/15 hover:border-white/40 bg-[#060608] hover:bg-black text-zinc-300 hover:text-white transition-colors cursor-pointer"
         >
-          <RotateCw className="w-3.5 h-3.5 text-[#00C853]" />
+          <RotateCw className="w-3.5 h-3.5 text-[#FFFFFF]" />
           <span>{isFlipped ? "الوجه الخارجي (Front)" : "العتاد الداخلي (Flip)"}</span>
         </button>
 
@@ -216,7 +216,7 @@ export function PhysicalAcrylicArtifact({
           onClick={() => setQrModalOpen(true)}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/15 hover:border-white/40 bg-[#060608] hover:bg-black text-zinc-300 hover:text-white transition-colors cursor-pointer"
         >
-          <QrCode className="w-3.5 h-3.5 text-[#00C853]" />
+          <QrCode className="w-3.5 h-3.5 text-[#FFFFFF]" />
           <span>معاينة الـ QR</span>
         </button>
 
@@ -224,7 +224,7 @@ export function PhysicalAcrylicArtifact({
           href={targetUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#00C853]/40 bg-[#00C853]/10 hover:bg-[#00C853]/20 text-[#00C853] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#FFFFFF]/40 bg-[#FFFFFF]/10 hover:bg-[#FFFFFF]/20 text-[#FFFFFF] transition-colors cursor-pointer"
         >
           <ExternalLink className="w-3.5 h-3.5" />
           <span>اختبار الرابط الحي</span>
@@ -236,7 +236,7 @@ export function PhysicalAcrylicArtifact({
         <DialogContent className="bg-[#060608] border-white/20 text-white max-w-sm text-center" dir="rtl">
           <DialogHeader>
             <DialogTitle className="text-base font-mono font-bold text-white flex items-center justify-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#00C853]" />
+              <span className="w-2 h-2 rounded-full bg-[#FFFFFF]" />
               <span>كود الاستجابة المعتمد (ISO 18004 Level H)</span>
             </DialogTitle>
           </DialogHeader>
@@ -250,7 +250,7 @@ export function PhysicalAcrylicArtifact({
 
             <div className="w-full space-y-1.5 text-xs font-mono">
               <div className="text-zinc-400">الرابط المرمّز المشفر:</div>
-              <div className="p-2 rounded border border-white/10 bg-black text-[#00C853] break-all select-all font-mono text-[11px]" dir="ltr">
+              <div className="p-2 rounded border border-white/10 bg-black text-[#FFFFFF] break-all select-all font-mono text-[11px]" dir="ltr">
                 {targetUrl}
               </div>
             </div>
@@ -261,7 +261,7 @@ export function PhysicalAcrylicArtifact({
                 variant="outline"
                 className="flex-1 border-white/20 hover:bg-zinc-800 text-white font-mono text-xs cursor-pointer gap-1.5"
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-[#00C853]" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? <Check className="w-3.5 h-3.5 text-[#FFFFFF]" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? "تم النسخ!" : "نسخ الرابط"}</span>
               </Button>
 
@@ -271,7 +271,7 @@ export function PhysicalAcrylicArtifact({
                 rel="noopener noreferrer"
                 className="flex-1"
               >
-                <Button className="w-full bg-[#00C853] hover:bg-[#00B045] text-black font-mono font-bold text-xs cursor-pointer gap-1.5">
+                <Button className="w-full bg-[#FFFFFF] hover:bg-[#00B045] text-black font-mono font-bold text-xs cursor-pointer gap-1.5">
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>فتح البوابة</span>
                 </Button>

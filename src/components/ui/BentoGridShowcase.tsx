@@ -25,7 +25,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
       {/* Section Header - Concise & Institutional */}
       <div className="text-center max-w-xl mx-auto space-y-2.5">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-[#08080A] text-zinc-300 text-[11px] font-mono">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF]" />
           <span>{isAr ? "معمارية المنظومة المعتمدة" : "OFFICIAL ARCHITECTURE SPEC"}</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
@@ -43,7 +43,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
-                <Radio className="w-4 h-4 text-[#00C853]" />
+                <Radio className="w-4 h-4 text-[#FFFFFF]" />
               </div>
               <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
                 NTAG 216 & QR LEVEL H
@@ -64,7 +64,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
 
           <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono text-zinc-400">
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF]" />
               <span className="text-zinc-300">{isAr ? "معيار ISO-18004" : "ISO-18004 Compliant"}</span>
             </div>
             <span className="text-zinc-500">LATENCY &lt; 250ms</span>
@@ -76,7 +76,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
-                <Lock className="w-4 h-4 text-[#00C853]" />
+                <Lock className="w-4 h-4 text-[#FFFFFF]" />
               </div>
               <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
                 ZERO-PII
@@ -97,7 +97,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
 
           <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono">
             <span className="text-zinc-300">AES-256 GCM</span>
-            <ShieldCheck className="w-4 h-4 text-[#00C853]" />
+            <ShieldCheck className="w-4 h-4 text-[#FFFFFF]" />
           </div>
         </div>
 
@@ -106,7 +106,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
-                <PhoneCall className="w-4 h-4 text-[#00C853]" />
+                <PhoneCall className="w-4 h-4 text-[#FFFFFF]" />
               </div>
               <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
                 WebRTC E2EE
@@ -127,7 +127,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
 
           <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono">
             <span className="text-zinc-400">{isAr ? "مؤقت مضاد للإزعاج" : "3-Min Cooldown"}</span>
-            <span className="text-[#00C853] text-[10px]">ACTIVE</span>
+            <span className="text-[#FFFFFF] text-[10px]">ACTIVE</span>
           </div>
         </div>
 
@@ -136,7 +136,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
-                <Fingerprint className="w-4 h-4 text-[#00C853]" />
+                <Fingerprint className="w-4 h-4 text-[#FFFFFF]" />
               </div>
               <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
                 FIDO2 / PASSKEY
@@ -157,7 +157,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
 
           <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono">
             <span className="text-zinc-300">WebAuthn</span>
-            <CheckCircle2 className="w-4 h-4 text-[#00C853]" />
+            <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" />
           </div>
         </div>
 
@@ -166,7 +166,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
-                <Layers className="w-4 h-4 text-[#00C853]" />
+                <Layers className="w-4 h-4 text-[#FFFFFF]" />
               </div>
               <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
                 70 × 50 MM ACRYLIC
@@ -187,7 +187,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
 
           <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono">
             <span className="text-zinc-300">UV Curable Ink</span>
-            <span className="text-[10px] font-mono text-[#00C853]">ANTI-HEAT</span>
+            <span className="text-[10px] font-mono text-[#FFFFFF]">ANTI-HEAT</span>
           </div>
         </div>
       </div>
