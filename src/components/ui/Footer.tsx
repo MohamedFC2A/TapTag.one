@@ -63,7 +63,7 @@ export function Footer({ lang = "ar" }: FooterProps) {
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Brand System Notice */}
         <div className="flex items-center gap-2 text-center sm:text-start">
-          <ShieldCheck className="w-4 h-4 text-[#00C853] shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-white shrink-0" />
           <span>
             {isAr
               ? "منظومة TapTag.one • الهوية الذكية وحماية الأصول عبر تقنيات NFC و QR المشفرة"

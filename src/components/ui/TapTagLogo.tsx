@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export function ContactlessWaves({ className = "w-5 h-5 text-[#00C853]" }: { className?: string }) {
+export function ContactlessWaves({ className = "w-5 h-5 text-white" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -38,7 +38,7 @@ export function TapTagLogo({
   showSubtitle = true,
   subtitle = "منظومة الهوية الذكية",
   size = "md",
-  waveColor = "text-[#00C853]",
+  waveColor = "text-white",
 }: TapTagLogoProps) {
   const textSizes = {
     sm: "text-base",
@@ -56,12 +56,12 @@ export function TapTagLogo({
     <div className={`flex flex-col select-none ${className}`}>
       <div dir="ltr" className="inline-flex items-center gap-2">
         <span className={`font-black tracking-tight text-white ${textSizes[size]} font-sans lowercase`}>
-          taptag<span className="text-[#00C853]">.</span>one
+          taptag<span className="text-zinc-400">.</span>one
         </span>
         <ContactlessWaves className={`${waveSizes[size]} ${waveColor} shrink-0`} />
       </div>
       {showSubtitle && (
-        <span className="text-[11px] text-[#A1A1AA] font-normal tracking-normal text-start">
+        <span className="text-[11px] text-zinc-400 font-normal tracking-normal text-start">
           {subtitle}
         </span>
       )}
