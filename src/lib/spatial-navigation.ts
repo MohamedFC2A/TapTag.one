@@ -185,14 +185,15 @@ export class KalmanAngleFilter {
 }
 
 /**
- * 1D Exponential Moving Average (EMA) for scalar smoothing (e.g., distance in meters)
+ * 1D Adaptive Exponential Moving Average for scalar smoothing (distance in meters)
+ * Tracks user walking speed with zero lag while stabilizing stationary GPS jitter.
  */
 export class ExponentialFilter {
   private alpha: number;
   private current: number | null = null;
 
-  constructor(alpha = 0.25) {
-    this.alpha = alpha;
+  constructor(defaultAlpha = 0.5) {
+    this.alpha = defaultAlpha;
   }
 
   public update(value: number): number {
@@ -200,7 +201,11 @@ export class ExponentialFilter {
       this.current = value;
       return value;
     }
-    this.current = this.alpha * value + (1 - this.alpha) * this.current;
+    const delta = Math.abs(value - this.current);
+    // Dynamic tracking: If delta > 1.5m (user actively walking), track quickly (alpha=0.75)
+    // If delta < 0.6m (sub-meter noise), smooth gently (alpha=0.35)
+    const effectiveAlpha = delta > 1.5 ? 0.75 : delta > 0.6 ? 0.55 : 0.35;
+    this.current = effectiveAlpha * value + (1 - effectiveAlpha) * this.current;
     return this.current;
   }
 
@@ -582,6 +587,118 @@ export function restartSpatialCalibrationLocally(tagUid: string): void {
 export function clearCalibrationLocally(tagUid: string): void {
   restartSpatialCalibrationLocally(tagUid);
 }
+
+/**
+ * Deterministic Arabic date and time formatting (clean 12h format with ص/م)
+ */
+export function formatCalibrationDateTime(dateOrIso: string | Date): {
+  timeFormatted: string;
+  dateFormatted: string;
+  fullFormatted: string;
+} {
+  const d = typeof dateOrIso === "string" ? new Date(dateOrIso) : dateOrIso;
+  if (isNaN(d.getTime())) {
+    return {
+      timeFormatted: "--:--",
+      dateFormatted: "غير معروف",
+      fullFormatted: "غير معروف",
+    };
+  }
+
+  // 12-Hour format
+  let hours = d.getHours();
+  const minutes = d.getMinutes();
+  const seconds = d.getSeconds();
+  const ampm = hours >= 12 ? "م" : "ص";
+  hours = hours % 12;
+  hours = hours ? hours : 12; // 0 becomes 12
+  const minStr = minutes < 10 ? `0${minutes}` : String(minutes);
+  const secStr = seconds < 10 ? `0${seconds}` : String(seconds);
+  const timeFormatted = `${hours}:${minStr}:${secStr} ${ampm}`;
+
+  // Date representation
+  const now = new Date();
+  const isToday =
+    d.getDate() === now.getDate() &&
+    d.getMonth() === now.getMonth() &&
+    d.getFullYear() === now.getFullYear();
+
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const isYesterday =
+    d.getDate() === yesterday.getDate() &&
+    d.getMonth() === yesterday.getMonth() &&
+    d.getFullYear() === yesterday.getFullYear();
+
+  let dateFormatted = "";
+  if (isToday) {
+    dateFormatted = "اليوم";
+  } else if (isYesterday) {
+    dateFormatted = "أمس";
+  } else {
+    const months = [
+      "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+      "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+    ];
+    dateFormatted = `${d.getDate()} ${months[d.getMonth()]}`;
+  }
+
+  return {
+    timeFormatted,
+    dateFormatted,
+    fullFormatted: `${dateFormatted} في ${timeFormatted}`,
+  };
+}
+
+/**
+ * Live dynamic relative time in Arabic (e.g. "الآن (منذ لحظات)", "منذ دقيقة", "منذ 15 دقيقة")
+ */
+export function getRelativeTimeArabic(dateOrIso: string | Date, now: Date = new Date()): string {
+  const d = typeof dateOrIso === "string" ? new Date(dateOrIso) : dateOrIso;
+  if (isNaN(d.getTime())) return "غير متاح";
+
+  const diffMs = now.getTime() - d.getTime();
+  const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+
+  if (diffSec < 40) {
+    return "الآن (منذ لحظات)";
+  }
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin === 1) {
+    return "منذ دقيقة واحدة";
+  }
+  if (diffMin === 2) {
+    return "منذ دقيقتين";
+  }
+  if (diffMin >= 3 && diffMin <= 10) {
+    return `منذ ${diffMin} دقائق`;
+  }
+  if (diffMin < 60) {
+    return `منذ ${diffMin} دقيقة`;
+  }
+  const diffHours = Math.floor(diffMin / 60);
+  if (diffHours === 1) {
+    return "منذ ساعة واحدة";
+  }
+  if (diffHours === 2) {
+    return "منذ ساعتين";
+  }
+  if (diffHours >= 3 && diffHours <= 10) {
+    return `منذ ${diffHours} ساعات`;
+  }
+  if (diffHours < 24) {
+    return `منذ ${diffHours} ساعة`;
+  }
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays === 1) {
+    return "منذ يوم واحد";
+  }
+  if (diffDays === 2) {
+    return "منذ يومين";
+  }
+  return `منذ ${diffDays} أيام`;
+}
+
 
 
 

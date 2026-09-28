@@ -98,6 +98,13 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
   const isAr = lang === "ar";
   const t = translations[lang];
 
+  // Filter for real registered vehicles so buttons never target blank unactivated tags
+  const registeredTags = tags.filter((t) => {
+    const plate = t.profile?.vehiclePlate || "";
+    return plate.trim() !== "" && !plate.includes("غير مسجل") && !plate.includes("جاهز للتفعيل");
+  });
+  const primaryTagUid = (registeredTags.length > 0 ? registeredTags[0] : tags[0])?.tagUid;
+
   // Quick Status Switcher
   const handleStatusChange = (tagId: string, newStatus: TagStatus) => {
     startTransition(async () => {
@@ -230,9 +237,9 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {tags.length > 0 && (
+            {primaryTagUid && (
               <Link
-                href={`/dashboard/find?tag=${tags[0].tagUid}`}
+                href={`/dashboard/find?tag=${primaryTagUid}`}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg border border-[#00C853] bg-[#00C853]/15 text-[#00C853] hover:bg-[#00C853] hover:text-black transition-all cursor-pointer shadow-md"
               >
                 <Compass className="w-4 h-4" />
@@ -240,9 +247,9 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
               </Link>
             )}
 
-            {tags.length > 0 && (
+            {primaryTagUid && (
               <Link
-                href={`/dashboard/calibrate?tag=${tags[0].tagUid}`}
+                href={`/dashboard/calibrate?tag=${primaryTagUid}`}
                 className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-lg border border-[#1F2228] bg-[#0A0A0E] text-zinc-300 hover:text-white hover:border-[#00C853] transition-all cursor-pointer"
               >
                 <Navigation className="w-4 h-4 text-[#00C853]" />

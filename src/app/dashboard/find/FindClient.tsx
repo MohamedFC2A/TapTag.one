@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   ChevronDown,
   Navigation,
+  Radio,
 } from "lucide-react";
 import {
   SpatialCalibration,
@@ -26,6 +27,8 @@ import {
   getNaturalDirectionText,
   calculateApplePrecisionArc,
   playNavigationSound,
+  formatCalibrationDateTime,
+  getRelativeTimeArabic,
 } from "@/lib/spatial-navigation";
 import {
   getLatestVehicleSpatialPoint,
@@ -53,15 +56,16 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
   const [selectedTag, setSelectedTag] = useState<TagItem>(initialTag);
   const [calibration, setCalibration] = useState<SpatialCalibration | null>(null);
   const [isLoadingPoint, setIsLoadingPoint] = useState(true);
+  const [liveFindRelativeTime, setLiveFindRelativeTime] = useState<string>("");
 
   // Live vector
   const [navVector, setNavVector] = useState<NavigationVector | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
-  // Filter & Sensor refs
-  const kalmanHeadingRef = useRef<KalmanAngleFilter>(new KalmanAngleFilter(0.08, 1.8));
-  const distanceFilterRef = useRef<ExponentialFilter>(new ExponentialFilter(0.25));
+  // Filter & Sensor refs (tuned for instantaneous responsiveness & zero lag)
+  const kalmanHeadingRef = useRef<KalmanAngleFilter>(new KalmanAngleFilter(0.08, 0.6));
+  const distanceFilterRef = useRef<ExponentialFilter>(new ExponentialFilter(0.5));
   const watchIdRef = useRef<number | null>(null);
   const currentHeadingRef = useRef<number>(0);
   const lastArrivalTriggerRef = useRef<boolean>(false);
@@ -71,7 +75,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
   const vehicleMake = selectedTag.profile?.vehicleMake || "المركبة";
   const vehicleModel = selectedTag.profile?.vehicleModel || "";
 
-  // 1. Indestructible Local-First Load + Cloud Fallback
+  // 1. Instant Local-First Load + Cloud Dynamic Synchronization
   useEffect(() => {
     setIsLoadingPoint(true);
     const tagUid = selectedTag.tagUid;
@@ -81,10 +85,9 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
     if (local) {
       setCalibration(local);
       setIsLoadingPoint(false);
-      return;
     }
 
-    // B. Fallback to Cloud Database if new device or cleared cache
+    // B. Check Cloud Database in parallel to sync any newer point
     getLatestVehicleSpatialPoint(tagUid)
       .then((res) => {
         if (res.success && res.point) {
@@ -102,9 +105,11 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
             centroidLng: res.point.centroidLng,
             offsetDistanceMeters: res.point.offsetDistanceMeters,
           };
-          saveCalibrationLocally(restored);
-          setCalibration(restored);
-        } else {
+          if (!local || new Date(res.point.createdAt).getTime() > new Date(local.calibratedAt).getTime()) {
+            saveCalibrationLocally(restored);
+            setCalibration(restored);
+          }
+        } else if (!local) {
           setCalibration(null);
         }
       })
@@ -115,6 +120,20 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
         setIsLoadingPoint(false);
       });
   }, [selectedTag.tagUid, vehiclePlate, vehicleMake, vehicleModel]);
+
+  // Live dynamic relative time update for the calibrated vehicle stance
+  useEffect(() => {
+    if (!calibration?.calibratedAt) {
+      setLiveFindRelativeTime("");
+      return;
+    }
+    const update = () => {
+      setLiveFindRelativeTime(getRelativeTimeArabic(calibration.calibratedAt));
+    };
+    update();
+    const interval = setInterval(update, 10000);
+    return () => clearInterval(interval);
+  }, [calibration?.calibratedAt]);
 
   // QA and Instant Preview Modes (?test=far or ?test=close)
   useEffect(() => {
@@ -203,10 +222,10 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
       let rawHeading = 0;
 
       const eCompass = e as unknown as { webkitCompassHeading?: number };
-      if (typeof eCompass.webkitCompassHeading === "number" && (e.beta === null || Math.abs(e.beta || 0) < 15)) {
+      if (typeof eCompass.webkitCompassHeading === "number") {
         rawHeading = eCompass.webkitCompassHeading;
       } else if (e.alpha !== null) {
-        // Full 3D Tilt-Compensation
+        // Full 3D Tilt-Compensation for Android
         rawHeading = computeTiltCompensatedHeading(e.alpha, e.beta, e.gamma);
       }
 
@@ -368,6 +387,15 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           >
             {vehicleMake} {vehicleModel}
           </div>
+          {calibration && (
+            <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono text-zinc-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
+              <span>موقف مثبت: {formatCalibrationDateTime(calibration.calibratedAt).fullFormatted}</span>
+              {liveFindRelativeTime && (
+                <span className="text-[#00C853] font-sans">({liveFindRelativeTime})</span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Vehicle Switcher (Only Valid Registered Vehicles) */}
@@ -511,7 +539,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
 
       {/* 3. Bottom Metric Telemetry (Distance & Natural Language Direction) */}
       <div className="px-6 pb-2 z-20">
-        {calibration && navVector && (
+        {calibration && navVector ? (
           <div className="space-y-1">
             {/* Big Crisp Distance */}
             <div className="text-5xl font-black tracking-tight leading-none text-white">
@@ -533,7 +561,12 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
               )}
             </div>
           </div>
-        )}
+        ) : calibration && !navVector ? (
+          <div className="flex items-center gap-2.5 py-2 text-zinc-400 text-sm font-medium">
+            <Radio className="w-4 h-4 text-amber-400 animate-spin" />
+            <span>جاري الاتصال بالأقمار الصناعية وحساب المسافة...</span>
+          </div>
+        ) : null}
       </div>
 
       {/* 4. Bottom Controls Glass Bar */}

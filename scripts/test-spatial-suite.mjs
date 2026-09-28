@@ -14,6 +14,8 @@ import {
   ExponentialFilter,
   computeTiltCompensatedHeading,
   computeWeightedGNSSCentroid,
+  formatCalibrationDateTime,
+  getRelativeTimeArabic,
 } from "../src/lib/spatial-navigation.ts";
 
 function runSpatialTestSuite() {
@@ -129,6 +131,33 @@ function runSpatialTestSuite() {
   assert(sampleCount === 3, "Multi-GNSS Centroid: All 3 samples processed");
   assert(avgAccuracy < 2.5, `Multi-GNSS Centroid: Weighted accuracy is heavily influenced by high-accuracy fix (got ${avgAccuracy.toFixed(2)}m)`);
   assert(Math.abs(avgLat - 24.713601) < 0.000005, "Multi-GNSS Centroid: Weighted latitude strongly adheres to sub-meter cluster");
+
+  // Test 11: formatCalibrationDateTime (Deterministic Clean Arabic 12h)
+  const nowTest = new Date();
+  const formattedToday = formatCalibrationDateTime(nowTest.toISOString());
+  assert(formattedToday.dateFormatted === "اليوم", `Timestamp Format: Current date resolves to 'اليوم' (got '${formattedToday.dateFormatted}')`);
+  assert(formattedToday.timeFormatted.includes("ص") || formattedToday.timeFormatted.includes("م"), "Timestamp Format: 12-hour marker (ص/م) present");
+
+  // Test 12: getRelativeTimeArabic (Live Dynamic Relative Elapsed Time)
+  const justNow = new Date(Date.now() - 10 * 1000); // 10s ago
+  assert(getRelativeTimeArabic(justNow) === "الآن (منذ لحظات)", "Relative Time: 10s ago yields 'الآن (منذ لحظات)'");
+
+  const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000); // 5 min ago
+  assert(getRelativeTimeArabic(fiveMinAgo) === "منذ 5 دقائق", "Relative Time: 5 min ago yields 'منذ 5 دقائق'");
+
+  const oneHourAgo = new Date(Date.now() - 65 * 60 * 1000); // 65 min ago
+  assert(getRelativeTimeArabic(oneHourAgo) === "منذ ساعة واحدة", "Relative Time: 65 min ago yields 'منذ ساعة واحدة'");
+
+  // Test 13: Adaptive ExponentialFilter (Immediate walking follow + stationary noise suppression)
+  const filter = new ExponentialFilter();
+  filter.reset(20.0);
+  // Walking step: jumps from 20m to 15m (delta 5m > 1.5m -> high tracking alpha 0.75)
+  const stepFollow = filter.update(15.0);
+  assert(stepFollow < 17.0, `Adaptive Filter: Walking transition rapidly tracks toward target (got ${stepFollow.toFixed(2)}m)`);
+  // Stationary jitter: small noise around current smoothed position (delta 0.15m < 0.6m -> gentle alpha 0.35)
+  const stationaryNoise = stepFollow + 0.15;
+  const stationarySmooth = filter.update(stationaryNoise);
+  assert(Math.abs(stationarySmooth - stepFollow) < 0.10, `Adaptive Filter: Stationary noise dampened gently (got ${stationarySmooth.toFixed(2)}m)`);
 
   console.log("\n-------------------------------------------------");
   console.log(`Spatial Test Suite Summary: ${passed} Passed | ${failed} Failed`);

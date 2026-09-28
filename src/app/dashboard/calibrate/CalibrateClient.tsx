@@ -25,8 +25,13 @@ import {
   saveCalibrationLocally,
   loadCalibrationLocally,
   playNavigationSound,
+  formatCalibrationDateTime,
+  getRelativeTimeArabic,
 } from "@/lib/spatial-navigation";
-import { saveVehicleSpatialCalibration } from "@/app/actions/calibration-actions";
+import {
+  saveVehicleSpatialCalibration,
+  getLatestVehicleSpatialPoint,
+} from "@/app/actions/calibration-actions";
 
 interface TagItem {
   id: string;
@@ -48,6 +53,10 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
   const router = useRouter();
   const [selectedTag, setSelectedTag] = useState<TagItem>(initialTag);
   const [existingCalibration, setExistingCalibration] = useState<SpatialCalibration | null>(null);
+  const [isReCalibrating, setIsReCalibrating] = useState<boolean>(false);
+
+  // Live dynamic relative time state (e.g. "الآن (منذ لحظات)", "منذ دقيقة", etc.)
+  const [liveRelativeTime, setLiveRelativeTime] = useState<string>("");
 
   // States: IDLE, SAMPLING (7 seconds multi-GNSS burst), SUCCESS, ERROR
   const [step, setStep] = useState<"IDLE" | "SAMPLING" | "SUCCESS" | "ERROR">("IDLE");
@@ -55,6 +64,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
   const [samplesCount, setSamplesCount] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState("");
   const [isGpsAcquiring, setIsGpsAcquiring] = useState(true);
+  const [isWaitingForGpsLock, setIsWaitingForGpsLock] = useState(false);
 
   // Live sensor readings
   const [currentAccuracy, setCurrentAccuracy] = useState<number | null>(null);
@@ -76,11 +86,71 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
   const vehicleMake = selectedTag.profile?.vehicleMake || "المركبة";
   const vehicleModel = selectedTag.profile?.vehicleModel || "";
 
-  // Check if this vehicle is already calibrated
+  const isSamplingRef = useRef<boolean>(false);
+  const pendingGpsLockRef = useRef<boolean>(false);
+
+  // 1. Check local storage and Neon Cloud database for existing calibration
   useEffect(() => {
+    setIsReCalibrating(false);
+
+    // A. Local-first 0-delay load
     const existing = loadCalibrationLocally(selectedTag.tagUid);
-    setExistingCalibration(existing);
-  }, [selectedTag.tagUid]);
+    if (existing) {
+      setExistingCalibration(existing);
+    }
+
+    // B. Cloud synchronization
+    getLatestVehicleSpatialPoint(selectedTag.tagUid)
+      .then((res) => {
+        if (res.success && res.point) {
+          const cloudCal: SpatialCalibration = {
+            tagUid: res.point.tagUid,
+            vehiclePlate,
+            vehicleMake,
+            vehicleModel,
+            calibratedAt: res.point.createdAt,
+            rawLat: res.point.rawLat,
+            rawLng: res.point.rawLng,
+            userHeading: res.point.userHeading,
+            accuracy: res.point.accuracy,
+            centroidLat: res.point.centroidLat,
+            centroidLng: res.point.centroidLng,
+            offsetDistanceMeters: res.point.offsetDistanceMeters,
+          };
+          if (!existing || new Date(res.point.createdAt).getTime() > new Date(existing.calibratedAt).getTime()) {
+            setExistingCalibration(cloudCal);
+            saveCalibrationLocally(cloudCal);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn("Neon background check note:", err);
+      });
+  }, [selectedTag.tagUid, vehiclePlate, vehicleMake, vehicleModel]);
+
+  // 2. Live dynamic relative time loop (updates every 10s)
+  useEffect(() => {
+    if (!existingCalibration?.calibratedAt) {
+      setLiveRelativeTime("");
+      return;
+    }
+    const update = () => {
+      setLiveRelativeTime(getRelativeTimeArabic(existingCalibration.calibratedAt));
+    };
+    update();
+    const interval = setInterval(update, 10000);
+    return () => clearInterval(interval);
+  }, [existingCalibration?.calibratedAt]);
+
+  // 3. Isolated Component Unmount Timer Cleanup
+  useEffect(() => {
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    };
+  }, []);
 
   // Request compass permission (iOS 13+)
   const requestOrientationPermission = async () => {
@@ -144,8 +214,12 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
           };
           latestGpsRef.current = sample;
 
-          // If currently in the 7-second high-rate sampling phase, record sample
-          if (step === "SAMPLING") {
+          // If user clicked start while GPS was still acquiring, begin now automatically
+          if (pendingGpsLockRef.current) {
+            pendingGpsLockRef.current = false;
+            setIsWaitingForGpsLock(false);
+            startBurstSamplingInternal(sample);
+          } else if (isSamplingRef.current) {
             samplesRef.current.push({
               lat: sample.lat,
               lng: sample.lng,
@@ -183,36 +257,27 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       if (watchIdRef.current !== null && navigator.geolocation) {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
-      if (timerIntervalRef.current) {
-        clearInterval(timerIntervalRef.current);
-      }
     };
-  }, [selectedTag.tagUid, step]);
+  }, [selectedTag.tagUid]);
 
   /**
-   * Start 7-Second High-Precision Multi-GNSS Sampling Engine
+   * Internal Sampling Burst Engine (Runs 7-second countdown reliably)
    */
-  const handleStartTimedCalibration = async () => {
-    setErrorMessage("");
+  const startBurstSamplingInternal = (initialGps?: { lat: number; lng: number; accuracy: number }) => {
+    const baseGps = initialGps || latestGpsRef.current;
+    if (!baseGps) return;
 
-    try {
-      await requestOrientationPermission();
-    } catch {
-      // Continue
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
     }
 
-    if (!latestGpsRef.current) {
-      setErrorMessage("لم يتم التقاط إشارة الأقمار الصناعية بعد. يرجى الانتظار في مكان مكشوف حتى يتم استقبال الترددات.");
-      setStep("ERROR");
-      return;
-    }
-
-    // Initialize 7-Second Sampling
+    isSamplingRef.current = true;
     samplesRef.current = [
       {
-        lat: latestGpsRef.current.lat,
-        lng: latestGpsRef.current.lng,
-        accuracy: latestGpsRef.current.accuracy,
+        lat: baseGps.lat,
+        lng: baseGps.lng,
+        accuracy: baseGps.accuracy,
         heading: latestHeadingRef.current,
       },
     ];
@@ -239,10 +304,36 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       }
 
       if (remaining <= 0) {
-        if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+        if (timerIntervalRef.current) {
+          clearInterval(timerIntervalRef.current);
+          timerIntervalRef.current = null;
+        }
+        isSamplingRef.current = false;
         finalizeMultiGNSSCalibration();
       }
     }, 1000);
+  };
+
+  /**
+   * Start 7-Second High-Precision Multi-GNSS Sampling Engine
+   */
+  const handleStartTimedCalibration = async () => {
+    setErrorMessage("");
+
+    try {
+      await requestOrientationPermission();
+    } catch {
+      // Continue
+    }
+
+    if (!latestGpsRef.current) {
+      // Auto-wait for GPS lock instead of failing with an error
+      setIsWaitingForGpsLock(true);
+      pendingGpsLockRef.current = true;
+      return;
+    }
+
+    startBurstSamplingInternal();
   };
 
   /**
@@ -360,29 +451,34 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col justify-between max-w-md mx-auto w-full p-4 pb-6 space-y-4">
         {/* Active Existing Calibration Notice Card */}
-        {existingCalibration && step === "IDLE" ? (
+        {existingCalibration && !isReCalibrating && step === "IDLE" ? (
           <div className="space-y-4">
             <div className="bg-[#0A140D] border border-[#00C853]/40 rounded-2xl p-4 space-y-3 shadow-xl">
               <div className="flex items-center gap-2.5 text-[#00C853] text-sm font-bold">
                 <CheckCircle2 className="w-5 h-5" />
                 <span>المركبة معايرة حالياً ومثبتة بنجاح</span>
               </div>
-              <div className="text-xs text-zinc-300 space-y-1.5 bg-[#050B07] p-3 rounded-xl border border-[#00C853]/20 font-mono text-[11px]">
-                <div className="flex justify-between">
+              <div className="text-xs text-zinc-300 space-y-2 bg-[#050B07] p-3 rounded-xl border border-[#00C853]/20 font-mono text-[11px]">
+                <div className="flex justify-between items-center">
                   <span className="text-zinc-400">لوحة المركبة:</span>
                   <span className="text-white font-bold">{existingCalibration.vehiclePlate}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-400">تاريخ المعايرة:</span>
-                  <span className="text-zinc-200">
-                    {new Date(existingCalibration.calibratedAt).toLocaleTimeString("ar-SA", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    })}
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-400">توقيت المعايرة:</span>
+                  <span className="text-zinc-200 font-medium">
+                    {formatCalibrationDateTime(existingCalibration.calibratedAt).fullFormatted}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                {liveRelativeTime && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-400">حالة التحديث:</span>
+                    <span className="text-[#00C853] font-semibold flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
+                      <span>{liveRelativeTime}</span>
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center">
                   <span className="text-zinc-400">دقة التمركز:</span>
                   <span className="text-[#00C853] font-bold">± {existingCalibration.accuracy.toFixed(1)} م</span>
                 </div>
@@ -399,7 +495,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
 
                 <button
                   type="button"
-                  onClick={() => setExistingCalibration(null)}
+                  onClick={() => setIsReCalibrating(true)}
                   className="w-full py-2.5 rounded-xl border border-zinc-700 bg-zinc-900/80 text-xs text-zinc-300 hover:text-white flex items-center justify-center gap-2 transition-colors"
                 >
                   <RotateCw className="w-3.5 h-3.5" />
@@ -419,6 +515,19 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
         ) : (
           /* Stance Guide & Setup */
           <div className="space-y-3">
+            {isReCalibrating && existingCalibration && step === "IDLE" && (
+              <div className="flex items-center justify-between bg-zinc-900/90 border border-zinc-700 rounded-xl px-3 py-2 text-xs">
+                <span className="text-zinc-300">يتم الآن تجهيز معايرة جديدة للموقف</span>
+                <button
+                  type="button"
+                  onClick={() => setIsReCalibrating(false)}
+                  className="text-amber-400 hover:text-amber-300 underline font-medium text-[11px]"
+                >
+                  تراجع والاحتفاظ بالموقف الحالي
+                </button>
+              </div>
+            )}
+
             <div className="bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl p-3">
               <IsometricStanceDiagram
                 vehicleMake={vehicleMake}
@@ -542,34 +651,49 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
               </Link>
               <button
                 type="button"
-                onClick={() => setStep("IDLE")}
+                onClick={() => {
+                  setIsReCalibrating(false);
+                  setStep("IDLE");
+                }}
                 className="w-full py-2.5 rounded-lg border border-[#222222] bg-[#141414] text-xs text-zinc-400 hover:text-white transition-colors"
               >
-                معايرة أخرى
+                عرض بطاقة الموقف المثبت
               </button>
             </div>
           </div>
         )}
 
-        {/* ACTION BUTTON (When Not Sampling and Not Success and Not showing active existing card) */}
-        {step === "IDLE" && !existingCalibration && (
+        {/* ACTION BUTTON (When Not Sampling and Not Success and (No existing calibration OR user clicked ReCalibrate)) */}
+        {step === "IDLE" && (!existingCalibration || isReCalibrating) && (
           <div className="space-y-2">
             <button
               type="button"
               onClick={handleStartTimedCalibration}
-              disabled={isGpsAcquiring && !latestGpsRef.current}
+              disabled={isWaitingForGpsLock}
               className={`w-full py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all active:scale-95 ${
-                isGpsAcquiring && !latestGpsRef.current
-                  ? "bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700"
+                isWaitingForGpsLock
+                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-wait"
+                  : isGpsAcquiring && !latestGpsRef.current
+                  ? "bg-zinc-800 text-zinc-400 border border-zinc-700"
                   : "bg-white hover:bg-zinc-200 text-black shadow-lg"
               }`}
             >
-              <Timer className="w-4 h-4" />
-              <span>
-                {isGpsAcquiring && !latestGpsRef.current
-                  ? "جاري تثبيت إشارة GPS..."
-                  : "بدء المعايرة الفضائية الفائقة (مسح 7 ثوانٍ)"}
-              </span>
+              {isWaitingForGpsLock ? (
+                <>
+                  <Radio className="w-4 h-4 animate-spin text-amber-400" />
+                  <span>جاري قفل إشارة الأقمار الصناعية... سيبدأ العد تلقائياً</span>
+                </>
+              ) : isGpsAcquiring && !latestGpsRef.current ? (
+                <>
+                  <Radio className="w-4 h-4 animate-pulse text-zinc-400" />
+                  <span>جاري استقبال ترددات GPS... (اضغط للبدء التلقائي)</span>
+                </>
+              ) : (
+                <>
+                  <Timer className="w-4 h-4" />
+                  <span>بدء المعايرة الفضائية الفائقة (مسح 7 ثوانٍ)</span>
+                </>
+              )}
             </button>
           </div>
         )}
