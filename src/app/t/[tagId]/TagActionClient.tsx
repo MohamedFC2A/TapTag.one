@@ -23,6 +23,10 @@ import {
   KeyRound,
   Zap,
   ExternalLink,
+  Compass,
+  Navigation,
+  RotateCcw,
+  Sparkles,
 } from "lucide-react";
 import { SafePublicTag, Language, TagStatus } from "@/types";
 import { translations } from "@/lib/translations";
@@ -30,6 +34,8 @@ import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { CallModal } from "@/components/ui/CallModal";
+import { VehicleSpatialFinder } from "@/components/navigation/VehicleSpatialFinder";
+import { SpatialCalibrationModal } from "@/components/navigation/SpatialCalibrationModal";
 import {
   sendMovementAlert,
   sendEmergencyReport,
@@ -63,6 +69,10 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
   const [isOwnerDevice, setIsOwnerDevice] = useState<boolean>(false);
   const [viewAsBystander, setViewAsBystander] = useState<boolean>(false);
   const [isBiometricAuthenticating, setIsBiometricAuthenticating] = useState(false);
+
+  // Zero-Hardware Spatial Navigation State
+  const [isSpatialFinderOpen, setIsSpatialFinderOpen] = useState<boolean>(false);
+  const [isSpatialCalibrationOpen, setIsSpatialCalibrationOpen] = useState<boolean>(false);
 
   // First-Claim Form states
   const [claimPlate, setClaimPlate] = useState(tag.vehiclePlate || "أ ب ج 1234");
@@ -644,6 +654,50 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                 <Eye className="w-3.5 h-3.5 text-zinc-400" />
                 <span>{isAr ? "معاينة كزائر (بوابة الغرباء)" : "Preview as Bystander"}</span>
               </button>
+            </div>
+
+            {/* ZERO-HARDWARE AUTONOMOUS VEHICLE FINDER (OWNER EXCLUSIVE) */}
+            <div className="p-4 sm:p-5 rounded-2xl border border-[#00C853]/60 bg-gradient-to-r from-[#00C853]/15 via-[#08080A] to-[#0A0A0E] space-y-4 shadow-xl">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start sm:items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-[#00C853] flex items-center justify-center text-black shrink-0 shadow-lg">
+                    <Compass className="w-6 h-6 text-black" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm sm:text-base font-black text-white">
+                        {t.spatialFinder.title}
+                      </span>
+                      <span className="text-[9px] font-mono px-2 py-0.5 rounded-full border border-[#00C853]/40 bg-black text-[#00C853] font-bold">
+                        ZERO-HARDWARE
+                      </span>
+                    </div>
+                    <p className="text-xs text-zinc-300 mt-1 font-mono">
+                      {t.spatialFinder.subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setIsSpatialCalibrationOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#1F2228] bg-black text-xs font-mono font-medium text-zinc-200 hover:text-white hover:border-[#00C853] transition-all cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-[#00C853]" />
+                    <span>{t.spatialFinder.calibrateButton}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsSpatialFinderOpen(true)}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#00C853] bg-[#00C853] hover:bg-[#00B048] text-black font-black text-xs uppercase tracking-wider transition-all shadow-lg active:scale-95 cursor-pointer"
+                  >
+                    <Navigation className="w-4 h-4 text-black" />
+                    <span>{t.spatialFinder.findCarButton}</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Owner Control Dashboard */}
@@ -1270,6 +1324,34 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
         tagUid={tag.tagUid}
         lang={lang}
         emergencyContactPhone={tag.emergencyContactPhone}
+      />
+
+      {/* Autonomous Zero-Hardware Vehicle Spatial Precision Finder */}
+      <VehicleSpatialFinder
+        isOpen={isSpatialFinderOpen}
+        onClose={() => setIsSpatialFinderOpen(false)}
+        tagUid={tag.tagUid}
+        vehiclePlate={tag.vehiclePlate}
+        vehicleMake={tag.vehicleMake}
+        vehicleModel={tag.vehicleModel}
+        vehicleColor={tag.vehicleColor}
+        lang={lang}
+      />
+
+      {/* Autonomous Spatial Stance Calibration Modal */}
+      <SpatialCalibrationModal
+        isOpen={isSpatialCalibrationOpen}
+        onClose={() => setIsSpatialCalibrationOpen(false)}
+        tagUid={tag.tagUid}
+        vehiclePlate={tag.vehiclePlate}
+        vehicleMake={tag.vehicleMake}
+        vehicleModel={tag.vehicleModel}
+        vehicleColor={tag.vehicleColor}
+        onCalibrationSaved={() => {
+          setIsSpatialCalibrationOpen(false);
+          setIsSpatialFinderOpen(true);
+        }}
+        lang={lang}
       />
 
       {/* Official Footer with Matany Group Signature */}
