@@ -8,7 +8,7 @@ export default function DemoOne() {
   const [activeMenu, setActiveMenu] = React.useState<MenuBarItem>("dashboard");
 
   return (
-    <div className="flex min-h-[350px] w-full flex-col items-center justify-center gap-8 p-6 bg-black text-white rounded-3xl border border-white/10 shadow-2xl">
+    <div className="flex min-h-[350px] w-full flex-col items-center justify-center gap-8 p-6 bg-black text-white rounded-2xl border border-white/10">
       <div className="text-center space-y-2">
         <h3 className="text-lg font-bold tracking-tight text-white">
           21st.dev Component Showcase

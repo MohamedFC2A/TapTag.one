@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, Cpu } from "lucide-react";
+import { Cpu } from "lucide-react";
 import { Language } from "@/types";
 import { translations } from "@/lib/translations";
 import { LanguageToggle } from "./LanguageToggle";
@@ -18,7 +18,7 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
   const t = translations[lang];
 
   return (
-    <header className="w-full border-b border-white/10 bg-[#000000]/80 backdrop-blur-2xl sticky top-0 z-50">
+    <header className="w-full border-b border-white/10 bg-[#000000] sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Brand & Seal */}
         <div className="flex items-center gap-3">
@@ -33,8 +33,8 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
 
         {/* Center / Tag UID Badge if on tag page */}
         {tagUid && (
-          <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-md border border-white/15 bg-white/[0.04]">
-            <Cpu className="w-3.5 h-3.5 text-white" />
+          <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded border border-white/15 bg-[#08080A]">
+            <Cpu className="w-3.5 h-3.5 text-[#00C853]" />
             <span className="text-xs text-white font-mono font-bold tracking-wider">
               {tagUid}
             </span>
@@ -45,7 +45,7 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
         <div className="flex items-center gap-4">
           {/* Admin links visible ONLY locally during development */}
           {process.env.NODE_ENV !== "production" && (
-            <nav className="hidden sm:flex items-center gap-4 text-xs font-semibold text-zinc-400">
+            <nav className="hidden sm:flex items-center gap-4 text-xs font-mono text-zinc-400">
               <Link
                 href="/dashboard"
                 className="hover:text-white transition-colors"
@@ -54,9 +54,9 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
               </Link>
               <Link
                 href="/admin/qr-engine"
-                className="hover:text-white text-zinc-300 transition-colors flex items-center gap-1.5 font-mono text-[11px]"
+                className="hover:text-white text-zinc-300 transition-colors flex items-center gap-1.5 text-[11px]"
               >
-                <span className="w-2 h-2 rounded-full bg-white" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
                 <span>{lang === "ar" ? "مصنع البطاقات" : "Factory Mint"}</span>
               </Link>
             </nav>

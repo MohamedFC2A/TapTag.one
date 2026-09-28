@@ -72,15 +72,14 @@ export const AntiMetalButton = React.forwardRef<
     },
     ref
   ) => {
-    const content = label ?? children ?? "Book a demo";
+    const content = label ?? children ?? "Execute";
 
     return (
       <button
         ref={ref}
         className={cn(
-          "group/btn relative inline-flex h-11 min-w-[150px] items-center justify-center overflow-hidden rounded-xl px-4 transition-transform active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer",
-          "bg-[linear-gradient(180deg,#1c1c1f_0%,#09090b_100%)] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.5)]",
-          "hover:border-white/25 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_6px_20px_rgba(0,0,0,0.7)]",
+          "group/btn relative inline-flex h-11 min-w-[150px] items-center justify-center overflow-hidden rounded-xl px-4 transition-all duration-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50 cursor-pointer",
+          "bg-[#08080A] border border-white/15 hover:border-emerald-500/50",
           className
         )}
         {...props}
@@ -101,18 +100,16 @@ export const AntiMetalButton = React.forwardRef<
         `}</style>
 
         {/* Button Label text */}
-        <span className="relative z-0 pl-7 text-[13px] font-semibold tracking-wide text-zinc-100 transition-colors group-hover/btn:text-white">
+        <span className="relative z-0 pl-7 text-[12px] font-mono uppercase tracking-wider text-zinc-200 transition-colors group-hover/btn:text-white">
           {content}
         </span>
 
         {/* Sliding Accent Wave Container */}
         <span
           aria-hidden="true"
-          className="absolute bottom-1 left-1 top-1 z-10 flex w-9 items-center justify-start gap-2 overflow-hidden rounded-lg pl-2.5 pr-2 transition-[width,gap] duration-300 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover/btn:w-[calc(100%-0.5rem)]"
+          className="absolute bottom-1 left-1 top-1 z-10 flex w-9 items-center justify-start gap-2 overflow-hidden rounded-lg pl-2.5 pr-2 transition-[width,gap] duration-300 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover/btn:w-[calc(100%-0.5rem)] border border-white/20"
           style={{
             background: `linear-gradient(180deg, ${accentFrom} 0%, ${accentTo} 100%)`,
-            boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.3)",
           }}
         >
           <DoubleChevron index={0} dotColor={dotColor} />

@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Radio } from "lucide-react";
+import React, { useState } from "react";
+import { Radio, ShieldCheck, Check } from "lucide-react";
 import { ContactlessWaves } from "./TapTagLogo";
 
 export function AcrylicCardHolo({
@@ -11,41 +11,59 @@ export function AcrylicCardHolo({
   tagUid?: string;
   className?: string;
 }) {
+  const [isScanning, setIsScanning] = useState(true);
+
   return (
     <div className={`relative group select-none ${className}`}>
-      {/* Ambient Backlight Glow */}
-      <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-white/20 via-white/5 to-white/20 blur-xl opacity-30 group-hover:opacity-60 transition duration-700 pointer-events-none" />
+      {/* 1px Precision Outer Hairline Border */}
+      <div className="relative aspect-[7/5] w-full max-w-[340px] sm:max-w-[420px] rounded-2xl border border-white/15 group-hover:border-emerald-500/40 bg-[#08080A] p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-colors duration-500">
+        
+        {/* Subtle Diagonal Specular Sheen (Zero Blur) */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent pointer-events-none" />
 
-      {/* The 7x5 Acrylic Card Body */}
-      <div className="relative aspect-[7/5] w-full max-w-[340px] sm:max-w-[400px] rounded-2xl border border-white/25 bg-[#000000] p-4 sm:p-5 shadow-2xl flex flex-col justify-between overflow-hidden backdrop-blur-xl">
-        {/* Subtle Specular Sheen Diagonal */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent pointer-events-none" />
+        {/* Smart Emerald Laser Scanner Line (1.5px Hairline Beam - Zero Blur) */}
+        {isScanning && (
+          <div
+            className="absolute left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#00C853] to-transparent pointer-events-none animate-laser-sweep z-20"
+          />
+        )}
 
-        {/* Top Solar Bar */}
-        <div className="w-full h-2 rounded-full bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-900 border border-white/10" />
+        {/* Top Architectural Sensor Bar */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+            <span className="text-[10px] font-mono font-semibold tracking-wider text-zinc-400 uppercase">
+              ACTIVE HARDWARE PROTOCOL
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-white/10 bg-black/60 text-[10px] font-mono text-zinc-300">
+            <span>NFC 13.56 MHz</span>
+          </div>
+        </div>
 
-        {/* Middle Core Area */}
-        <div className="flex items-center justify-between gap-4 my-2">
-          {/* Left: NFC / Brand Mark */}
-          <div className="flex flex-col space-y-1">
-            <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">
-              SMART VEHICLE TAG
+        {/* Middle Core Area: Typography & Crisp QR Matrix */}
+        <div className="flex items-center justify-between gap-4 my-2 relative z-10">
+          {/* Left: Brand Identity & Specifications */}
+          <div className="flex flex-col space-y-1.5 text-start">
+            <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">
+              OFFICIAL VEHICLE TAG
             </span>
             <div className="flex items-center gap-2">
               <span className="text-xl sm:text-2xl font-black tracking-tight text-white lowercase">
-                taptag<span className="text-zinc-500">.</span>one
+                taptag<span className="text-[#00C853]">.</span>one
               </span>
               <ContactlessWaves className="w-5 h-5 text-white" />
             </div>
-            <span className="text-[10px] text-zinc-500 font-mono">
-              NFC CONTACTLESS • LEVEL H QR
-            </span>
+            <div className="flex items-center gap-2 pt-0.5">
+              <span className="text-[10px] text-zinc-400 font-mono">
+                NTAG 216 • ISO 18004 LEVEL H
+              </span>
+            </div>
           </div>
 
-          {/* Right: Crisp Vector QR Representation */}
-          <div className="relative p-2 rounded-xl border border-white/20 bg-white/[0.03] backdrop-blur-md shrink-0">
+          {/* Right: Crisp Vector QR Code Matrix (Flat, High Contrast) */}
+          <div className="relative p-2 rounded-xl border border-white/15 bg-black shrink-0">
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white p-1 rounded-lg flex items-center justify-center">
-              {/* QR Pattern SVG */}
               <svg viewBox="0 0 33 33" className="w-full h-full text-black" fill="currentColor">
                 {/* Top-Left Corner Box */}
                 <rect x="0" y="0" width="7" height="7" />
@@ -90,10 +108,13 @@ export function AcrylicCardHolo({
         {/* Bottom Hardware Strip */}
         <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] font-mono">
           <div className="flex items-center gap-1.5 text-zinc-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-white" />
-            <span>AUTHENTIC HARDWARE</span>
+            <span className="text-[10px] text-zinc-500 uppercase">UID</span>
+            <span className="text-white font-bold tracking-wider">{tagUid}</span>
           </div>
-          <span className="text-white font-bold tracking-wider">{tagUid}</span>
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-[#00C853]/30 bg-[#00C853]/10 text-[#00C853] text-[10px] font-mono">
+            <Check className="w-3 h-3" />
+            <span>VERIFIED</span>
+          </div>
         </div>
       </div>
     </div>

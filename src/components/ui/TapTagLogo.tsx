@@ -14,7 +14,7 @@ export function ContactlessWaves({ className = "w-5 h-5 text-white" }: { classNa
       aria-hidden="true"
     >
       {/* Dot */}
-      <circle cx="4.5" cy="12" r="1.75" fill="currentColor" stroke="none" />
+      <circle cx="4.5" cy="12" r="1.75" fill="#00C853" stroke="none" />
       {/* Inner Wave */}
       <path d="M8.5 8.5a5 5 0 0 1 0 7" />
       {/* Middle Wave */}
@@ -56,12 +56,12 @@ export function TapTagLogo({
     <div className={`flex flex-col select-none ${className}`}>
       <div dir="ltr" className="inline-flex items-center gap-2">
         <span className={`font-black tracking-tight text-white ${textSizes[size]} font-sans lowercase`}>
-          taptag<span className="text-zinc-400">.</span>one
+          taptag<span className="text-[#00C853]">.</span>one
         </span>
         <ContactlessWaves className={`${waveSizes[size]} ${waveColor} shrink-0`} />
       </div>
       {showSubtitle && (
-        <span className="text-[11px] text-zinc-400 font-normal tracking-normal text-start">
+        <span className="text-[10px] font-mono text-zinc-400 font-normal tracking-tight text-start">
           {subtitle}
         </span>
       )}

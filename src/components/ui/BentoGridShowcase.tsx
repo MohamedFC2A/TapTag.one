@@ -1,19 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React from "react";
 import {
   Radio,
   Lock,
   PhoneCall,
   Fingerprint,
   Layers,
-  ArrowLeft,
-  ArrowRight,
   ShieldCheck,
   CheckCircle2,
-  Sparkles,
-  Zap,
+  Cpu,
 } from "lucide-react";
 import { Language } from "@/types";
 
@@ -23,187 +19,175 @@ interface BentoGridShowcaseProps {
 
 export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
   const isAr = lang === "ar";
-  const [activeSimulation, setActiveSimulation] = useState<number | null>(null);
 
   return (
-    <section id="pillars-section" className="w-full py-16 space-y-8">
-      {/* Section Header */}
-      <div className="text-center max-w-2xl mx-auto space-y-3 px-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-zinc-300 text-xs font-mono font-medium backdrop-blur-md">
-          <Sparkles className="w-3.5 h-3.5 text-white" />
-          <span>{isAr ? "معمارية البروتوكول الذكي" : "SMART PROTOCOL ARCHITECTURE"}</span>
+    <section id="pillars-section" className="w-full py-14 space-y-8 max-w-5xl mx-auto px-4">
+      {/* Section Header - Concise & Institutional */}
+      <div className="text-center max-w-xl mx-auto space-y-2.5">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-[#08080A] text-zinc-300 text-[11px] font-mono">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+          <span>{isAr ? "معمارية المنظومة المعتمدة" : "OFFICIAL ARCHITECTURE SPEC"}</span>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
-          {isAr ? "منظومة واحدة. خصوصية مطلقة. أمان تام." : "One System. Absolute Privacy. Zero Friction."}
+        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+          {isAr ? "ركائز الأمان والهوية الذكية" : "Core Security & Hardware Pillars"}
         </h2>
-        <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-          {isAr
-            ? "تمت هندسة TapTag.one لتوفير أعلى معايير الحماية للمركبات بدون تطبيقات، بدون كلمات مرور، وبحجب كامل لكافة أرقام الهواتف."
-            : "Engineered to deliver enterprise-grade vehicle protection without apps, without passwords, and with zero personal data leakage."}
+        <p className="text-xs text-zinc-400 font-mono">
+          {isAr ? "تشفير ثنائي الأطراف • حجب الهوية • اتصال مباشر دون تطبيقات" : "Zero-PII • End-to-End Encrypted • Appless Architecture"}
         </p>
       </div>
 
-      {/* Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto px-4">
-        {/* BENTO 1: NFC & Dynamic QR (Span 2 cols on desktop) */}
-        <div className="md:col-span-2 relative group overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#0B0B0E] to-[#040406] p-7 sm:p-9 hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_35px_rgba(255,255,255,0.05)] flex flex-col justify-between">
-          <div className="space-y-4">
+      {/* Bento Grid (Zero Shadows / Zero Glowing / 1px Precision Borders) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+        {/* BENTO 1: NFC & Dynamic QR (Span 2 cols) */}
+        <div className="md:col-span-2 relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl border border-white/15 bg-white/[0.05] flex items-center justify-center text-white">
-                <Radio className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
+                <Radio className="w-4 h-4 text-[#00C853]" />
               </div>
-              <span className="text-[11px] font-mono uppercase px-2.5 py-1 rounded-md border border-white/10 bg-black text-zinc-300">
-                DUAL-ENGINE NFC / QR
+              <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
+                NTAG 216 & QR LEVEL H
               </span>
             </div>
 
-            <div className="space-y-2 max-w-md">
-              <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                {isAr ? "تقريب NFC ومسح QR فوري بدون تطبيقات" : "Instant Tap & Dynamic Scan (Zero Apps)"}
+            <div className="space-y-1 max-w-md text-start">
+              <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                {isAr ? "استجابة فورية بدون تطبيقات (< 250ms)" : "Direct Native Browser Routing (< 250ms)"}
               </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <p className="text-xs text-zinc-400 leading-normal">
                 {isAr
-                  ? "مجرد تقريب الهاتف من بطاقة الأكريليك أو تصوير رمز الـ QR يفتح بوابة المار فورياً عبر المتصفح الافتراضي خلال أقل من ثانية واحدة."
-                  : "A single touch with any modern smartphone opens the secured action portal directly in the native browser in under 800ms."}
+                  ? "تقريب الهاتف أو مسح الكود يفتح البوابة فورياً عبر المتصفح الافتراضي خلال أجزاء من الثانية."
+                  : "A single touch or optical scan opens the verified action portal directly in the native browser."}
               </p>
             </div>
           </div>
 
-          {/* Interactive Simulation Graphic */}
-          <div className="mt-8 pt-6 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="relative flex items-center justify-center">
-                <div className="w-3 h-3 rounded-full bg-white animate-ping absolute opacity-40" />
-                <div className="w-2.5 h-2.5 rounded-full bg-white relative z-10" />
-              </div>
-              <span className="text-xs font-mono text-zinc-300">
-                {isAr ? "مستوى تصحيح الخطأ ISO 18004 بنسبة 30%" : "ISO 18004 Level H (30% ECC)"}
-              </span>
+          <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono text-zinc-400">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+              <span className="text-zinc-300">{isAr ? "معيار ISO-18004" : "ISO-18004 Compliant"}</span>
             </div>
-
-            <span className="text-[11px] text-zinc-500 font-mono">
-              LATENCY &lt; 250ms
-            </span>
+            <span className="text-zinc-500">LATENCY &lt; 250ms</span>
           </div>
         </div>
 
         {/* BENTO 2: Zero-Knowledge Privacy Barrier */}
-        <div className="relative group overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#0B0B0E] to-[#040406] p-7 sm:p-9 hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_35px_rgba(255,255,255,0.05)] flex flex-col justify-between">
-          <div className="space-y-4">
+        <div className="relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl border border-white/15 bg-white/[0.05] flex items-center justify-center text-white">
-                <Lock className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
+                <Lock className="w-4 h-4 text-[#00C853]" />
               </div>
-              <span className="text-[11px] font-mono uppercase px-2.5 py-1 rounded-md border border-white/10 bg-black text-zinc-300">
-                ZERO PII SHIELD
+              <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
+                ZERO-PII
               </span>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white tracking-tight">
-                {isAr ? "حاجز الخصوصية الصارم" : "Zero-Knowledge Barrier"}
+            <div className="space-y-1 text-start">
+              <h3 className="text-base font-bold text-white tracking-tight">
+                {isAr ? "حجب كامل لبيانات المالك" : "Zero PII Exposure"}
               </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <p className="text-xs text-zinc-400 leading-normal">
                 {isAr
-                  ? "رقم هاتفك واسمك مشفرين في السيرفر ولا يخرجان لأي متصفح خارجي على الإطلاق. لا إزعاج ولا كشف لهويتك."
-                  : "Owner contact details and identity never leave the encrypted backend. Complete anonymity for both parties."}
+                  ? "أرقام الهواتف مشفرة ومحجوبة تماماً عن المتصفح الخارجي لمنع التطفل."
+                  : "Phone numbers and identities remain cryptographically sealed inside the backend."}
               </p>
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-zinc-400">
-            <span className="font-mono text-[11px] text-white">SHA-256 HMAC</span>
-            <ShieldCheck className="w-4 h-4 text-white" />
+          <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono">
+            <span className="text-zinc-300">AES-256 GCM</span>
+            <ShieldCheck className="w-4 h-4 text-[#00C853]" />
           </div>
         </div>
 
-        {/* BENTO 3: Masked VoIP Bridge */}
-        <div className="relative group overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#0B0B0E] to-[#040406] p-7 sm:p-9 hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_35px_rgba(255,255,255,0.05)] flex flex-col justify-between">
-          <div className="space-y-4">
+        {/* BENTO 3: Masked VoIP Audio Bridge */}
+        <div className="relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl border border-white/15 bg-white/[0.05] flex items-center justify-center text-white">
-                <PhoneCall className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
+                <PhoneCall className="w-4 h-4 text-[#00C853]" />
               </div>
-              <span className="text-[11px] font-mono uppercase px-2.5 py-1 rounded-md border border-white/10 bg-black text-zinc-300">
-                MASKED VOIP
+              <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
+                WebRTC E2EE
               </span>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white tracking-tight">
-                {isAr ? "مكالمات صوتية مشفرة" : "Encrypted VoIP Calls"}
+            <div className="space-y-1 text-start">
+              <h3 className="text-base font-bold text-white tracking-tight">
+                {isAr ? "اتصال صوتي مشفر بضغطة زر" : "Masked VoIP Voice Bridge"}
               </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <p className="text-xs text-zinc-400 leading-normal">
                 {isAr
-                  ? "اتصال صوتي مباشر مشفر بين المار والمالك دون كشف رقم الهاتف لأي طرف، مع مؤقت مضاد للإزعاج (3 دقائق)."
-                  : "Real-time browser-to-browser audio channel with zero number disclosure and anti-spam cooldown."}
+                  ? "مكالمة صوتية سحابية مباشرة عبر المتصفح مع حماية الرقم ومهلة تلقائية."
+                  : "Encrypted browser-to-browser voice link with zero number exchange."}
               </p>
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-zinc-400">
-            <span className="font-mono text-[11px] text-zinc-300">WebRTC Encrypted</span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white">3 MIN COOLDOWN</span>
+          <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono">
+            <span className="text-zinc-400">{isAr ? "مؤقت مضاد للإزعاج" : "3-Min Cooldown"}</span>
+            <span className="text-[#00C853] text-[10px]">ACTIVE</span>
           </div>
         </div>
 
-        {/* BENTO 4: First-Claim Biometric Ownership */}
-        <div className="relative group overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#0B0B0E] to-[#040406] p-7 sm:p-9 hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_35px_rgba(255,255,255,0.05)] flex flex-col justify-between">
-          <div className="space-y-4">
+        {/* BENTO 4: First-Claim Biometric Passkey */}
+        <div className="relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl border border-white/15 bg-white/[0.05] flex items-center justify-center text-white">
-                <Fingerprint className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
+                <Fingerprint className="w-4 h-4 text-[#00C853]" />
               </div>
-              <span className="text-[11px] font-mono uppercase px-2.5 py-1 rounded-md border border-white/10 bg-black text-zinc-300">
-                FIRST-CLAIM
+              <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
+                FIDO2 / PASSKEY
               </span>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white tracking-tight">
+            <div className="space-y-1 text-start">
+              <h3 className="text-base font-bold text-white tracking-tight">
                 {isAr ? "ربط فوري بالبصمة" : "Biometric Passkey Claim"}
               </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <p className="text-xs text-zinc-400 leading-normal">
                 {isAr
-                  ? "البطاقة ترتبط تلقائياً بجوال المالك الأول عبر بصمة الإصبع أو الوجه بدون أي كلمات مرور قابلة للاختراق."
-                  : "Zero passwords. The tag binds permanently to the first claimant device via WebAuthn biometric sensors."}
+                  ? "تفعيل البطاقة بلمسة واحدة عبر بصمة الوجه أو الإصبع بدون كلمات مرور."
+                  : "Cryptographic device binding via native biometrics. Zero passwords."}
               </p>
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-zinc-400">
-            <span className="font-mono text-[11px] text-white">FIDO2 / WebAuthn</span>
-            <CheckCircle2 className="w-4 h-4 text-white" />
+          <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono">
+            <span className="text-zinc-300">WebAuthn</span>
+            <CheckCircle2 className="w-4 h-4 text-[#00C853]" />
           </div>
         </div>
 
         {/* BENTO 5: High-Durability Acrylic Card Hardware */}
-        <div className="relative group overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#0B0B0E] to-[#040406] p-7 sm:p-9 hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_35px_rgba(255,255,255,0.05)] flex flex-col justify-between">
-          <div className="space-y-4">
+        <div className="relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl border border-white/15 bg-white/[0.05] flex items-center justify-center text-white">
-                <Layers className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
+                <Layers className="w-4 h-4 text-[#00C853]" />
               </div>
-              <span className="text-[11px] font-mono uppercase px-2.5 py-1 rounded-md border border-white/10 bg-black text-zinc-300">
+              <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded border border-white/10 bg-black text-zinc-300">
                 70 × 50 MM ACRYLIC
               </span>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white tracking-tight">
-                {isAr ? "أكريليك زجاجي عالي الصلابة" : "Laser UV Acrylic Glass"}
+            <div className="space-y-1 text-start">
+              <h3 className="text-base font-bold text-white tracking-tight">
+                {isAr ? "أكريليك زجاجي مقاوم للحرارة" : "Automotive UV Acrylic Glass"}
               </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <p className="text-xs text-zinc-400 leading-normal">
                 {isAr
-                  ? "خامة أكريليك فاخرة مقاومة لأشعة الشمس المباشرة، درجات الحرارة العالية في السيارات، والخدوش اليومية."
-                  : "Premium acrylic glass engineered for high automotive temperatures, direct sunlight, and physical durability."}
+                  ? "معالجة حرارية مقاومة لحرارة مقصورة السيارات وأشعة الشمس والخدوش."
+                  : "Engineered to withstand direct vehicle cabin temperatures and UV radiation."}
               </p>
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-zinc-400">
-            <span className="font-mono text-[11px] text-zinc-300">UV Print & Laser Cut</span>
-            <span className="text-[11px] text-white font-mono">100% WATERPROOF</span>
+          <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono">
+            <span className="text-zinc-300">UV Curable Ink</span>
+            <span className="text-[10px] font-mono text-[#00C853]">ANTI-HEAT</span>
           </div>
         </div>
       </div>

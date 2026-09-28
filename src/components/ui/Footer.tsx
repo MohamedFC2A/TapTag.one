@@ -59,12 +59,12 @@ export function Footer({ lang = "ar" }: FooterProps) {
   };
 
   return (
-    <footer className="w-full border-t border-[#1C1C1F] bg-[#000000] py-8 px-4 text-xs text-[#A1A1AA]">
+    <footer className="w-full border-t border-[#1C1C20] bg-[#000000] py-8 px-4 text-xs text-[#A1A1AA]">
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Brand System Notice */}
         <div className="flex items-center gap-2 text-center sm:text-start">
-          <ShieldCheck className="w-4 h-4 text-white shrink-0" />
-          <span>
+          <ShieldCheck className="w-4 h-4 text-[#00C853] shrink-0" />
+          <span className="font-mono text-[11px]">
             {isAr
               ? "منظومة TapTag.one • الهوية الذكية وحماية الأصول عبر تقنيات NFC و QR المشفرة"
               : "TapTag.one • Smart NFC/QR Identity & Privacy Asset System"}
@@ -72,24 +72,24 @@ export function Footer({ lang = "ar" }: FooterProps) {
         </div>
 
         {/* Built by Matany Group with Official 3D M Emblem */}
-        <div dir="ltr" className="inline-flex items-center gap-1.5 text-xs text-zinc-400 font-normal select-none">
+        <div dir="ltr" className="inline-flex items-center gap-1.5 text-xs text-zinc-400 font-mono select-none">
           <span>Built by</span>
           <a
             href="https://matanygroup.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-bold text-white hover:text-zinc-200 transition-colors group cursor-pointer"
+            className="inline-flex items-center gap-1.5 font-bold text-white hover:text-[#00C853] transition-colors group cursor-pointer"
             title="MATANY GROUP"
           >
-            <LogoSvgM className="h-3.5 w-auto shrink-0 group-hover:scale-110 transition-transform" />
-            <span className="tracking-wide text-white">Matany Group</span>
+            <LogoSvgM className="h-3.5 w-auto shrink-0 group-hover:scale-105 transition-transform" />
+            <span className="tracking-wide text-white group-hover:text-[#00C853] transition-colors">Matany Group</span>
           </a>
         </div>
 
         {/* Scroll To Top */}
         <button
           onClick={scrollToTop}
-          className="px-3 py-1.5 rounded-lg border border-[#27272A] bg-[#0E0E12] hover:bg-[#1C1C20] hover:text-white transition-all flex items-center gap-1.5 text-[11px] text-zinc-300"
+          className="px-3 py-1.5 rounded-lg border border-[#27272A] bg-[#08080A] hover:border-white/30 hover:text-white transition-all flex items-center gap-1.5 text-[11px] text-zinc-300 font-mono cursor-pointer"
         >
           <span>{isAr ? "للأعلى" : "Top"}</span>
           <ArrowUp className="w-3.5 h-3.5" />
