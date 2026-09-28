@@ -6,6 +6,7 @@ import {
   NavigationVector,
   computeNavigationVector,
   loadCalibrationLocally,
+  clearCalibrationLocally,
   KalmanAngleFilter,
   ExponentialFilter,
   playNavigationSound,
@@ -19,14 +20,14 @@ import {
   RotateCcw,
   Sparkles,
   ShieldCheck,
-  AlertCircle,
-  Eye,
+  AlertTriangle,
   Footprints,
   Car,
   CheckCircle2,
   X,
   Play,
   Pause,
+  Radio,
 } from "lucide-react";
 
 interface VehicleSpatialFinderProps {
@@ -59,9 +60,9 @@ export function VehicleSpatialFinder({
   const [isSensorActive, setIsSensorActive] = useState(false);
   const [sensorError, setSensorError] = useState<string>("");
 
-  // Interactive Simulation / Desktop Testing mode
+  // Interactive Simulation / Testing mode
   const [isSimulationMode, setIsSimulationMode] = useState(false);
-  const [simDistance, setSimDistance] = useState(24.5);
+  const [simDistance, setSimDistance] = useState(18.5);
   const [simHeading, setSimHeading] = useState(0);
   const [isAutoWalking, setIsAutoWalking] = useState(false);
 
@@ -70,14 +71,28 @@ export function VehicleSpatialFinder({
   const distanceFilterRef = useRef<ExponentialFilter>(new ExponentialFilter(0.25));
   const watchIdRef = useRef<number | null>(null);
   const lastArrivalTriggerRef = useRef<boolean>(false);
+  const currentHeadingRef = useRef<number>(0);
 
-  // Load existing calibration from localStorage when mounted
+  // Check and load calibration from localStorage when mounted
   useEffect(() => {
-    if (tagUid) {
-      const existing = loadCalibrationLocally(tagUid);
-      if (existing) {
-        setCalibration(existing);
+    if (!tagUid || !isOpen) return;
+
+    const existing = loadCalibrationLocally(tagUid);
+    if (existing) {
+      // Purge any corrupted Riyadh fallback coordinates (~24.7136, 46.6753)
+      if (
+        Math.abs(existing.rawLat - 24.7136) < 0.05 &&
+        Math.abs(existing.rawLng - 46.6753) < 0.05
+      ) {
+        clearCalibrationLocally(tagUid);
+        setCalibration(null);
+        setIsCalibrationModalOpen(true); // Automatically open modal to get REAL coordinates
+        return;
       }
+      setCalibration(existing);
+    } else {
+      // If never calibrated, automatically open the calibration modal!
+      setIsCalibrationModalOpen(true);
     }
   }, [tagUid, isOpen]);
 
@@ -90,9 +105,7 @@ export function VehicleSpatialFinder({
     setIsSensorActive(true);
     setSensorError("");
 
-    let currentHeading = 0;
-
-    // 1. Device Orientation Listener (Compass / Gyro)
+    // 1. Device Orientation Listener (Absolute on Android, webkitCompassHeading on iOS)
     const handleOrientation = (e: DeviceOrientationEvent) => {
       const eCompass = e as unknown as { webkitCompassHeading?: number };
       let rawHeading = 0;
@@ -102,11 +115,12 @@ export function VehicleSpatialFinder({
         rawHeading = (360 - e.alpha) % 360;
       }
 
-      currentHeading = kalmanHeadingRef.current.update(rawHeading);
+      const smoothedHeading = kalmanHeadingRef.current.update(rawHeading);
+      currentHeadingRef.current = smoothedHeading;
 
       setNavVector((prev) => {
         if (!prev) return null;
-        const relativeBearing = ((prev.bearingToVehicle - currentHeading + 540) % 360) - 180;
+        const relativeBearing = ((prev.bearingToVehicle - smoothedHeading + 540) % 360) - 180;
         const isDirectlyAligned = Math.abs(relativeBearing) <= 12;
 
         if (isDirectlyAligned && !prev.isDirectlyAligned) {
@@ -118,19 +132,24 @@ export function VehicleSpatialFinder({
 
         return {
           ...prev,
-          deviceHeading: currentHeading,
+          deviceHeading: smoothedHeading,
           relativeBearing,
           isDirectlyAligned,
         };
       });
     };
 
-    if (typeof window !== "undefined" && window.addEventListener) {
-      window.addEventListener("deviceorientation", handleOrientation);
+    if (typeof window !== "undefined") {
+      const win = window as any;
+      if ("ondeviceorientationabsolute" in win) {
+        win.addEventListener("deviceorientationabsolute", handleOrientation);
+      } else {
+        win.addEventListener("deviceorientation", handleOrientation);
+      }
     }
 
     // 2. Geolocation Watch Position
-    if (navigator.geolocation) {
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
       watchIdRef.current = navigator.geolocation.watchPosition(
         (pos) => {
           const lat = pos.coords.latitude;
@@ -140,7 +159,7 @@ export function VehicleSpatialFinder({
           const rawVector = computeNavigationVector(
             lat,
             lng,
-            currentHeading,
+            currentHeadingRef.current,
             calibration,
             accuracy
           );
@@ -170,25 +189,26 @@ export function VehicleSpatialFinder({
           }
         },
         (err) => {
-          console.warn("Geolocation watch error (using fallback simulation):", err);
+          console.warn("Geolocation watch error:", err);
           setSensorError(
             isAr
-              ? "تعذر الاتصال بـ GPS بدقة عالية في المكان الحالي. تم تفعيل وضع المحاكاة عالي الاستجابة."
-              : "High accuracy GPS is restricted indoors. Precision simulation enabled."
+              ? "تعذر الاتصال بالأقمار الصناعية بدقة عالية في المكان الحالي. يمكنك تفعيل وضع المحاكاة للاختبار."
+              : "GPS signal obstructed indoors. You may enable simulation mode to test."
           );
-          setIsSimulationMode(true);
         },
         {
           enableHighAccuracy: true,
-          maximumAge: 1000,
-          timeout: 10000,
+          maximumAge: 2000,
+          timeout: 20000,
         }
       );
     }
 
     return () => {
       if (typeof window !== "undefined") {
-        window.removeEventListener("deviceorientation", handleOrientation);
+        const win = window as any;
+        win.removeEventListener("deviceorientationabsolute", handleOrientation);
+        win.removeEventListener("deviceorientation", handleOrientation);
       }
       if (watchIdRef.current !== null && navigator.geolocation) {
         navigator.geolocation.clearWatch(watchIdRef.current);
@@ -211,7 +231,7 @@ export function VehicleSpatialFinder({
     if (!isOpen) return;
 
     if (isSimulationMode) {
-      const targetBearing = 42; // arbitrary fixed vehicle direction
+      const targetBearing = 42; // arbitrary vehicle direction
       const relativeBearing = ((targetBearing - simHeading + 540) % 360) - 180;
       const isDirectlyAligned = Math.abs(relativeBearing) <= 12;
       const isWithinLockoutRange = simDistance <= 2.5;
@@ -222,7 +242,7 @@ export function VehicleSpatialFinder({
         bearingToVehicle: targetBearing,
         relativeBearing,
         deviceHeading: simHeading,
-        confidencePercent: 94,
+        confidencePercent: 96,
         isDirectlyAligned,
         isWithinLockoutRange,
         isBeyondActiveRange,
@@ -311,7 +331,7 @@ export function VehicleSpatialFinder({
         </div>
 
         {/* Viewport Content */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center justify-between space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center justify-between space-y-5">
           {/* CASE 1: UNCALIBRATED STATE -> PROMPT TO CALIBRATE */}
           {!calibration && (
             <div className="w-full text-center space-y-5 py-6">
@@ -320,12 +340,12 @@ export function VehicleSpatialFinder({
               </div>
               <div>
                 <h3 className="text-base font-bold text-white">
-                  {isAr ? "لم تتم معايرة موضع السيارة بعد" : "Vehicle Not Calibrated Yet"}
+                  {isAr ? "يلزم معايرة موضع السيارة أولاً" : "Vehicle Calibration Required"}
                 </h3>
                 <p className="text-xs text-zinc-400 max-w-sm mx-auto mt-1 leading-relaxed">
                   {isAr
-                    ? "للبدء في تحديد مكان سيارتك بدون أي أجهزة خارجية، قم بالوقوف يسار السيارة واضغط زر المعايرة لمرة واحدة."
-                    : "To locate your car without external hardware, stand at the driver's side and perform a 1-tap spatial calibration."}
+                    ? "للبدء في تحديد مكان سيارتك بدقة، قف بجوار باب السائق (يسار السيارة) واضغط زر المعايرة لالتقاط إحداثيات GPS الحقيقية."
+                    : "Stand beside driver door and tap Calibrate to capture genuine satellite coordinates."}
                 </p>
               </div>
 
@@ -335,14 +355,44 @@ export function VehicleSpatialFinder({
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-[#00C853] bg-[#00C853] hover:bg-[#00B048] text-black font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-xl active:scale-95"
               >
                 <Sparkles className="w-4 h-4 text-black" />
-                <span>{isAr ? "معايرة موضع المركبة الفضائي الآن" : "Calibrate Vehicle Stance Now"}</span>
+                <span>{isAr ? "بدء المعايرة الفضائية للمركبة الآن" : "Calibrate Vehicle Stance Now"}</span>
               </button>
             </div>
           )}
 
-          {/* CASE 2: USER IS TOO CLOSE FOR 3D ARROW (> 0 and < 5m) OR UNCALIBRATED DISTANCE */}
+          {/* EXTREME DISTANCE WARNING (> 1.5 km) */}
+          {calibration && navVector && navVector.distanceMeters > 1500 && (
+            <div className="w-full p-4 rounded-2xl border border-amber-900/80 bg-amber-950/40 text-xs text-amber-200 space-y-3 animate-in fade-in">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-white">
+                    {isAr ? "المسافة المقروءة بعيدة جداً عن موقع السيارة!" : "Extreme Distance Detected!"}
+                  </h4>
+                  <p className="text-[11px] text-zinc-300 mt-1 leading-relaxed">
+                    {isAr
+                      ? `المسافة الحالية (${(navVector.distanceMeters / 1000).toFixed(1)} كم). يبدو أن المعايرة تمت سابقاً بإحداثيات قديمة أو من مدينة أخرى. يرجى الضغط بالأسفل لإعادة المعايرة بإحداثيات مكانك الحالي فوراً.`
+                      : `Distance is ${(navVector.distanceMeters / 1000).toFixed(1)} km. Please recalibrate with live coordinates beside car.`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsCalibrationModalOpen(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-400 bg-amber-400 text-black font-bold text-xs shadow-md"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-black" />
+                  <span>{isAr ? "إعادة المعايرة في مكاني الآن" : "Recalibrate At My Location"}</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* CASE 2: USER IS TOO CLOSE FOR 3D ARROW (> 2.5m and < 5m) */}
           {calibration && navVector && !navVector.isBeyondActiveRange && !hasArrivedLockout && (
-            <div className="w-full text-center p-4 rounded-2xl border border-amber-900/60 bg-amber-950/20 text-xs text-amber-200 space-y-2">
+            <div className="w-full text-center p-3.5 rounded-2xl border border-amber-900/60 bg-amber-950/20 text-xs text-amber-200 space-y-1.5">
               <div className="font-bold flex items-center justify-center gap-1.5">
                 <Footprints className="w-4 h-4 text-amber-400" />
                 <span>
@@ -494,7 +544,6 @@ export function VehicleSpatialFinder({
         onCalibrationSaved={(cal) => {
           setCalibration(cal);
           setIsCalibrationModalOpen(false);
-          setSimDistance(25.0); // Reset test distance
           setHasArrivedLockout(false);
         }}
         lang={lang}
