@@ -328,17 +328,84 @@ export function playNavigationSound(
 }
 
 /**
- * Storage helpers for Spatial Calibration
+ * Translates relative bearing into natural language directions exactly matching Apple Find My
  */
-const CALIBRATION_STORAGE_KEY_PREFIX = "taptag_spatial_cal_";
+export function getNaturalDirectionText(relativeBearing: number, isAr = true): string {
+  const absBearing = Math.abs(relativeBearing);
+  if (absBearing <= 20) {
+    return isAr ? "أمامك مباشرة" : "ahead";
+  } else if (relativeBearing > 20 && relativeBearing <= 135) {
+    return isAr ? "إلى يمينك" : "to your right";
+  } else if (relativeBearing < -20 && relativeBearing >= -135) {
+    return isAr ? "إلى يسارك" : "to your left";
+  } else {
+    return isAr ? "خلفك" : "behind";
+  }
+}
+
+/**
+ * Calculates dynamic SVG circular arc trajectory exactly as seen in Apple Precision Finding
+ * Radius = 120, Center = (150, 150)
+ */
+export function calculateApplePrecisionArc(relativeBearing: number, radius = 125, cx = 150, cy = 150): {
+  pathD: string;
+  startDot: { x: number; y: number };
+  endDot: { x: number; y: number };
+  isVisible: boolean;
+} {
+  // If target is directly ahead (< 15 deg), arc merges/hides
+  if (Math.abs(relativeBearing) <= 12) {
+    return {
+      pathD: "",
+      startDot: { x: cx, y: cy - radius },
+      endDot: { x: cx, y: cy - radius },
+      isVisible: false,
+    };
+  }
+
+  // Apple Find My arc starts near top (0 deg / 12 o'clock) or midway and sweeps to the target angle
+  // 0 degrees is (cx, cy - radius)
+  // Let start angle be 0 deg (or slight offset towards bearing)
+  const startAngleDeg = relativeBearing > 0 ? 0 : 0;
+  const endAngleDeg = Math.max(-175, Math.min(175, relativeBearing));
+
+  // Convert to radians (0 deg = top / 12 o'clock)
+  const toCoord = (deg: number) => {
+    const rad = toRadians(deg - 90);
+    return {
+      x: cx + radius * Math.cos(rad),
+      y: cy + radius * Math.sin(rad),
+    };
+  };
+
+  const pStart = toCoord(startAngleDeg);
+  const pEnd = toCoord(endAngleDeg);
+
+  const sweepFlag = relativeBearing > 0 ? 1 : 0;
+  const largeArcFlag = Math.abs(endAngleDeg - startAngleDeg) > 180 ? 1 : 0;
+
+  const pathD = `M ${pStart.x} ${pStart.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${pEnd.x} ${pEnd.y}`;
+
+  return {
+    pathD,
+    startDot: pStart,
+    endDot: pEnd,
+    isVisible: true,
+  };
+}
+
+/**
+ * Storage helpers for Spatial Calibration - Persistent & Locked
+ */
+const CALIBRATION_STORAGE_KEY_PREFIX = "taptag_spatial_locked_v2_";
+const LEGACY_STORAGE_PREFIX = "taptag_spatial_cal_";
 
 export function saveCalibrationLocally(calibration: SpatialCalibration): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(
-      `${CALIBRATION_STORAGE_KEY_PREFIX}${calibration.tagUid}`,
-      JSON.stringify(calibration)
-    );
+    const payload = JSON.stringify(calibration);
+    localStorage.setItem(`${CALIBRATION_STORAGE_KEY_PREFIX}${calibration.tagUid}`, payload);
+    localStorage.setItem(`${LEGACY_STORAGE_PREFIX}${calibration.tagUid}`, payload);
   } catch (err) {
     console.error("Failed to save spatial calibration locally:", err);
   }
@@ -347,7 +414,9 @@ export function saveCalibrationLocally(calibration: SpatialCalibration): void {
 export function loadCalibrationLocally(tagUid: string): SpatialCalibration | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(`${CALIBRATION_STORAGE_KEY_PREFIX}${tagUid}`);
+    const raw =
+      localStorage.getItem(`${CALIBRATION_STORAGE_KEY_PREFIX}${tagUid}`) ||
+      localStorage.getItem(`${LEGACY_STORAGE_PREFIX}${tagUid}`);
     if (!raw) return null;
     return JSON.parse(raw) as SpatialCalibration;
   } catch (err) {
@@ -356,11 +425,19 @@ export function loadCalibrationLocally(tagUid: string): SpatialCalibration | nul
   }
 }
 
-export function clearCalibrationLocally(tagUid: string): void {
+export function restartSpatialCalibrationLocally(tagUid: string): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(`${CALIBRATION_STORAGE_KEY_PREFIX}${tagUid}`);
+    localStorage.removeItem(`${LEGACY_STORAGE_PREFIX}${tagUid}`);
   } catch (err) {
-    console.error("Failed to clear spatial calibration locally:", err);
+    console.error("Failed to reset spatial calibration locally:", err);
   }
 }
+
+export function clearCalibrationLocally(tagUid: string): void {
+  restartSpatialCalibrationLocally(tagUid);
+}
+
+
+

@@ -27,7 +27,6 @@ import { translations } from "@/lib/translations";
 import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { VehicleSpatialFinder } from "@/components/navigation/VehicleSpatialFinder";
 import {
   updateTagStatus,
   updateTagAutoResponse,
@@ -92,7 +91,6 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
   const [tags, setTags] = useState<TagData[]>(initialTags);
   const [incidents, setIncidents] = useState<IncidentData[]>(initialIncidents);
   const [selectedTagForConfig, setSelectedTagForConfig] = useState<TagData | null>(null);
-  const [selectedTagForFinder, setSelectedTagForFinder] = useState<TagData | null>(null);
   const [autoResponseText, setAutoResponseText] = useState("");
   const [autoResponseEnabled, setAutoResponseEnabled] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -231,16 +229,25 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {tags.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setSelectedTagForFinder(tags[0])}
-                className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-lg border border-[#00C853] bg-[#00C853]/15 text-[#00C853] hover:bg-[#00C853] hover:text-black transition-all cursor-pointer shadow-md"
+              <Link
+                href={`/dashboard/find?tag=${tags[0].tagUid}`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg border border-[#00C853] bg-[#00C853]/15 text-[#00C853] hover:bg-[#00C853] hover:text-black transition-all cursor-pointer shadow-md"
               >
                 <Compass className="w-4 h-4" />
                 <span>{t.spatialFinder.findCarButton}</span>
-              </button>
+              </Link>
+            )}
+
+            {tags.length > 0 && (
+              <Link
+                href={`/dashboard/calibrate?tag=${tags[0].tagUid}`}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-lg border border-[#1F2228] bg-[#0A0A0E] text-zinc-300 hover:text-white hover:border-[#00C853] transition-all cursor-pointer"
+              >
+                <Navigation className="w-4 h-4 text-[#00C853]" />
+                <span>{isAr ? "معايرة السيارة" : "Calibrate Stance"}</span>
+              </Link>
             )}
 
             <Link
@@ -405,13 +412,21 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
                     </td>
                     <td className="p-3.5 text-end">
                       <div className="inline-flex items-center gap-2">
-                        <button
-                          onClick={() => setSelectedTagForFinder(tag)}
+                        <Link
+                          href={`/dashboard/find?tag=${tag.tagUid}`}
                           className="p-1.5 rounded border border-[#00C853]/40 bg-[#00C853]/10 text-[#00C853] hover:bg-[#00C853] hover:text-black transition-colors"
-                          title={isAr ? "نظام التوجيه الملاحي الفضائي (أين سيارتي؟)" : "Zero-Hardware Spatial Finder"}
+                          title={isAr ? "أين سيارتي؟ (الملاحة الفضائية)" : "Find Car (Precision Finding)"}
                         >
                           <Compass className="w-3.5 h-3.5" />
-                        </button>
+                        </Link>
+
+                        <Link
+                          href={`/dashboard/calibrate?tag=${tag.tagUid}`}
+                          className="p-1.5 rounded border border-[#1F2228] bg-[#0A0A0E] text-zinc-300 hover:text-white hover:border-[#00C853] transition-colors"
+                          title={isAr ? "معايرة موقف السيارة" : "Calibrate Stance"}
+                        >
+                          <Navigation className="w-3.5 h-3.5" />
+                        </Link>
 
                         <button
                           onClick={() => handleOpenConfig(tag)}
@@ -670,20 +685,6 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
             </div>
           </div>
         </div>
-      )}
-
-      {/* Zero-Hardware Autonomous Vehicle Spatial Precision Finder */}
-      {selectedTagForFinder && (
-        <VehicleSpatialFinder
-          isOpen={!!selectedTagForFinder}
-          onClose={() => setSelectedTagForFinder(null)}
-          tagUid={selectedTagForFinder.tagUid}
-          vehiclePlate={selectedTagForFinder.profile?.vehiclePlate || selectedTagForFinder.tagUid}
-          vehicleMake={selectedTagForFinder.profile?.vehicleMake || "Vehicle"}
-          vehicleModel={selectedTagForFinder.profile?.vehicleModel || ""}
-          vehicleColor={selectedTagForFinder.profile?.vehicleColor || ""}
-          lang={lang}
-        />
       )}
 
       <Footer lang={lang} />

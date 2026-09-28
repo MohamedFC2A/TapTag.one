@@ -79,32 +79,33 @@ export async function saveVehicleSpatialCalibration(params: SaveCalibrationParam
       offsetDistanceMeters
     );
 
-    // Also record audit incident log
-    await db.incidentLog.create({
-      data: {
-        tagId: tag.id,
-        eventType: "SCAN",
-        ipAddressHash: "neon_spatial_sync",
-        status: "RESOLVED",
-        resolutionNotes: "Zero-Hardware Spatial Stance Calibrated and Persisted in Neon",
-        metadata: {
-          type: "SPATIAL_CALIBRATION",
-          pointId: id,
-          rawLat,
-          rawLng,
-          userHeading,
-          accuracy,
-          altitude,
-          centroidLat,
-          centroidLng,
-          offsetDistanceMeters,
-          timestamp: new Date().toISOString(),
-        },
-      },
-    });
-
-    revalidatePath(`/t/${cleanTagUid}`);
-    revalidatePath("/dashboard");
+    // Asynchronously log audit trail without blocking response
+    if (tag) {
+      db.incidentLog
+        .create({
+          data: {
+            tagId: tag.id,
+            eventType: "SCAN",
+            ipAddressHash: "neon_spatial_sync",
+            status: "RESOLVED",
+            resolutionNotes: "Zero-Hardware Spatial Stance Calibrated and Persisted in Neon",
+            metadata: {
+              type: "SPATIAL_CALIBRATION",
+              pointId: id,
+              rawLat,
+              rawLng,
+              userHeading,
+              accuracy,
+              altitude,
+              centroidLat,
+              centroidLng,
+              offsetDistanceMeters,
+              timestamp: new Date().toISOString(),
+            },
+          },
+        })
+        .catch((err) => console.error("Audit log async error:", err));
+    }
 
     return {
       success: true,
@@ -119,6 +120,53 @@ export async function saveVehicleSpatialCalibration(params: SaveCalibrationParam
       success: false,
       error: "حدث خطأ أثناء المزامنة السحابية مع Neon.",
     };
+  }
+}
+
+/**
+ * Fetch the single most recent calibration point for a tag from Neon PostgreSQL
+ */
+export async function getLatestVehicleSpatialPoint(tagUid: string): Promise<{
+  success: boolean;
+  point: SpatialPointRecord | null;
+}> {
+  try {
+    const cleanTagUid = tagUid.trim().toUpperCase();
+    const rows = (await db.$queryRawUnsafe(
+      `
+      SELECT 
+        "id", "tagUid", "rawLat", "rawLng", "userHeading", "accuracy",
+        "centroidLat", "centroidLng", "offsetDistanceMeters", "createdAt"
+      FROM "VehicleSpatialPoint"
+      WHERE "tagUid" = $1
+      ORDER BY "createdAt" DESC
+      LIMIT 1;
+      `,
+      cleanTagUid
+    )) as any[];
+
+    if (!rows || rows.length === 0) {
+      return { success: true, point: null };
+    }
+
+    const r = rows[0];
+    const point: SpatialPointRecord = {
+      id: r.id,
+      tagUid: r.tagUid,
+      rawLat: Number(r.rawLat),
+      rawLng: Number(r.rawLng),
+      userHeading: Number(r.userHeading),
+      accuracy: Number(r.accuracy),
+      centroidLat: Number(r.centroidLat),
+      centroidLng: Number(r.centroidLng),
+      offsetDistanceMeters: Number(r.offsetDistanceMeters),
+      createdAt: r.createdAt instanceof Date ? r.createdAt.toISOString() : String(r.createdAt),
+    };
+
+    return { success: true, point };
+  } catch (error) {
+    console.error("getLatestVehicleSpatialPoint error:", error);
+    return { success: false, point: null };
   }
 }
 
@@ -163,3 +211,24 @@ export async function getVehicleSpatialPointsHistory(tagUid: string): Promise<{
     return { success: false, points: [] };
   }
 }
+
+/**
+ * Purge calibration points when the user explicitly triggers Restart
+ */
+export async function deleteVehicleSpatialCalibration(tagUid: string): Promise<{
+  success: boolean;
+  message?: string;
+}> {
+  try {
+    const cleanTagUid = tagUid.trim().toUpperCase();
+    await db.$executeRawUnsafe(
+      `DELETE FROM "VehicleSpatialPoint" WHERE "tagUid" = $1;`,
+      cleanTagUid
+    );
+    return { success: true, message: "تمت إعادة ضبط النقطة بنجاح." };
+  } catch (error) {
+    console.error("deleteVehicleSpatialCalibration error:", error);
+    return { success: false };
+  }
+}
+
