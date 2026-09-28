@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #000000;
+  --foreground: #FFFFFF;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-ibm-plex), var(--font-readex), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: -0.015em;
+  font-feature-settings: "cv01" on, "cv02" on, "ss01" on;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-color: #000000;
+}
+
+/* Strict Official Aesthetic: Zero diffuse lighting / Zero neon glow / Flat matte surfaces */
+* {
+  box-shadow: none !important;
+}
+
+/* Crisp institutional selection */
+::selection {
+  background-color: #00C853;
+  color: #000000;
+}
+
+/* Subtle, sharp hairline borders */
+.hairline-border {
+  border: 1px solid #1C1C1F;
+}
+
+/* Clean minimal scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #222226;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333338;
+}

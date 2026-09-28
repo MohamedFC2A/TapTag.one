@@ -1,0 +1,143 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMIN
+  FLEET_MANAGER
+  OWNER
+}
+
+enum TagStatus {
+  ACTIVE
+  AWAY
+  DND
+  SUSPENDED
+}
+
+enum IncidentEventType {
+  SCAN
+  MOVEMENT_REQUEST
+  EMERGENCY_REPORT
+  CALL_ATTEMPT
+  DIRECT_NOTE
+}
+
+enum IncidentStatus {
+  RECEIVED
+  DELIVERED
+  RESOLVED
+  IGNORED
+}
+
+enum AlertChannel {
+  WHATSAPP
+  TELEGRAM
+  PUSH
+  SMS
+}
+
+enum DeliveryStatus {
+  QUEUED
+  SENT
+  FAILED
+  DELIVERED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  phone        String?
+  name         String?
+  role         UserRole  @default(OWNER)
+  otpCode      String?
+  otpExpiresAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  tags         Tag[]
+}
+
+model Tag {
+  id              String        @id @default(cuid())
+  tagUid          String        @unique // e.g. "MW-88219-X"
+  secretHash      String        @default("factory_key")
+  status          TagStatus     @default(ACTIVE)
+  isActivated     Boolean       @default(false) // First-Claim Ownership state
+  ownerDeviceId   String?       // Bound Device ID / Biometric Passkey ID
+  ownerDeviceName String?       // Device model (e.g. iPhone, Galaxy)
+  claimedAt       DateTime?     // Activation timestamp
+  activationToken String?       @default(cuid())
+  qrCodeSvg       String?       @db.Text
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  profile         TagProfile?
+  incidentLogs    IncidentLog[]
+  alerts          Alert[]
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([tagUid])
+  @@index([userId])
+  @@index([status])
+  @@index([ownerDeviceId])
+}
+
+model TagProfile {
+  id                    String   @id @default(cuid())
+  tagId                 String   @unique
+  tag                   Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  vehiclePlate          String   // e.g. "أ ب ج 1234"
+  vehicleMake           String   // e.g. "Toyota"
+  vehicleModel          String   // e.g. "Land Cruiser"
+  vehicleColor          String   // e.g. "White Pearl"
+  emergencyContactPhone String   // Private: Masked, NEVER exposed publicly
+  autoResponseText      String   @default("سأعود خلال 15 دقيقة")
+  autoResponseEnabled   Boolean  @default(false)
+  notifyWhatsApp        Boolean  @default(true)
+  notifyTelegram        Boolean  @default(false)
+  notifyPush            Boolean  @default(true)
+  notifySms             Boolean  @default(false)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model IncidentLog {
+  id              String            @id @default(cuid())
+  tagId           String
+  tag             Tag               @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  eventType       IncidentEventType
+  ipAddressHash   String            // SHA-256 hash of client IP for privacy & rate limiting
+  userAgent       String?
+  status          IncidentStatus    @default(RECEIVED)
+  resolutionNotes String?
+  metadata        Json?             // category, caller session, note content, etc.
+  createdAt       DateTime          @default(now())
+
+  @@index([tagId])
+  @@index([ipAddressHash, createdAt])
+  @@index([eventType])
+}
+
+model Alert {
+  id               String         @id @default(cuid())
+  tagId            String
+  tag              Tag            @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  channel          AlertChannel
+  recipient        String         // Masked phone/id
+  payload          Json
+  deliveryStatus   DeliveryStatus @default(SENT)
+  providerResponse String?
+  createdAt        DateTime       @default(now())
+
+  @@index([tagId])
+  @@index([channel])
+}
