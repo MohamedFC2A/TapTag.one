@@ -254,9 +254,9 @@ export function PWAInstallAndPermissionsModal() {
 
             {/* Success message */}
             {authSuccessMessage && (
-              <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs font-mono text-emerald-200 flex items-center justify-between shadow-glass animate-in fade-in">
+              <div className="p-3.5 rounded-xl border border-white/20 bg-white/10 text-xs font-mono text-white flex items-center justify-between shadow-glass animate-in fade-in">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-white" />
                   <span>{authSuccessMessage}</span>
                 </div>
                 <span className="text-[10px] text-zinc-400 font-mono">جارٍ الإغلاق...</span>
@@ -370,7 +370,7 @@ export function PWAInstallAndPermissionsModal() {
                   disabled={isAuthorizing || !!authSuccessMessage}
                   className={`w-full font-mono font-bold text-xs py-5 cursor-pointer transition-all ${
                     authSuccessMessage
-                      ? "bg-emerald-500 text-white"
+                      ? "bg-white text-black"
                       : "bg-white hover:bg-zinc-200 text-black"
                   }`}
                 >

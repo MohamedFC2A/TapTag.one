@@ -55,7 +55,7 @@ async function ensureCardDesignTable() {
     `);
 
     // Ensure new columns exist
-    await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "logoText" TEXT DEFAULT 'tagtap.one';`);
+    await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "logoText" TEXT DEFAULT 'taptag.one';`);
     await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "layoutPreset" TEXT DEFAULT 'TAP_MINIMAL';`);
     await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "qrPlacement" TEXT DEFAULT 'BACK_ONLY';`);
     await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "nfcPosition" TEXT DEFAULT 'BOTTOM_LEFT';`);
@@ -121,7 +121,7 @@ export async function saveCardDesignAction(config: CardDesignConfig) {
       config.showNfcIcon,
       config.showEmergency,
       config.customText,
-      config.logoText || "tagtap.one",
+      config.logoText || "taptag.one",
       config.layoutPreset || "TAP_MINIMAL",
       config.qrPlacement || "BACK_ONLY",
       config.nfcPosition || "BOTTOM_LEFT",

@@ -78,8 +78,8 @@ export const AntiMetalButton = React.forwardRef<
       <button
         ref={ref}
         className={cn(
-          "group/btn relative inline-flex h-11 min-w-[150px] items-center justify-center overflow-hidden rounded-xl px-4 transition-all duration-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50 cursor-pointer",
-          "bg-[#08080A] border border-white/15 hover:border-emerald-500/50",
+          "group/btn relative inline-flex h-11 min-w-[150px] items-center justify-center overflow-hidden rounded-xl px-4 transition-all duration-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer",
+          "bg-[#08080A] border border-white/15 hover:border-white/40",
           className
         )}
         {...props}

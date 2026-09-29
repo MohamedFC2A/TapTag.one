@@ -348,7 +348,7 @@ export function VehicleSpatialFinder({
         {calibration && navVector && navVector.distanceMeters > 1500 && (
           <div className="w-full p-3.5 rounded-xl border border-zinc-800 bg-[#121212] text-xs text-zinc-200 space-y-2.5">
             <div className="flex items-start gap-2.5">
-              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <AlertTriangle className="w-4 h-4 text-white shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold text-white block">
                   {isAr ? "المسافة بعيدة جداً عن موقع المعايرة!" : "Distance is very far from calibration point"}

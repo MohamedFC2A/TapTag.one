@@ -415,8 +415,8 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
                     </td>
                     <td className="p-4">
                       {tag.profile?.autoResponseEnabled ? (
-                        <span className="inline-flex items-center gap-1.5 text-[11px] text-amber-400 font-medium px-2.5 py-1 rounded-full glass-pill border border-amber-500/20">
-                          <CheckCircle2 className="w-3 h-3 text-amber-400" />
+                        <span className="inline-flex items-center gap-1.5 text-[11px] text-zinc-300 font-medium px-2.5 py-1 rounded-full glass-pill border border-white/15">
+                          <CheckCircle2 className="w-3 h-3 text-white" />
                           <span>{isAr ? "مفعّل" : "Active"}</span>
                         </span>
                       ) : (
@@ -516,7 +516,7 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
                           </span>
                         )}
                         {inc.eventType === "EMERGENCY_REPORT" && (
-                          <span className="px-2.5 py-1 rounded-full glass-pill text-amber-400 text-[10px] font-mono font-bold border border-amber-500/20">
+                          <span className="px-2.5 py-1 rounded-full glass-pill text-white text-[10px] font-mono font-bold border border-white/20 bg-white/5">
                             EMERGENCY
                           </span>
                         )}
@@ -543,13 +543,13 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
                     </td>
                     <td className="p-4">
                       {inc.status === "RESOLVED" ? (
-                        <span className="inline-flex items-center gap-1.5 text-[11px] text-zinc-300 font-bold px-2.5 py-1 rounded-full glass-pill border border-emerald-500/20">
-                          <CheckCircle2 className="w-3 h-3 text-[#00C853]" />
+                        <span className="inline-flex items-center gap-1.5 text-[11px] text-zinc-300 font-bold px-2.5 py-1 rounded-full glass-pill border border-white/20">
+                          <CheckCircle2 className="w-3 h-3 text-white" />
                           <span>{isAr ? "تمت المعالجة" : "Resolved"}</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 text-[11px] text-amber-400 px-2.5 py-1 rounded-full glass-pill border border-amber-500/20">
-                          <Clock className="w-3 h-3 text-amber-400" />
+                        <span className="inline-flex items-center gap-1.5 text-[11px] text-zinc-400 px-2.5 py-1 rounded-full glass-pill border border-white/10">
+                          <Clock className="w-3 h-3 text-zinc-400" />
                           <span>{isAr ? "قيد المتابعة" : "Pending"}</span>
                         </span>
                       )}

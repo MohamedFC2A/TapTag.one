@@ -299,15 +299,15 @@ export function AdminClient({
         <div
           className={`p-3.5 rounded-xl border text-xs font-mono flex items-center justify-between glass-surface ${
             feedback.type === "success"
-              ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-200"
-              : "border-rose-500/20 bg-rose-500/5 text-rose-200"
+              ? "border-white/20 bg-white/5 text-white"
+              : "border-red-500/20 bg-red-500/5 text-red-200"
           }`}
         >
           <div className="flex items-center gap-2">
             {feedback.type === "success" ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <CheckCircle2 className="w-4 h-4 text-white" />
             ) : (
-              <ShieldAlert className="w-4 h-4 text-rose-400" />
+              <ShieldAlert className="w-4 h-4 text-red-400" />
             )}
             <span>{feedback.text}</span>
           </div>
@@ -518,9 +518,9 @@ export function AdminClient({
                               variant="outline"
                               className={`text-[10px] font-mono cursor-pointer transition-transform group-hover:scale-105 ${
                                 tag.status === "ACTIVE"
-                                  ? "border-zinc-700 bg-zinc-800 text-white"
+                                  ? "border-white/20 bg-white/10 text-white"
                                   : tag.status === "AWAY"
-                                  ? "border-yellow-600/40 bg-yellow-950/20 text-yellow-400"
+                                  ? "border-zinc-700 bg-zinc-800 text-zinc-300"
                                   : "border-red-600/40 bg-red-950/20 text-red-400"
                               }`}
                             >
@@ -538,7 +538,7 @@ export function AdminClient({
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-[11px] text-zinc-400">
-                              <Lock className="w-3.5 h-3.5 text-yellow-500" />
+                              <Lock className="w-3.5 h-3.5 text-zinc-400" />
                               <span>مخزون مختوم</span>
                             </span>
                           )}
@@ -715,8 +715,8 @@ export function AdminClient({
                             variant="outline"
                             className={`text-[9px] font-mono ${
                               inc.status === "RESOLVED"
-                                ? "border-zinc-700 bg-zinc-800 text-white"
-                                : "border-yellow-600/40 bg-yellow-950/20 text-yellow-400"
+                                ? "border-white/20 bg-white/10 text-white"
+                                : "border-white/15 bg-white/5 text-zinc-300"
                             }`}
                           >
                             {inc.status}

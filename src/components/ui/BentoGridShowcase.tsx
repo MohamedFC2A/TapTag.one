@@ -39,7 +39,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
       {/* Bento Grid (Zero Shadows / Zero Glowing / 1px Precision Borders) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
         {/* BENTO 1: NFC & Dynamic QR (Span 2 cols) */}
-        <div className="md:col-span-2 relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+        <div className="md:col-span-2 relative group rounded-xl border border-white/10 hover:border-white/30 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
@@ -72,7 +72,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
         </div>
 
         {/* BENTO 2: Zero-Knowledge Privacy Barrier */}
-        <div className="relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+        <div className="relative group rounded-xl border border-white/10 hover:border-white/30 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
@@ -102,7 +102,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
         </div>
 
         {/* BENTO 3: Masked VoIP Audio Bridge */}
-        <div className="relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+        <div className="relative group rounded-xl border border-white/10 hover:border-white/30 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
@@ -132,7 +132,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
         </div>
 
         {/* BENTO 4: First-Claim Biometric Passkey */}
-        <div className="relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+        <div className="relative group rounded-xl border border-white/10 hover:border-white/30 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">
@@ -162,7 +162,7 @@ export function BentoGridShowcase({ lang }: BentoGridShowcaseProps) {
         </div>
 
         {/* BENTO 5: High-Durability Acrylic Card Hardware */}
-        <div className="relative group rounded-xl border border-white/10 hover:border-emerald-500/40 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
+        <div className="relative group rounded-xl border border-white/10 hover:border-white/30 bg-[#08080A] p-6 sm:p-7 flex flex-col justify-between transition-colors duration-300">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg border border-white/15 bg-black flex items-center justify-center text-white">

@@ -16,7 +16,7 @@ export function AcrylicCardHolo({
   return (
     <div className={`relative group select-none ${className}`}>
       {/* 1px Precision Outer Hairline Border */}
-      <div className="relative aspect-[7/5] w-full max-w-[340px] sm:max-w-[420px] rounded-2xl border border-white/15 group-hover:border-emerald-500/40 bg-[#08080A] p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-colors duration-500">
+      <div className="relative aspect-[7/5] w-full max-w-[340px] sm:max-w-[420px] rounded-2xl border border-white/15 group-hover:border-white/30 bg-[#08080A] p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-colors duration-500">
         
         {/* Subtle Diagonal Specular Sheen (Zero Blur) */}
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent pointer-events-none" />

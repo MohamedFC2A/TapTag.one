@@ -420,7 +420,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
           <div
             className={`p-4 rounded-2xl glass-surface-elevated text-xs flex items-center gap-3 transition-all animate-in fade-in duration-200 ${
               feedback.type === "success"
-                ? "border-emerald-500/30 text-white font-bold"
+                ? "border-white/20 text-white font-bold"
                 : feedback.type === "error"
                 ? "border-red-500/30 text-red-200"
                 : "border-white/[0.08] text-zinc-200"
@@ -842,11 +842,11 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
           <div className="space-y-6">
             {/* If Owner is previewing bystander view */}
             {isOwnerDevice && viewAsBystander && (
-              <div className="p-3.5 rounded-2xl glass-surface border border-amber-500/30 flex items-center justify-between text-xs text-amber-200">
+              <div className="p-3.5 rounded-2xl glass-surface border border-white/15 flex items-center justify-between text-xs text-zinc-300">
                 <span>{isAr ? "أنت تشاهد الصفحة الآن كما يراها أي شخص مار يمسح الـ QR." : "You are currently viewing the page as an external bystander."}</span>
                 <button
                   onClick={() => setViewAsBystander(false)}
-                  className="px-3 py-1.5 rounded-xl glass-card border border-amber-500/40 text-white font-medium cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl glass-card border border-white/20 text-white font-medium cursor-pointer"
                 >
                   {isAr ? "العودة لوضع المالك" : "Return to Owner Mode"}
                 </button>
@@ -909,13 +909,13 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
 
               {/* Owner Auto-Response Protocol (Visible if Away or enabled) */}
               {(tag.status === "AWAY" || tag.autoResponseEnabled) && tag.autoResponseText && (
-                <div className="mt-4 p-4 rounded-2xl glass-surface border border-amber-500/30 flex items-start gap-3">
-                  <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div className="mt-4 p-4 rounded-2xl glass-surface border border-white/15 flex items-start gap-3">
+                  <Clock className="w-4 h-4 text-white shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-xs font-semibold text-amber-300 block mb-0.5">
+                    <span className="text-xs font-semibold text-white block mb-0.5">
                       {isAr ? "تنويه المالك التلقائي:" : "Owner Auto-Response:"}
                     </span>
-                    <p className="text-xs text-zinc-200">
+                    <p className="text-xs text-zinc-300">
                       {tag.autoResponseText}
                     </p>
                   </div>
@@ -927,12 +927,12 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             {cooldownRemaining > 0 && (
               <div className="p-3.5 rounded-2xl glass-surface border border-white/[0.08] flex items-center justify-between text-xs text-zinc-300 font-mono">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-amber-400" />
+                  <Clock className="w-4 h-4 text-white" />
                   <span>
                     {isAr ? "فترة التهدئة النشطة لمنع التكرار:" : "Anti-Spam Cooldown Active:"}
                   </span>
                 </div>
-                <span className="text-amber-400 font-bold">
+                <span className="text-white font-mono font-bold">
                   {Math.floor(cooldownRemaining / 60)}:{(cooldownRemaining % 60).toString().padStart(2, "0")}
                 </span>
               </div>
@@ -957,8 +957,8 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
               <div className="space-y-4">
                 {/* DND Notice */}
                 {tag.status === "DND" && (
-                  <div className="p-4 rounded-2xl glass-surface border border-amber-500/30 flex items-center gap-3 text-xs text-amber-200">
-                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                  <div className="p-4 rounded-2xl glass-surface border border-white/15 flex items-center gap-3 text-xs text-zinc-300">
+                    <AlertTriangle className="w-4 h-4 text-white shrink-0" />
                     <span>
                       {isAr
                         ? "المركبة في وضع 'عدم الإزعاج' (DND) — تم حجب طلبات التحريك والملاحظات، ويُسمح فقط ببلاغات الطوارئ الحرجة."
@@ -1020,15 +1020,15 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     onClick={() => setActiveTab(activeTab === "emergency" ? null : "emergency")}
                     className={`p-6 rounded-3xl border cursor-pointer transition-all ${
                       activeTab === "emergency"
-                        ? "glass-surface-elevated border-amber-500 text-white shadow-glass scale-[1.01]"
+                        ? "glass-surface-elevated border-white text-white shadow-glass scale-[1.01]"
                         : "glass-card hover:border-white/20"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-2xl glass-pill flex items-center justify-center text-amber-400 border border-amber-500/20">
-                        <AlertTriangle className="w-5 h-5 text-amber-400" />
+                      <div className="w-10 h-10 rounded-2xl glass-pill flex items-center justify-center text-white border border-white/20">
+                        <AlertTriangle className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full glass-pill text-amber-400 font-bold border border-amber-500/20">
+                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full glass-pill text-white font-bold border border-white/20">
                         URGENT
                       </span>
                     </div>
@@ -1038,7 +1038,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     <p className="text-xs text-zinc-400 leading-relaxed mb-4">
                       {t.actions.emergency.desc}
                     </p>
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-400">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
                       <span>{isAr ? "إبلاغ عن طوارئ" : "Report Emergency"}</span>
                       <ChevronRight className={`w-3.5 h-3.5 transition-transform ${activeTab === "emergency" ? "rotate-90" : ""}`} />
                     </div>
@@ -1196,14 +1196,14 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             {activeTab === "emergency" && (
               <form
                 onSubmit={handleEmergencySubmit}
-                className="p-6 sm:p-7 rounded-3xl glass-surface-elevated border border-amber-500/40 space-y-5 shadow-glass animate-in fade-in duration-200"
+                className="p-6 sm:p-7 rounded-3xl glass-surface-elevated border border-white/20 space-y-5 shadow-glass animate-in fade-in duration-200"
               >
                 <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
                   <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-amber-500" />
+                    <AlertTriangle className="w-4 h-4 text-white" />
                     <span>{t.actions.emergency.title}</span>
                   </h4>
-                  <span className="text-[11px] text-amber-400 font-mono font-bold">PRIORITY HIGH</span>
+                  <span className="text-[11px] text-zinc-400 font-mono font-bold">PRIORITY HIGH</span>
                 </div>
 
                 <div>
@@ -1216,7 +1216,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                         key={key}
                         className={`flex items-start gap-3 p-3.5 rounded-xl border text-xs cursor-pointer transition-all ${
                           selectedEmergencyCategory === key
-                            ? "glass-surface-elevated border-amber-500 text-white font-bold shadow-sm"
+                            ? "glass-surface-elevated border-white text-white font-bold shadow-sm"
                             : "glass-card text-zinc-300 hover:border-white/15"
                         }`}
                       >
@@ -1226,7 +1226,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                           value={key}
                           checked={selectedEmergencyCategory === key}
                           onChange={() => setSelectedEmergencyCategory(key)}
-                          className="text-amber-500 focus:ring-0 mt-0.5 bg-transparent border-white/20"
+                          className="accent-white focus:ring-0 mt-0.5 bg-transparent border-white/20 cursor-pointer"
                         />
                         <span>{label}</span>
                       </label>
@@ -1259,7 +1259,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   <button
                     type="submit"
                     disabled={isPending || cooldownRemaining > 0}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-glass"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-glass"
                   >
                     <AlertTriangle className="w-3.5 h-3.5 text-black" />
                     <span>{isPending ? (isAr ? "جارٍ الإرسال..." : "Sending...") : t.actions.emergency.button}</span>

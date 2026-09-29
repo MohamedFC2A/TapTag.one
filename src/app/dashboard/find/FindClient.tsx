@@ -628,7 +628,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           </div>
         ) : calibration && !navVector ? (
           <div className="flex items-center gap-2.5 py-2 text-zinc-400 text-sm font-medium">
-            <Radio className="w-4 h-4 text-amber-400 animate-spin" />
+            <Radio className="w-4 h-4 text-white animate-spin" />
             <span>جاري الاتصال بالأقمار الصناعية وحساب المسافة...</span>
           </div>
         ) : null}

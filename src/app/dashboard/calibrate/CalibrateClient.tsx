@@ -473,7 +473,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
           <div className="space-y-4">
             <div className="glass-surface-elevated rounded-3xl p-5 space-y-4 border border-white/[0.12] shadow-glass">
               <div className="flex items-center gap-2.5 text-white text-sm font-bold">
-                <CheckCircle2 className="w-5 h-5 text-[#00C853]" />
+                <CheckCircle2 className="w-5 h-5 text-white" />
                 <span>المركبة معايرة حالياً ومثبتة بنجاح</span>
               </div>
               <div className="text-xs text-zinc-300 space-y-2.5 glass-surface p-3.5 rounded-2xl border border-white/[0.08] font-mono text-[11px]">
@@ -491,7 +491,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                   <div className="flex justify-between items-center">
                     <span className="text-zinc-400">حالة التحديث:</span>
                     <span className="text-zinc-200 font-semibold flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
+                      <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
                       <span>{liveRelativeTime}</span>
                     </span>
                   </div>
@@ -539,7 +539,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                 <button
                   type="button"
                   onClick={() => setIsReCalibrating(false)}
-                  className="text-amber-400 hover:text-amber-300 underline font-medium text-[11px] cursor-pointer"
+                  className="text-zinc-300 hover:text-white underline font-medium text-[11px] cursor-pointer"
                 >
                   تراجع والاحتفاظ بالموقف الحالي
                 </button>
@@ -557,7 +557,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
             {/* Step Instructions */}
             <div className="glass-surface border border-white/[0.08] rounded-2xl p-4 text-xs text-zinc-300 space-y-1.5 shadow-glass">
               <div className="font-bold text-white flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
                 <span>إجراء المعايرة الدقيقة الفائقة (7 ثوانٍ):</span>
               </div>
               <p className="text-zinc-400 leading-relaxed text-xs">
@@ -574,9 +574,9 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
               <Radio
                 className={`w-4 h-4 ${
                   isGpsAcquiring
-                    ? "text-amber-400 animate-spin"
+                    ? "text-zinc-300 animate-spin"
                     : currentAccuracy !== null && currentAccuracy <= 5
-                    ? "text-[#00C853]"
+                    ? "text-white"
                     : "text-zinc-400"
                 }`}
               />
@@ -640,7 +640,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
               </div>
               <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
                 <span className="flex items-center gap-1.5">
-                  <Satellite className="w-3.5 h-3.5 text-[#00C853]" />
+                  <Satellite className="w-3.5 h-3.5 text-white" />
                   <span>تم التقاط {samplesCount} عينة دقيقة</span>
                 </span>
                 <span>باقي {countdown} ثوانٍ</span>
@@ -653,7 +653,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
         {step === "SUCCESS" && (
           <div className="p-5 sm:p-6 rounded-3xl glass-surface-elevated border border-white/[0.12] space-y-4 shadow-glass">
             <div className="flex items-center gap-2.5 text-white text-sm font-bold">
-              <CheckCircle2 className="w-5 h-5 text-[#00C853]" />
+              <CheckCircle2 className="w-5 h-5 text-white" />
               <span>تم تثبيت المعايرة بدقة الأقمار الفائقة!</span>
             </div>
             <p className="text-xs text-zinc-400 leading-relaxed">
@@ -690,7 +690,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
               disabled={isWaitingForGpsLock}
               className={`w-full py-3.5 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-glass active:scale-95 ${
                 isWaitingForGpsLock
-                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-wait"
+                  ? "bg-white/10 text-white border border-white/20 cursor-wait"
                   : isGpsAcquiring && !latestGpsRef.current
                   ? "glass-card text-zinc-400 border border-white/[0.08]"
                   : "bg-white hover:bg-zinc-200 text-black"
@@ -698,7 +698,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
             >
               {isWaitingForGpsLock ? (
                 <>
-                  <Radio className="w-4 h-4 animate-spin text-amber-400" />
+                  <Radio className="w-4 h-4 animate-spin text-white" />
                   <span>جاري قفل إشارة الأقمار الصناعية... سيبدأ العد تلقائياً</span>
                 </>
               ) : isGpsAcquiring && !latestGpsRef.current ? (

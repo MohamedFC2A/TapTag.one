@@ -487,7 +487,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                 <h3 className="text-xs font-mono uppercase tracking-wider text-zinc-300 font-bold">
                   مقاسات وأشكال الأكريليك الرسمية
                 </h3>
-                <span className="text-[10px] font-mono text-emerald-400 font-bold">
+                <span className="text-[10px] font-mono text-zinc-400 font-bold">
                   Printzone 2026
                 </span>
               </div>
@@ -677,7 +677,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-bold font-sans">شعار taptag.one الرسمي</span>
                         <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
-                          config.brandType !== "CUSTOM_BRAND" ? "bg-black text-white" : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                          config.brandType !== "CUSTOM_BRAND" ? "bg-black text-white" : "bg-white/10 text-white border border-white/20"
                         }`}>
                           مشمول مجاناً (0 ج.م)
                         </span>
@@ -712,7 +712,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-bold font-sans">براند واسم مخصص</span>
                         <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
-                          config.brandType === "CUSTOM_BRAND" ? "bg-black text-white" : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                          config.brandType === "CUSTOM_BRAND" ? "bg-black text-white" : "bg-white/10 text-white border border-white/20"
                         }`}>
                           + 50 ج.م إضافية
                         </span>
@@ -721,8 +721,8 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                         حفر وتخصيص بالليزر باسم علامتك، شركتك، معرضك، أو اسمك الشخصي.
                       </p>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-400">
-                      <Sparkles className="w-3.5 h-3.5" />
+                    <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-300">
+                      <Sparkles className="w-3.5 h-3.5 text-white" />
                       <span>حفر ليزر شخصي</span>
                     </div>
                   </button>
@@ -731,19 +731,19 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
               {/* Logo / Brand Text Input */}
               {config.brandType === "CUSTOM_BRAND" ? (
-                <div className="p-3.5 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-2">
+                <div className="p-3.5 rounded-2xl glass-surface-elevated border border-white/15 space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-mono uppercase tracking-wider text-amber-300 block font-bold">
+                    <label className="text-xs font-mono uppercase tracking-wider text-white block font-bold">
                       اكتب نص البراند المخصص (+50 ج.م)
                     </label>
-                    <span className="text-[10px] font-mono text-amber-400">تحديث مباشر على البطاقة</span>
+                    <span className="text-[10px] font-mono text-zinc-400">تحديث مباشر على البطاقة</span>
                   </div>
                   <input
                     type="text"
                     value={config.logoText || ""}
                     onChange={(e) => updateField("logoText", e.target.value)}
                     placeholder="مثال: Al-Safwa Motors أو اسم معرضك أو شركتك"
-                    className="w-full bg-black/80 border border-amber-500/30 rounded-xl px-3 py-2 text-white font-sans text-sm font-bold focus:outline-none focus:border-amber-400 transition-colors"
+                    className="w-full glass-input rounded-xl px-3 py-2 text-white font-sans text-sm font-bold focus:outline-none focus:border-white transition-colors"
                     dir="auto"
                   />
                   <p className="text-[10px] text-zinc-400">
@@ -912,7 +912,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                   type="checkbox"
                   checked={config.showNfcIcon}
                   onChange={(e) => updateField("showNfcIcon", e.target.checked)}
-                  className="w-4 h-4 accent-emerald-500 rounded cursor-pointer"
+                  className="w-4 h-4 accent-white rounded cursor-pointer"
                 />
               </div>
             </div>
@@ -922,10 +922,10 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
           <div className="p-4 rounded-3xl bg-gradient-to-b from-white/[0.06] to-white/[0.02] border border-white/[0.12] shadow-glass space-y-3">
             <div className="flex items-center justify-between text-xs font-mono text-zinc-400 border-b border-white/[0.08] pb-2">
               <span className="font-bold text-white flex items-center gap-1.5">
-                <Sliders className="w-3.5 h-3.5 text-[#00C853]" />
+                <Sliders className="w-3.5 h-3.5 text-white" />
                 <span>حساب التكلفة والإنتاج الفوري</span>
               </span>
-              <span className="text-emerald-400 font-bold">Printzone 2026</span>
+              <span className="text-zinc-400 font-bold">Printzone 2026</span>
             </div>
 
             <div className="space-y-1.5 text-xs">
@@ -935,13 +935,13 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
               </div>
               <div className="flex items-center justify-between text-zinc-300">
                 <span>تخصيص الشعار ({config.brandType === "CUSTOM_BRAND" ? "براند واسم مخصص" : "شعار taptag.one الرسمي"}):</span>
-                <span className={`font-mono font-bold ${brandCustomizationFee > 0 ? "text-amber-400" : "text-emerald-400"}`}>
+                <span className="font-mono font-bold text-white">
                   {brandCustomizationFee > 0 ? `+${brandCustomizationFee} ج.م` : "مشمول مجاناً"}
                 </span>
               </div>
               <div className="pt-2 border-t border-white/[0.10] flex items-center justify-between text-sm font-bold text-white">
                 <span className="font-sans">الإجمالي النهائي للقطعة:</span>
-                <span className="text-base font-black font-mono text-[#00C853]">{totalPriceEgp} ج.م</span>
+                <span className="text-base font-black font-mono text-white">{totalPriceEgp} ج.م</span>
               </div>
             </div>
 

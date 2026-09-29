@@ -16,7 +16,7 @@ export function StatusBadge({ status, lang = "ar", className = "" }: StatusBadge
         <span
           className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium glass-pill border border-white/15 text-white ${className}`}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-white" />
           <span>{isAr ? "نشطة وجاهزة للتنبيه" : "Active & Ready"}</span>
         </span>
       );
@@ -24,9 +24,9 @@ export function StatusBadge({ status, lang = "ar", className = "" }: StatusBadge
     case "AWAY":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium glass-pill border border-white/15 text-zinc-200 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium glass-pill border border-white/15 text-zinc-300 ${className}`}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
           <span>{isAr ? "المالك بالخارج مؤقتاً" : "Temporarily Away"}</span>
         </span>
       );

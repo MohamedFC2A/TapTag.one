@@ -168,7 +168,7 @@ export function CallModal({
                 onClick={() => setIsMuted(!isMuted)}
                 className={`p-3 rounded-2xl border transition-all cursor-pointer ${
                   isMuted
-                    ? "border-amber-500/50 bg-amber-950/60 text-amber-400"
+                    ? "border-white/30 bg-white/10 text-white"
                     : "glass-card text-zinc-300 hover:text-white"
                 }`}
                 title={isMuted ? t.unmute : t.mute}
