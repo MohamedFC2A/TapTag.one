@@ -102,13 +102,13 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
         />
 
         {/* Quick Customization Button underneath card */}
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
           <Link
-            href="/admin/qr-engine"
+            href="/studio"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-zinc-200 transition-all shadow-md"
           >
             <Sliders className="w-3.5 h-3.5" />
-            <span>{isAr ? "تخصيص وتصميم بطاقتك الآن" : "Customize Your Card"}</span>
+            <span>{isAr ? "استوديو تخصيص وتصميم البطاقة" : "Card Studio & Customizer"}</span>
           </Link>
           <Link
             href="/dashboard/find"

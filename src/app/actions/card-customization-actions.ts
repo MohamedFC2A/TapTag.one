@@ -10,6 +10,8 @@ import type {
   CardLogoColor,
   CardFontFamily,
   CardPlateStyle,
+  CardLayoutPreset,
+  CardQrPlacement,
   CardDesignConfig,
 } from "@/types/card-design";
 import { DEFAULT_CARD_DESIGN } from "@/types/card-design";
@@ -22,11 +24,14 @@ export type {
   CardLogoColor,
   CardFontFamily,
   CardPlateStyle,
+  CardLayoutPreset,
+  CardQrPlacement,
   CardDesignConfig,
 };
 
 /**
- * Initializes CardDesign table in Neon PostgreSQL if not already created.
+ * Initializes CardDesign table in Neon PostgreSQL if not already created,
+ * and ensures all luxury Tap attributes (logoText, layoutPreset, qrPlacement, nfcPosition) exist.
  */
 async function ensureCardDesignTable() {
   try {
@@ -35,11 +40,11 @@ async function ensureCardDesignTable() {
         "id" TEXT PRIMARY KEY,
         "tagUid" TEXT UNIQUE NOT NULL,
         "material" TEXT NOT NULL DEFAULT 'MATTE_OBSIDIAN',
-        "dimensionStandard" TEXT NOT NULL DEFAULT 'ACRYLIC_TAG_70X50',
+        "dimensionStandard" TEXT NOT NULL DEFAULT 'CR80_STANDARD',
         "codeType" TEXT NOT NULL DEFAULT 'QR_CODE',
-        "logoPosition" TEXT NOT NULL DEFAULT 'TOP_LEFT',
-        "logoColor" TEXT NOT NULL DEFAULT 'SILVER',
-        "fontFamily" TEXT NOT NULL DEFAULT 'IBM_PLEX',
+        "logoPosition" TEXT NOT NULL DEFAULT 'CENTER',
+        "logoColor" TEXT NOT NULL DEFAULT 'WHITE',
+        "fontFamily" TEXT NOT NULL DEFAULT 'INTER',
         "plateStyle" TEXT NOT NULL DEFAULT 'STANDARD',
         "plateNumber" TEXT NOT NULL DEFAULT 'أ ب ج 1234',
         "showNfcIcon" BOOLEAN NOT NULL DEFAULT true,
@@ -48,6 +53,13 @@ async function ensureCardDesignTable() {
         "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Ensure new columns exist
+    await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "logoText" TEXT DEFAULT 'taptag.';`);
+    await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "layoutPreset" TEXT DEFAULT 'TAP_MINIMAL';`);
+    await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "qrPlacement" TEXT DEFAULT 'BACK_ONLY';`);
+    await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "nfcPosition" TEXT DEFAULT 'BOTTOM_LEFT';`);
+
     await db.$executeRawUnsafe(`
       CREATE INDEX IF NOT EXISTS "idx_carddesign_taguid" ON "CardDesign" ("tagUid");
     `);
@@ -71,8 +83,9 @@ export async function saveCardDesignAction(config: CardDesignConfig) {
       INSERT INTO "CardDesign" (
         "id", "tagUid", "material", "dimensionStandard", "codeType",
         "logoPosition", "logoColor", "fontFamily", "plateStyle", "plateNumber",
-        "showNfcIcon", "showEmergency", "customText", "updatedAt"
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+        "showNfcIcon", "showEmergency", "customText", "logoText", "layoutPreset",
+        "qrPlacement", "nfcPosition", "updatedAt"
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW())
       ON CONFLICT ("tagUid") DO UPDATE SET
         "material" = EXCLUDED."material",
         "dimensionStandard" = EXCLUDED."dimensionStandard",
@@ -85,6 +98,10 @@ export async function saveCardDesignAction(config: CardDesignConfig) {
         "showNfcIcon" = EXCLUDED."showNfcIcon",
         "showEmergency" = EXCLUDED."showEmergency",
         "customText" = EXCLUDED."customText",
+        "logoText" = EXCLUDED."logoText",
+        "layoutPreset" = EXCLUDED."layoutPreset",
+        "qrPlacement" = EXCLUDED."qrPlacement",
+        "nfcPosition" = EXCLUDED."nfcPosition",
         "updatedAt" = NOW();
       `,
       id,
@@ -99,11 +116,16 @@ export async function saveCardDesignAction(config: CardDesignConfig) {
       config.plateNumber,
       config.showNfcIcon,
       config.showEmergency,
-      config.customText
+      config.customText,
+      config.logoText || "taptag.",
+      config.layoutPreset || "TAP_MINIMAL",
+      config.qrPlacement || "BACK_ONLY",
+      config.nfcPosition || "BOTTOM_LEFT"
     );
 
     revalidatePath("/");
     revalidatePath("/admin/qr-engine");
+    revalidatePath("/studio");
 
     return {
       success: true,
@@ -164,6 +186,10 @@ export async function getCardDesignAction(tagUid?: string): Promise<{
           showNfcIcon: Boolean(row.showNfcIcon),
           showEmergency: Boolean(row.showEmergency),
           customText: row.customText,
+          logoText: row.logoText || "taptag.",
+          layoutPreset: (row.layoutPreset as CardLayoutPreset) || "TAP_MINIMAL",
+          qrPlacement: (row.qrPlacement as CardQrPlacement) || "BACK_ONLY",
+          nfcPosition: row.nfcPosition || "BOTTOM_LEFT",
           updatedAt: row.updatedAt ? new Date(row.updatedAt).toISOString() : undefined,
         },
       };
