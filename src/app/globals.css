@@ -20,26 +20,84 @@ body {
   overflow-x: hidden;
 }
 
-/* Institutional Precision: Monochrome Studio Aesthetic - No Neon / No Green */
 ::selection {
   background-color: #FFFFFF;
   color: #000000;
 }
 
-/* Subtle, sharp hairline borders */
+/* Hairline border */
 .hairline-border {
-  border: 1px solid #27272A;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Pure Apple/Linear Grade Glassmorphic Design System Tokens */
+.glass-surface {
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass-surface-elevated {
+  background: rgba(14, 14, 18, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 20px 48px -12px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 
+    0 4px 20px -2px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-1px);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+}
+
+.glass-input {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: #FFFFFF;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.glass-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 /* Studio & Physical Card Textures & Lighting */
 .acrylic-sheen {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.03) 25%,
     rgba(255, 255, 255, 0) 50%,
-    rgba(255, 255, 255, 0.08) 80%,
-    rgba(255, 255, 255, 0.2) 100%
+    rgba(255, 255, 255, 0.06) 80%,
+    rgba(255, 255, 255, 0.16) 100%
   );
 }
 
@@ -52,38 +110,11 @@ body {
   );
 }
 
-.carbon-fiber {
-  background: 
-    linear-gradient(27deg, #121214 5px, transparent 5px) 0 5px,
-    linear-gradient(207deg, #121214 5px, transparent 5px) 10px 0px,
-    linear-gradient(27deg, #1E1E22 5px, transparent 5px) 0px 10px,
-    linear-gradient(207deg, #1E1E22 5px, transparent 5px) 10px 5px,
-    linear-gradient(90deg, #18181B 10px, #0F0F11 10px);
-  background-size: 20px 20px;
-}
-
 .chamfer-bevel {
   box-shadow: 
-    inset 1px 1px 1px 0px rgba(255, 255, 255, 0.25),
+    inset 1px 1px 1px 0px rgba(255, 255, 255, 0.2),
     inset -1px -1px 1px 0px rgba(0, 0, 0, 0.6),
-    0 20px 40px -15px rgba(0, 0, 0, 0.85);
-}
-
-.studio-card-shadow {
-  box-shadow:
-    0 2px 4px rgba(0,0,0,0.4),
-    0 12px 24px -4px rgba(0,0,0,0.6),
-    0 32px 64px -8px rgba(0,0,0,0.9),
-    0 0 0 1px rgba(255,255,255,0.08);
-}
-
-.studio-spotlight {
-  background: radial-gradient(
-    circle at 50% 40%,
-    rgba(255, 255, 255, 0.07) 0%,
-    rgba(255, 255, 255, 0.02) 40%,
-    transparent 70%
-  );
+    0 16px 36px -12px rgba(0, 0, 0, 0.85);
 }
 
 /* Oscillating audio frequency bars for VoIP call simulator */
@@ -128,9 +159,8 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   background: #27272A;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525B;
+  background: #3F3F46;
 }
-

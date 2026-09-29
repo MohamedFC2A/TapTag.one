@@ -1,11 +1,27 @@
 export type CardMaterial =
+  | "ACRYLIC"
   | "MATTE_OBSIDIAN"
   | "SMOKED_ACRYLIC"
   | "CARBON_FIBER"
   | "BRUSHED_TITANIUM"
   | "PEARL_WHITE";
 
+export type AcrylicFinish = "SATIN_MATTE" | "GLOSSY_CRYSTAL" | "SMOKED_FROST";
+
+/**
+ * Official Printzone 2026 Production Dimensions:
+ * 1. Card: 5.5 x 8.5 cm (Car Windshield Card)
+ * 2. Coaster Mini: 9 x 9 cm
+ * 3. Coaster Large: 12 x 12 cm
+ * 4. Stand Desktop: 10 x 15 cm
+ * 5. Stand Large: 15 x 20 cm
+ */
 export type CardDimension =
+  | "CARD_55X85"
+  | "COASTER_90X90"
+  | "COASTER_120X120"
+  | "STAND_100X150"
+  | "STAND_150X200"
   | "CR80_STANDARD"
   | "ACRYLIC_TAG_70X50"
   | "MINI_KEY_54X28";
@@ -28,6 +44,8 @@ export interface CardDesignConfig {
   id?: string;
   tagUid: string;
   material: CardMaterial;
+  cardColor?: string; // Hex color (e.g. #0E0F12, #F8FAFC, #0F172A, #064E3B, or custom picker)
+  acrylicFinish?: AcrylicFinish;
   dimensionStandard: CardDimension;
   codeType: CardCodeType;
   logoPosition: CardLogoPosition;
@@ -38,18 +56,22 @@ export interface CardDesignConfig {
   showNfcIcon: boolean;
   showEmergency: boolean;
   customText: string;
-  // Amazon Tap card professional attributes
+  // Professional Amazon / Printzone specifications
   layoutPreset?: CardLayoutPreset;
   logoText?: string;
   qrPlacement?: CardQrPlacement;
   nfcPosition?: "BOTTOM_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT";
+  brandType?: "OFFICIAL_TAPTAG" | "CUSTOM_BRAND";
+  customBrandFee?: number;
   updatedAt?: string;
 }
 
 export const DEFAULT_CARD_DESIGN: CardDesignConfig = {
   tagUid: "MW-88219-X",
-  material: "MATTE_OBSIDIAN",
-  dimensionStandard: "CR80_STANDARD", // Standard CR80 85.6 x 54 mm (like the Amazon card)
+  material: "ACRYLIC",
+  cardColor: "#0E0F12",
+  acrylicFinish: "GLOSSY_CRYSTAL",
+  dimensionStandard: "CARD_55X85",
   codeType: "QR_CODE",
   logoPosition: "CENTER",
   logoColor: "WHITE",
@@ -60,7 +82,9 @@ export const DEFAULT_CARD_DESIGN: CardDesignConfig = {
   showEmergency: false,
   customText: "TAPTAG SMART ACCESS",
   layoutPreset: "TAP_MINIMAL",
-  logoText: "taptag.",
+  logoText: "taptag.one",
   qrPlacement: "BACK_ONLY",
   nfcPosition: "BOTTOM_LEFT",
+  brandType: "OFFICIAL_TAPTAG",
+  customBrandFee: 0,
 };

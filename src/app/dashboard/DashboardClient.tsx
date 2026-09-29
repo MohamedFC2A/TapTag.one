@@ -216,148 +216,156 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
   };
 
   return (
-    <div className={`min-h-screen bg-[#000000] text-white flex flex-col ${isAr ? "rtl" : "ltr"}`} dir={isAr ? "rtl" : "ltr"}>
+    <div className={`min-h-screen bg-[#000000] text-white flex flex-col relative overflow-hidden ${isAr ? "rtl" : "ltr"}`} dir={isAr ? "rtl" : "ltr"}>
+      {/* Precision Micro-Grid Horizon */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
+
+      {/* Floating Glassmorphic Header */}
       <Header lang={lang} onLanguageChange={setLang} />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 space-y-8">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 space-y-8 relative z-10">
         {/* Top Control Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-6">
           <div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-white" />
-              <h1 className="text-xl font-black text-white tracking-wide">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl glass-pill">
+                <ShieldCheck className="w-5 h-5 text-[#00C853]" />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 {isAr ? "لوحة إدارة سياراتي" : t.dashboard.title}
               </h1>
             </div>
-            <p className="text-xs text-[#A1A1AA] mt-1 font-medium">
+            <p className="text-xs sm:text-sm text-zinc-400 mt-1 font-medium leading-relaxed">
               {isAr
-                ? "متابعة وإدارة سياراتك المسجلة والتحكم الفوري في حالات البطاقات الذكية عبر المنظومة السحابية المعتمدة"
-                : "Real-time fleet monitoring and operational controls backed by secure cloud infrastructure."}
+                ? "إدارة سياراتك وبطاقاتك الذكية والتحكم الفوري في حالات التواصل وبلاغات الأمان."
+                : "Manage your vehicles, smart cards, and instant emergency communications."}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
             {primaryTagUid && (
               <Link
                 href={`/dashboard/find?tag=${primaryTagUid}`}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-white text-black hover:bg-zinc-200 transition-all cursor-pointer shadow-md"
+                className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl bg-white text-black hover:bg-zinc-200 transition-all cursor-pointer shadow-glass active:scale-95"
               >
-                <Compass className="w-4 h-4" />
-                <span>{t.spatialFinder.findCarButton}</span>
+                <Compass className="w-3.5 h-3.5 text-black" />
+                <span>{isAr ? "أين سيارتي؟" : "Find Vehicle"}</span>
               </Link>
             )}
 
             {primaryTagUid && (
               <Link
                 href={`/dashboard/calibrate?tag=${primaryTagUid}`}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-200 hover:text-white hover:border-zinc-500 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-xl glass-card text-zinc-200 hover:text-white transition-all cursor-pointer"
               >
-                <Navigation className="w-4 h-4 text-zinc-300" />
-                <span>{isAr ? "معايرة السيارة" : "Calibrate Stance"}</span>
+                <Navigation className="w-3.5 h-3.5 text-zinc-300" />
+                <span>{isAr ? "معايرة" : "Calibrate"}</span>
               </Link>
             )}
 
             <Link
               href="/dashboard/activate"
-              className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-white transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-xl glass-card text-white hover:border-white/20 transition-all"
             >
-              <PlusCircle className="w-4 h-4 text-zinc-300" />
-              <span>{isAr ? "تفعيل كارت بالبصمة" : t.dashboard.activateTag}</span>
+              <PlusCircle className="w-3.5 h-3.5 text-zinc-300" />
+              <span>{isAr ? "تفعيل كارت جديد" : "Activate Card"}</span>
             </Link>
 
             <Link
               href="/admin/qr-engine"
-              className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-200 hover:text-white hover:border-zinc-500 transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl glass-card text-zinc-300 hover:text-white transition-all"
             >
-              <Printer className="w-4 h-4 text-zinc-300" />
-              <span>{isAr ? "استوديو تصميم البطاقات" : "Card Studio"}</span>
+              <Printer className="w-3.5 h-3.5 text-zinc-300" />
+              <span>{isAr ? "استوديو البطاقات" : "Studio"}</span>
             </Link>
           </div>
         </div>
 
-        {/* 4 Metric Cards (Flat Matte, Pure Black, 1px Hairline Borders) */}
+        {/* 4 Metric Cards (Frosted Glassmorphism, Zero Glowing) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-4 rounded-lg border border-[#1F2228] bg-[#08080A]">
-            <span className="text-[11px] font-mono uppercase text-[#A1A1AA] block mb-1 font-semibold">
+          <div className="p-5 rounded-3xl glass-surface-elevated border border-white/[0.08] shadow-glass">
+            <span className="text-[11px] font-mono uppercase text-zinc-400 block mb-1.5 font-semibold">
               {t.dashboard.activeTags}
             </span>
-            <div className="text-2xl font-black font-mono text-white flex items-baseline gap-2">
+            <div className="text-2xl sm:text-3xl font-black font-mono text-white flex items-baseline gap-2">
               <span>{stats.activeTags}</span>
-              <span className="text-xs text-[#71717A] font-normal">/ {stats.totalTags}</span>
+              <span className="text-xs text-zinc-500 font-normal">/ {stats.totalTags}</span>
             </div>
-            <div className="mt-2 text-[10px] text-zinc-300 flex items-center gap-1 font-mono font-bold">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+            <div className="mt-2.5 text-[10px] text-zinc-300 flex items-center gap-1.5 font-mono font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
               <span>{Math.round((stats.activeTags / Math.max(1, stats.totalTags)) * 100)}% OPERATIONAL</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-lg border border-[#1F2228] bg-[#08080A]">
-            <span className="text-[11px] font-mono uppercase text-zinc-500 block mb-1">
+          <div className="p-5 rounded-3xl glass-surface-elevated border border-white/[0.08] shadow-glass">
+            <span className="text-[11px] font-mono uppercase text-zinc-400 block mb-1.5 font-semibold">
               {t.dashboard.totalScans}
             </span>
-            <div className="text-2xl font-bold font-mono text-white">
+            <div className="text-2xl sm:text-3xl font-black font-mono text-white">
               {stats.totalScans}
             </div>
-            <div className="mt-2 text-[10px] text-zinc-400 flex items-center gap-1 font-mono">
+            <div className="mt-2.5 text-[10px] text-zinc-400 flex items-center gap-1.5 font-mono">
               <span>ALL TIME VERIFIED SCANS</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-lg border border-[#1F2228] bg-[#08080A]">
-            <span className="text-[11px] font-mono uppercase text-[#A1A1AA] block mb-1 font-semibold">
+          <div className="p-5 rounded-3xl glass-surface-elevated border border-white/[0.08] shadow-glass">
+            <span className="text-[11px] font-mono uppercase text-zinc-400 block mb-1.5 font-semibold">
               {t.dashboard.pendingAlerts}
             </span>
-            <div className="text-2xl font-black font-mono text-amber-400">
+            <div className="text-2xl sm:text-3xl font-black font-mono text-amber-400">
               {stats.pendingAlerts}
             </div>
-            <div className="mt-2 text-[10px] text-amber-400 flex items-center gap-1 font-mono font-bold">
+            <div className="mt-2.5 text-[10px] text-amber-400 flex items-center gap-1.5 font-mono font-bold">
               <Clock className="w-3 h-3" />
               <span>AWAITING RESOLUTION</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-lg border border-[#1F2228] bg-[#08080A]">
-            <span className="text-[11px] font-mono uppercase text-[#A1A1AA] block mb-1 font-semibold">
+          <div className="p-5 rounded-3xl glass-surface-elevated border border-white/[0.08] shadow-glass">
+            <span className="text-[11px] font-mono uppercase text-zinc-400 block mb-1.5 font-semibold">
               {t.dashboard.resolvedRate}
             </span>
-            <div className="text-2xl font-black font-mono text-white">
+            <div className="text-2xl sm:text-3xl font-black font-mono text-white">
               {stats.resolvedRate}%
             </div>
-            <div className="mt-2 text-[10px] text-zinc-300 flex items-center gap-1 font-mono font-bold">
-              <CheckCircle2 className="w-3 h-3 text-white" />
+            <div className="mt-2.5 text-[10px] text-zinc-300 flex items-center gap-1.5 font-mono font-bold">
+              <CheckCircle2 className="w-3 h-3 text-[#00C853]" />
               <span>SLA COMPLIANCE</span>
             </div>
           </div>
         </div>
 
-        {/* Registered Fleet & Tags Table */}
-        <div className="border border-zinc-800 rounded-2xl bg-[#08080A] overflow-hidden studio-card-shadow">
-          <div className="p-4 border-b border-zinc-800 flex items-center justify-between bg-[#040406]">
-            <div className="flex items-center gap-2">
+        {/* Registered Fleet & Tags Table Chassis */}
+        <div className="rounded-3xl glass-surface-elevated border border-white/[0.10] overflow-hidden shadow-glass">
+          <div className="p-5 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.02]">
+            <div className="flex items-center gap-2.5">
               <Car className="w-4 h-4 text-white" />
               <h2 className="text-sm font-bold text-white uppercase tracking-wider">
                 {isAr ? "سياراتك المسجلة والبطاقات الذكية" : "Registered Fleet & Smart Tags"}
               </h2>
             </div>
-            <span className="text-xs font-mono text-zinc-400 font-bold">{tags.length} TAGS</span>
+            <span className="text-xs font-mono text-zinc-400 font-bold px-2.5 py-1 rounded-full glass-pill border border-white/[0.08]">
+              {tags.length} TAGS
+            </span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs" dir={isAr ? "rtl" : "ltr"}>
-              <thead className="bg-[#000000] text-[#A1A1AA] border-b border-[#1F2228] font-mono text-[11px] uppercase">
+              <thead className="bg-black/40 text-zinc-400 border-b border-white/[0.06] font-mono text-[11px] uppercase">
                 <tr>
-                  <th className="p-3.5 text-start">{isAr ? "رمز البطاقة" : "Tag UID"}</th>
-                  <th className="p-3.5 text-start">{isAr ? "لوحة المركبة" : "Plate"}</th>
-                  <th className="p-3.5 text-start">{isAr ? "طراز المركبة" : "Vehicle"}</th>
-                  <th className="p-3.5 text-start">{isAr ? "الحالة التشغيلية" : "Operational Status"}</th>
-                  <th className="p-3.5 text-start">{isAr ? "الرد التلقائي" : "Auto-Reply"}</th>
-                  <th className="p-3.5 text-end">{isAr ? "الإجراءات" : "Controls"}</th>
+                  <th className="p-4 text-start">{isAr ? "رمز البطاقة" : "Tag UID"}</th>
+                  <th className="p-4 text-start">{isAr ? "لوحة المركبة" : "Plate"}</th>
+                  <th className="p-4 text-start">{isAr ? "طراز المركبة" : "Vehicle"}</th>
+                  <th className="p-4 text-start">{isAr ? "الحالة التشغيلية" : "Operational Status"}</th>
+                  <th className="p-4 text-start">{isAr ? "الرد التلقائي" : "Auto-Reply"}</th>
+                  <th className="p-4 text-end">{isAr ? "الإجراءات" : "Controls"}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1F2228] text-zinc-300">
+              <tbody className="divide-y divide-white/[0.06] text-zinc-300">
                 {tags.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-8 text-center text-zinc-500">
+                    <td colSpan={6} className="p-10 text-center text-zinc-500">
                       <div className="flex flex-col items-center justify-center space-y-3">
                         <Cpu className="w-8 h-8 text-zinc-600" />
                         <div className="text-xs font-medium text-zinc-400">
@@ -377,79 +385,79 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
                   </tr>
                 ) : (
                   tags.map((tag) => (
-                  <tr key={tag.id} className="hover:bg-zinc-900/40 transition-colors">
-                    <td className="p-3.5">
+                  <tr key={tag.id} className="hover:bg-white/[0.03] transition-colors">
+                    <td className="p-4">
                       <div className="flex items-center gap-2 font-mono font-medium text-white">
                         <Cpu className="w-3.5 h-3.5 text-zinc-400" />
                         <span>{tag.tagUid}</span>
                       </div>
                     </td>
-                    <td className="p-3.5 font-bold text-white">
+                    <td className="p-4 font-bold text-white font-mono">
                       {tag.profile?.vehiclePlate || "—"}
                     </td>
-                    <td className="p-3.5 text-zinc-400">
-                      <div>{tag.profile?.vehicleMake} {tag.profile?.vehicleModel}</div>
-                      <div className="text-[10px] text-zinc-500">{tag.profile?.vehicleColor}</div>
+                    <td className="p-4 text-zinc-300">
+                      <div className="font-semibold">{tag.profile?.vehicleMake} {tag.profile?.vehicleModel}</div>
+                      <div className="text-[10px] text-zinc-400">{tag.profile?.vehicleColor}</div>
                     </td>
-                    <td className="p-3.5">
+                    <td className="p-4">
                       {/* Operational Status Switcher Dropdown */}
                       <select
                         value={tag.status}
                         onChange={(e) => handleStatusChange(tag.id, e.target.value as TagStatus)}
                         disabled={isPending}
-                        className="bg-[#000000] border border-[#1F2228] text-xs rounded-lg px-2.5 py-1 text-zinc-200 focus:outline-none focus:border-white"
+                        className="glass-input text-xs rounded-xl px-3 py-1.5 text-zinc-200 focus:outline-none cursor-pointer"
                       >
-                        <option value="ACTIVE">{isAr ? "نشطة (Active)" : "ACTIVE"}</option>
-                        <option value="AWAY">{isAr ? "بالخارج (Away)" : "AWAY"}</option>
-                        <option value="DND">{isAr ? "عدم الإزعاج (DND)" : "DND"}</option>
-                        <option value="SUSPENDED">{isAr ? "معلقة (Suspended)" : "SUSPENDED"}</option>
+                        <option value="ACTIVE" className="bg-zinc-950 text-white">{isAr ? "نشطة (Active)" : "ACTIVE"}</option>
+                        <option value="AWAY" className="bg-zinc-950 text-white">{isAr ? "بالخارج (Away)" : "AWAY"}</option>
+                        <option value="DND" className="bg-zinc-950 text-white">{isAr ? "عدم الإزعاج (DND)" : "DND"}</option>
+                        <option value="SUSPENDED" className="bg-zinc-950 text-white">{isAr ? "معلقة (Suspended)" : "SUSPENDED"}</option>
                       </select>
                     </td>
-                    <td className="p-3.5">
+                    <td className="p-4">
                       {tag.profile?.autoResponseEnabled ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 font-medium">
+                        <span className="inline-flex items-center gap-1.5 text-[11px] text-amber-400 font-medium px-2.5 py-1 rounded-full glass-pill border border-amber-500/20">
                           <CheckCircle2 className="w-3 h-3 text-amber-400" />
                           <span>{isAr ? "مفعّل" : "Active"}</span>
                         </span>
                       ) : (
-                        <span className="text-[11px] text-zinc-500">
+                        <span className="text-[11px] text-zinc-500 font-mono">
                           {isAr ? "معطل" : "Off"}
                         </span>
                       )}
                     </td>
-                    <td className="p-3.5 text-end">
+                    <td className="p-4 text-end">
                       <div className="inline-flex items-center gap-2">
                         <Link
                           href={`/dashboard/find?tag=${tag.tagUid}`}
-                          className="p-1.5 rounded-lg border border-zinc-700 bg-zinc-800 text-white hover:bg-zinc-700 transition-colors"
+                          className="p-2 rounded-xl glass-card text-white hover:border-white/20 transition-all"
                           title={isAr ? "أين سيارتي؟ (الملاحة الفضائية)" : "Find Car (Precision Finding)"}
                         >
-                          <Compass className="w-3.5 h-3.5" />
+                          <Compass className="w-4 h-4" />
                         </Link>
 
                         <Link
                           href={`/dashboard/calibrate?tag=${tag.tagUid}`}
-                          className="p-1.5 rounded-lg border border-[#1F2228] bg-[#0A0A0E] text-zinc-300 hover:text-white hover:border-zinc-500 transition-colors"
+                          className="p-2 rounded-xl glass-card text-zinc-300 hover:text-white hover:border-white/20 transition-all"
                           title={isAr ? "معايرة موقف السيارة" : "Calibrate Stance"}
                         >
-                          <Navigation className="w-3.5 h-3.5" />
+                          <Navigation className="w-4 h-4" />
                         </Link>
 
                         <button
                           onClick={() => handleOpenConfig(tag)}
-                          className="p-1.5 rounded-lg border border-[#1F2228] bg-[#0A0A0E] text-zinc-300 hover:text-white hover:border-zinc-500 transition-colors"
+                          className="p-2 rounded-xl glass-card text-zinc-300 hover:text-white hover:border-white/20 transition-all cursor-pointer"
                           title={isAr ? "إعدادات القنوات والرد التلقائي" : "Settings"}
                         >
-                          <Sliders className="w-3.5 h-3.5" />
+                          <Sliders className="w-4 h-4" />
                         </button>
 
                         <Link
                           href={`/r/${tag.tagUid}`}
                           target="_blank"
-                          className="p-1.5 rounded-lg border border-[#1F2228] bg-[#0A0A0E] text-zinc-300 hover:text-white hover:border-zinc-500 transition-colors"
+                          className="p-2 rounded-xl glass-card text-zinc-300 hover:text-white hover:border-white/20 transition-all"
                           title={isAr ? "تجربة التوجيه الذكي للـ QR" : "Test Smart Redirect"}
                         >
-                          <ExternalLink className="w-3.5 h-3.5" />
+                          <ExternalLink className="w-4 h-4" />
                         </Link>
                       </div>
                     </td>
@@ -462,32 +470,34 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
         </div>
 
         {/* Incident Audit Trail Log */}
-        <div className="border border-zinc-800 rounded-2xl bg-[#08080A] overflow-hidden studio-card-shadow">
-          <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
-            <div className="flex items-center gap-2">
+        <div className="rounded-3xl glass-surface-elevated border border-white/[0.10] overflow-hidden shadow-glass">
+          <div className="p-5 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.02]">
+            <div className="flex items-center gap-2.5">
               <History className="w-4 h-4 text-white" />
               <h2 className="text-sm font-bold text-white uppercase tracking-wider">
                 {t.dashboard.auditTrail}
               </h2>
             </div>
-            <span className="text-xs font-mono text-zinc-500">AUDIT LOGS</span>
+            <span className="text-xs font-mono text-zinc-400 font-bold px-2.5 py-1 rounded-full glass-pill border border-white/[0.08]">
+              AUDIT LOGS
+            </span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs" dir={isAr ? "rtl" : "ltr"}>
-              <thead className="bg-[#000000] text-zinc-400 border-b border-[#1F2228] font-mono text-[11px] uppercase">
+              <thead className="bg-black/40 text-zinc-400 border-b border-white/[0.06] font-mono text-[11px] uppercase">
                 <tr>
-                  <th className="p-3.5 text-start">{isAr ? "نوع الحدث" : "Event"}</th>
-                  <th className="p-3.5 text-start">{isAr ? "البطاقة واللوحة" : "Tag & Plate"}</th>
-                  <th className="p-3.5 text-start">{isAr ? "التوقيت" : "Timestamp"}</th>
-                  <th className="p-3.5 text-start">{isAr ? "الحالة" : "Status"}</th>
-                  <th className="p-3.5 text-end">{isAr ? "الإجراء" : "Action"}</th>
+                  <th className="p-4 text-start">{isAr ? "نوع الحدث" : "Event"}</th>
+                  <th className="p-4 text-start">{isAr ? "البطاقة واللوحة" : "Tag & Plate"}</th>
+                  <th className="p-4 text-start">{isAr ? "التوقيت" : "Timestamp"}</th>
+                  <th className="p-4 text-start">{isAr ? "الحالة" : "Status"}</th>
+                  <th className="p-4 text-end">{isAr ? "الإجراء" : "Action"}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1F2228] text-zinc-300">
+              <tbody className="divide-y divide-white/[0.06] text-zinc-300">
                 {incidents.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-6 text-center text-zinc-500">
+                    <td colSpan={5} className="p-8 text-center text-zinc-500">
                       <div className="text-xs">
                         {isAr
                           ? "سجل العمليات نظيف. لا توجد بلاغات أو عمليات مسح حالياً."
@@ -497,59 +507,59 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
                   </tr>
                 ) : (
                   incidents.map((inc) => (
-                  <tr key={inc.id} className="hover:bg-[#0D0D12] transition-colors">
-                    <td className="p-3.5">
+                  <tr key={inc.id} className="hover:bg-white/[0.03] transition-colors">
+                    <td className="p-4">
                       <div className="flex items-center gap-2">
                         {inc.eventType === "MOVEMENT_REQUEST" && (
-                          <span className="px-2 py-0.5 rounded border border-zinc-700 bg-zinc-800 text-zinc-200 text-[10px] font-mono font-bold">
+                          <span className="px-2.5 py-1 rounded-full glass-pill text-zinc-200 text-[10px] font-mono font-bold border border-white/[0.10]">
                             MOVEMENT
                           </span>
                         )}
                         {inc.eventType === "EMERGENCY_REPORT" && (
-                          <span className="px-2 py-0.5 rounded border border-amber-800/60 bg-amber-950/40 text-amber-400 text-[10px] font-mono">
+                          <span className="px-2.5 py-1 rounded-full glass-pill text-amber-400 text-[10px] font-mono font-bold border border-amber-500/20">
                             EMERGENCY
                           </span>
                         )}
                         {inc.eventType === "SCAN" && (
-                          <span className="px-2 py-0.5 rounded border border-[#1F2228] bg-[#0A0A0E] text-zinc-400 text-[10px] font-mono">
+                          <span className="px-2.5 py-1 rounded-full glass-pill text-zinc-400 text-[10px] font-mono border border-white/[0.08]">
                             SCAN
                           </span>
                         )}
                         {inc.eventType === "DIRECT_NOTE" && (
-                          <span className="px-2 py-0.5 rounded border border-zinc-700 bg-zinc-800 text-zinc-300 text-[10px] font-mono">
+                          <span className="px-2.5 py-1 rounded-full glass-pill text-zinc-300 text-[10px] font-mono border border-white/[0.10]">
                             NOTE
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="p-3.5">
+                    <td className="p-4">
                       <div className="font-mono text-white font-bold">{inc.tag.tagUid}</div>
-                      <div className="text-[10px] text-zinc-400">
+                      <div className="text-[10px] text-zinc-400 font-mono">
                         {inc.tag.profile?.vehiclePlate || "—"}
                       </div>
                     </td>
-                    <td className="p-3.5 font-mono text-[11px] text-zinc-400">
+                    <td className="p-4 font-mono text-[11px] text-zinc-400">
                       {new Date(inc.createdAt).toLocaleString(isAr ? "ar-SA" : "en-US")}
                     </td>
-                    <td className="p-3.5">
+                    <td className="p-4">
                       {inc.status === "RESOLVED" ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-zinc-300 font-bold">
-                          <CheckCircle2 className="w-3 h-3 text-white" />
+                        <span className="inline-flex items-center gap-1.5 text-[11px] text-zinc-300 font-bold px-2.5 py-1 rounded-full glass-pill border border-emerald-500/20">
+                          <CheckCircle2 className="w-3 h-3 text-[#00C853]" />
                           <span>{isAr ? "تمت المعالجة" : "Resolved"}</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-amber-400">
+                        <span className="inline-flex items-center gap-1.5 text-[11px] text-amber-400 px-2.5 py-1 rounded-full glass-pill border border-amber-500/20">
                           <Clock className="w-3 h-3 text-amber-400" />
                           <span>{isAr ? "قيد المتابعة" : "Pending"}</span>
                         </span>
                       )}
                     </td>
-                    <td className="p-3.5 text-end">
+                    <td className="p-4 text-end">
                       {inc.status !== "RESOLVED" && (
                         <button
                           onClick={() => handleResolveIncident(inc.id)}
                           disabled={isPending}
-                          className="px-2.5 py-1 rounded border border-[#1F2228] bg-[#0A0A0E] hover:border-zinc-500 text-[11px] text-zinc-200 transition-colors"
+                          className="px-3 py-1.5 rounded-xl glass-card text-[11px] text-zinc-200 hover:text-white hover:border-white/20 transition-all cursor-pointer"
                         >
                           {isAr ? "إغلاق البلاغ" : "Resolve"}
                         </button>
@@ -564,22 +574,22 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
         </div>
       </main>
 
-      {/* Settings Modal (Auto-Reply & Dispatch Channels) */}
+      {/* Settings Frosted Glass Modal (Auto-Reply & Dispatch Channels) */}
       {selectedTagForConfig && selectedTagForConfig.profile && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-[#08080A] border border-[#1F2228] rounded-xl p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-[#1F2228] pb-3">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-lg glass-surface-elevated rounded-3xl p-6 sm:p-7 space-y-6 border border-white/[0.14] shadow-glass-elevated">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
               <div>
                 <h3 className="text-sm font-bold text-white">
                   {isAr ? "إعدادات تشغيل البطاقة:" : "Tag Configuration:"} {selectedTagForConfig.tagUid}
                 </h3>
-                <p className="text-xs text-zinc-400">
+                <p className="text-xs text-zinc-400 mt-0.5">
                   {selectedTagForConfig.profile.vehiclePlate} ({selectedTagForConfig.profile.vehicleMake})
                 </p>
               </div>
               <button
                 onClick={() => setSelectedTagForConfig(null)}
-                className="text-zinc-500 hover:text-white text-xs"
+                className="w-8 h-8 rounded-full glass-pill flex items-center justify-center text-zinc-400 hover:text-white text-xs cursor-pointer"
               >
                 ✕
               </button>
@@ -595,7 +605,7 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
                   type="checkbox"
                   checked={autoResponseEnabled}
                   onChange={(e) => setAutoResponseEnabled(e.target.checked)}
-                  className="rounded bg-black border-[#1F2228] text-white focus:ring-0"
+                  className="rounded bg-black border-white/20 text-white focus:ring-0"
                 />
               </div>
               <textarea
@@ -603,9 +613,9 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
                 value={autoResponseText}
                 onChange={(e) => setAutoResponseText(e.target.value)}
                 placeholder="سأعود للمركبة خلال 15 دقيقة..."
-                className="w-full bg-[#000000] border border-[#1F2228] rounded-lg p-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-white"
+                className="w-full glass-input rounded-xl p-3 text-xs text-white placeholder-zinc-500 focus:outline-none resize-none"
               />
-              <p className="text-[11px] text-zinc-500">
+              <p className="text-[11px] text-zinc-400 leading-relaxed">
                 {isAr
                   ? "يظهر هذا التنويه مباشرة للشخص الذي يمسح البطاقة عندما تكون في وضع 'الخارج مؤقتاً'."
                   : "Displayed on the public scan portal when tag status is set to Away."}
@@ -613,71 +623,71 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
             </div>
 
             {/* Dispatch Channels */}
-            <div className="space-y-3 border-t border-[#1F2228] pt-4">
+            <div className="space-y-3 border-t border-white/[0.08] pt-4">
               <label className="text-xs font-semibold text-white block">
                 {t.dashboard.dispatchChannels}
               </label>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
                   onClick={() => handleToggleChannel("whatsapp")}
-                  className={`p-2.5 rounded border text-xs flex items-center justify-between transition-colors ${
+                  className={`p-3 rounded-xl border text-xs flex items-center justify-between transition-all cursor-pointer ${
                     selectedTagForConfig.profile.notifyWhatsApp
-                      ? "border-white bg-zinc-800 text-white font-bold"
-                      : "border-[#1F2228] bg-[#0A0A0E] text-zinc-400"
+                      ? "glass-surface-elevated border-white text-white font-bold"
+                      : "glass-card text-zinc-400"
                   }`}
                 >
                   <span>WhatsApp API</span>
-                  <span>{selectedTagForConfig.profile.notifyWhatsApp ? "ON" : "OFF"}</span>
+                  <span className="font-mono text-[10px]">{selectedTagForConfig.profile.notifyWhatsApp ? "ON" : "OFF"}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleToggleChannel("push")}
-                  className={`p-2.5 rounded border text-xs flex items-center justify-between transition-colors ${
+                  className={`p-3 rounded-xl border text-xs flex items-center justify-between transition-all cursor-pointer ${
                     selectedTagForConfig.profile.notifyPush
-                      ? "border-white bg-zinc-800 text-white font-bold"
-                      : "border-[#1F2228] bg-[#0A0A0E] text-zinc-400"
+                      ? "glass-surface-elevated border-white text-white font-bold"
+                      : "glass-card text-zinc-400"
                   }`}
                 >
                   <span>Web Push</span>
-                  <span>{selectedTagForConfig.profile.notifyPush ? "ON" : "OFF"}</span>
+                  <span className="font-mono text-[10px]">{selectedTagForConfig.profile.notifyPush ? "ON" : "OFF"}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleToggleChannel("telegram")}
-                  className={`p-2.5 rounded border text-xs flex items-center justify-between transition-colors ${
+                  className={`p-3 rounded-xl border text-xs flex items-center justify-between transition-all cursor-pointer ${
                     selectedTagForConfig.profile.notifyTelegram
-                      ? "border-white bg-zinc-800 text-white font-bold"
-                      : "border-[#1F2228] bg-[#0A0A0E] text-zinc-400"
+                      ? "glass-surface-elevated border-white text-white font-bold"
+                      : "glass-card text-zinc-400"
                   }`}
                 >
                   <span>Telegram Bot</span>
-                  <span>{selectedTagForConfig.profile.notifyTelegram ? "ON" : "OFF"}</span>
+                  <span className="font-mono text-[10px]">{selectedTagForConfig.profile.notifyTelegram ? "ON" : "OFF"}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleToggleChannel("sms")}
-                  className={`p-2.5 rounded border text-xs flex items-center justify-between transition-colors ${
+                  className={`p-3 rounded-xl border text-xs flex items-center justify-between transition-all cursor-pointer ${
                     selectedTagForConfig.profile.notifySms
-                      ? "border-white bg-zinc-800 text-white font-bold"
-                      : "border-[#1F2228] bg-[#0A0A0E] text-zinc-400"
+                      ? "glass-surface-elevated border-white text-white font-bold"
+                      : "glass-card text-zinc-400"
                   }`}
                 >
                   <span>SMS Fallback</span>
-                  <span>{selectedTagForConfig.profile.notifySms ? "ON" : "OFF"}</span>
+                  <span className="font-mono text-[10px]">{selectedTagForConfig.profile.notifySms ? "ON" : "OFF"}</span>
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 border-t border-[#1F2228] pt-4">
+            <div className="flex items-center justify-end gap-3 border-t border-white/[0.08] pt-4">
               <button
                 type="button"
                 onClick={() => setSelectedTagForConfig(null)}
-                className="px-4 py-2 rounded border border-[#1F2228] text-xs text-zinc-400 hover:text-white"
+                className="px-4 py-2.5 rounded-xl glass-card text-xs text-zinc-400 hover:text-white cursor-pointer"
               >
                 {isAr ? "إغلاق" : "Close"}
               </button>
@@ -685,7 +695,7 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
                 type="button"
                 onClick={handleSaveAutoResponse}
                 disabled={isPending}
-                className="px-5 py-2 rounded-xl border border-white bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-colors"
+                className="px-6 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all shadow-glass cursor-pointer"
               >
                 {isAr ? "حفظ التغييرات" : "Save Changes"}
               </button>

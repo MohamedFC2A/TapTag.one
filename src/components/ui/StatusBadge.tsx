@@ -14,40 +14,40 @@ export function StatusBadge({ status, lang = "ar", className = "" }: StatusBadge
     case "ACTIVE":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border border-emerald-800/60 bg-emerald-950/40 text-emerald-400 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass-pill border border-emerald-500/20 text-white ${className}`}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          {isAr ? "نشطة وجاهزة للتنبيه" : "Active & Ready"}
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+          <span>{isAr ? "نشطة وجاهزة للتنبيه" : "Active & Ready"}</span>
         </span>
       );
 
     case "AWAY":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border border-amber-800/60 bg-amber-950/30 text-amber-300 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass-pill border border-amber-500/20 text-amber-300 ${className}`}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-          {isAr ? "المالك بالخارج مؤقتاً" : "Temporarily Away"}
+          <span>{isAr ? "المالك بالخارج مؤقتاً" : "Temporarily Away"}</span>
         </span>
       );
 
     case "DND":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border border-zinc-700 bg-zinc-800/60 text-zinc-300 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass-pill border border-white/[0.10] text-zinc-300 ${className}`}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-          {isAr ? "عدم الإزعاج (طوارئ فقط)" : "Do Not Disturb (Emergency Only)"}
+          <span>{isAr ? "عدم الإزعاج (طوارئ فقط)" : "Do Not Disturb (Emergency Only)"}</span>
         </span>
       );
 
     case "SUSPENDED":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border border-red-900/60 bg-red-950/40 text-red-400 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass-pill border border-red-500/20 text-red-300 ${className}`}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-          {isAr ? "البطاقة معلقة" : "Suspended"}
+          <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+          <span>{isAr ? "البطاقة معلقة" : "Suspended"}</span>
         </span>
       );
   }

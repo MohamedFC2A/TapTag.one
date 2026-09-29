@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Cpu, Menu, X, Shield, Terminal, Layers, LayoutDashboard, Printer } from "lucide-react";
+import { Cpu, Menu, X, Shield, ShieldCheck } from "lucide-react";
 import { Language } from "@/types";
 import { translations } from "@/lib/translations";
 import { LanguageToggle } from "./LanguageToggle";
@@ -34,23 +34,21 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
     },
     {
       href: "/admin/qr-engine",
-      label: isAr ? "استوديو تصميم البطاقات" : "Card Studio",
-      active: pathname.startsWith("/admin/qr-engine"),
+      label: isAr ? "استوديو البطاقة" : "Card Studio",
+      active: pathname.startsWith("/admin/qr-engine") || pathname.startsWith("/studio"),
     },
+    {
+      href: "/scan",
+      label: isAr ? "مسح البطاقة" : "Scan Tag",
+      active: pathname === "/scan",
+    },
+  ];
+
+  const secondaryLinks = [
     {
       href: "/dashboard/find",
       label: isAr ? "تحديد مكان السيارة" : "Find Vehicle",
       active: pathname.startsWith("/dashboard/find"),
-    },
-    {
-      href: "/dashboard/calibrate",
-      label: isAr ? "معايرة السيارة" : "Calibrate",
-      active: pathname.startsWith("/dashboard/calibrate"),
-    },
-    {
-      href: "/demo/activate",
-      label: isAr ? "تفعيل كارت بالبصمة" : "Activate Card",
-      active: pathname.startsWith("/demo/activate"),
     },
     {
       href: "/admin",
@@ -60,29 +58,28 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
   ];
 
   return (
-    <header className="w-full border-b border-zinc-800 bg-[#000000] sticky top-0 z-50 select-none">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    <div className="w-full sticky top-3 z-50 px-3 sm:px-6 select-none">
+      <header className="max-w-6xl mx-auto glass-surface-elevated rounded-2xl border border-white/[0.10] shadow-glass px-4 sm:px-5 h-16 flex items-center justify-between transition-all">
         {/* Brand Logo */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3 group">
             <TapTagLogo
-              subtitle={t.brandSub}
-              showSubtitle={true}
+              showSubtitle={false}
               size="md"
             />
           </Link>
         </div>
 
-        {/* Center Desktop Navigation Bar */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#09090B] px-2 py-1 rounded-xl border border-zinc-800">
+        {/* Center Desktop Navigation Bar (Clean & Focused) */}
+        <nav className="hidden md:flex items-center gap-1 bg-white/[0.03] px-1.5 py-1 rounded-xl border border-white/[0.06]">
           {navLinks.map((link, idx) => (
             <Link
               key={idx}
               href={link.href}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 ${
                 link.active
                   ? "bg-white text-black font-bold shadow-sm"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/60"
+                  : "text-zinc-400 hover:text-white hover:bg-white/[0.05]"
               }`}
             >
               {link.label}
@@ -91,22 +88,25 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
         </nav>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-3">
-          {/* Subtle Institutional Status Indicator */}
-          <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-lg border border-zinc-800 bg-zinc-900/60 text-[10px] font-mono text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-white" />
-            <span className="font-semibold">TAPTAG PROTOCOL</span>
-          </div>
-
-          {/* Center / Tag UID Badge if on tag page */}
+        <div className="flex items-center gap-2.5">
+          {/* Tag UID Badge if on tag page */}
           {tagUid && (
-            <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg border border-zinc-800 bg-[#0C0C0E]">
+            <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg border border-white/[0.10] bg-black/50">
               <Cpu className="w-3.5 h-3.5 text-zinc-400" />
               <span className="text-xs text-white font-mono font-bold tracking-wider">
                 {tagUid}
               </span>
             </div>
           )}
+
+          {/* Primary Action Button */}
+          <Link
+            href="/dashboard/activate"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white text-black font-bold text-xs hover:bg-zinc-200 transition-all shadow-sm active:scale-95 cursor-pointer"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-black" />
+            <span>{isAr ? "تفعيل بطاقة" : "Activate Tag"}</span>
+          </Link>
 
           {/* Language Switcher */}
           <LanguageToggle currentLang={lang} onLanguageChange={onLanguageChange} />
@@ -115,33 +115,53 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg border border-white/15 text-zinc-300 hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer"
+            className="md:hidden p-2 rounded-xl border border-white/[0.10] bg-white/[0.03] text-zinc-300 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
             aria-label="Toggle Navigation"
           >
-            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4 text-zinc-300" />}
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Drawer (Only on small screens, never overlaps footer on desktop) */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/10 bg-[#060608] px-4 py-4 space-y-2">
+        <div className="md:hidden mt-2 max-w-6xl mx-auto glass-surface-elevated rounded-2xl border border-white/[0.10] p-3 space-y-1 shadow-glass animate-in fade-in slide-in-from-top-2 duration-200">
+          <Link
+            href="/dashboard/activate"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-white text-black font-bold text-xs mb-2 shadow-sm"
+          >
+            <span>{isAr ? "تفعيل بطاقة جديدة بالبصمة" : "Activate New Card"}</span>
+            <ShieldCheck className="w-4 h-4 text-black" />
+          </Link>
           {navLinks.map((link, idx) => (
             <Link
               key={idx}
               href={link.href}
               onClick={() => setMobileMenuOpen(false)}
-              className={`block px-3 py-2 rounded text-xs font-mono transition-colors text-start ${
+              className={`block px-3 py-2 rounded-xl text-xs font-mono transition-colors text-start ${
                 link.active
-                  ? "bg-white text-black font-bold"
+                  ? "bg-white/[0.1] text-white font-bold"
                   : "text-zinc-300 hover:text-white hover:bg-white/[0.05]"
               }`}
             >
               {link.label}
             </Link>
           ))}
+          <div className="pt-2 border-t border-white/[0.06] space-y-1">
+            {secondaryLinks.map((link, idx) => (
+              <Link
+                key={idx}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-xl text-xs font-mono text-zinc-400 hover:text-white transition-colors text-start"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
       )}
-    </header>
+    </div>
   );
 }

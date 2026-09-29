@@ -35,8 +35,8 @@ interface TapTagLogoProps {
 
 export function TapTagLogo({
   className = "",
-  showSubtitle = true,
-  subtitle = "منظومة الهوية الذكية",
+  showSubtitle = false,
+  subtitle = "",
   size = "md",
   waveColor = "text-white",
 }: TapTagLogoProps) {
@@ -60,11 +60,11 @@ export function TapTagLogo({
         </span>
         <ContactlessWaves className={`${waveSizes[size]} ${waveColor} shrink-0`} />
       </div>
-      {showSubtitle && (
+      {showSubtitle && subtitle ? (
         <span className="text-[10px] font-mono text-zinc-400 font-normal tracking-tight text-start">
           {subtitle}
         </span>
-      )}
+      ) : null}
     </div>
   );
 }

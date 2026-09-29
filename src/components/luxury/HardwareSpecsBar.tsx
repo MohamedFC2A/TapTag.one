@@ -40,19 +40,19 @@ export function HardwareSpecsBar({ lang }: HardwareSpecsBarProps) {
   ];
 
   return (
-    <section className="w-full max-w-5xl mx-auto px-4 py-8">
-      <div className="rounded-xl border border-white/10 bg-[#060608] p-5">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+    <section className="w-full max-w-5xl mx-auto px-4 py-6">
+      <div className="rounded-2xl glass-surface p-5 sm:p-6 border border-white/[0.08] shadow-glass">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
           {specs.map((item, idx) => {
             const Icon = item.icon;
             return (
               <div
                 key={idx}
-                className="space-y-1 text-start p-2.5 rounded-lg border border-white/[0.04] bg-black"
+                className="space-y-1.5 text-start p-3 rounded-xl glass-card border border-white/[0.05] hover:border-white/[0.12] transition-all"
               >
                 <div className="flex items-center gap-1.5 text-zinc-400">
                   <Icon className="w-3.5 h-3.5 text-zinc-300" />
-                  <span className="text-[9px] font-mono tracking-wider uppercase text-zinc-500">
+                  <span className="text-[9px] font-mono tracking-wider uppercase text-zinc-400">
                     {item.label}
                   </span>
                 </div>

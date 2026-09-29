@@ -245,7 +245,7 @@ export function AdminClient({
   return (
     <div className="space-y-6">
       {/* 1. Master Admin Header & Mission Control Badge */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-xl border border-white/15 bg-[#060608]">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl border border-white/[0.08] glass-surface shadow-glass">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
@@ -263,7 +263,7 @@ export function AdminClient({
 
         {/* Global Controls & DB Latency Badge */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 bg-black text-xs font-mono text-zinc-300">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] text-xs font-mono text-zinc-300">
             <Database className="w-3.5 h-3.5 text-zinc-400" />
             <span>NEON POOLER:</span>
             <span className="text-white font-bold font-mono">
@@ -276,7 +276,7 @@ export function AdminClient({
             disabled={isPending}
             variant="outline"
             size="sm"
-            className="border-white/20 bg-black hover:bg-zinc-900 text-white font-mono text-xs cursor-pointer gap-1.5"
+            className="border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] text-white font-mono text-xs cursor-pointer gap-1.5 rounded-lg"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
             <span>تحديث</span>
@@ -285,7 +285,7 @@ export function AdminClient({
           <Link href="/admin/qr-engine">
             <Button
               size="sm"
-              className="bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs cursor-pointer gap-1.5"
+              className="bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs cursor-pointer gap-1.5 rounded-lg shadow-sm"
             >
               <Printer className="w-3.5 h-3.5 text-black" />
               <span>استوديو الطباعة والسك</span>
@@ -297,17 +297,17 @@ export function AdminClient({
       {/* Global Feedback Alert */}
       {feedback && (
         <div
-          className={`p-3.5 rounded-lg border text-xs font-mono flex items-center justify-between ${
+          className={`p-3.5 rounded-xl border text-xs font-mono flex items-center justify-between glass-surface ${
             feedback.type === "success"
-              ? "border-zinc-700 bg-zinc-900/60 text-white"
-              : "border-red-800 bg-red-950/40 text-red-200"
+              ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-200"
+              : "border-rose-500/20 bg-rose-500/5 text-rose-200"
           }`}
         >
           <div className="flex items-center gap-2">
             {feedback.type === "success" ? (
-              <CheckCircle2 className="w-4 h-4 text-white" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             ) : (
-              <ShieldAlert className="w-4 h-4 text-red-400" />
+              <ShieldAlert className="w-4 h-4 text-rose-400" />
             )}
             <span>{feedback.text}</span>
           </div>
@@ -322,7 +322,7 @@ export function AdminClient({
 
       {/* 2. Top Metric Cards (High Density Telemetry) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="p-3.5 rounded-xl border border-white/10 bg-[#060608] space-y-1">
+        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             إجمالي الأصول (TOTAL)
           </div>
@@ -332,7 +332,7 @@ export function AdminClient({
           <div className="text-[10px] font-mono text-zinc-500">مخزون مسجل في Neon</div>
         </div>
 
-        <div className="p-3.5 rounded-xl border border-white/10 bg-[#060608] space-y-1">
+        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             البطاقات النشطة (ACTIVE)
           </div>
@@ -342,27 +342,27 @@ export function AdminClient({
           <div className="text-[10px] font-mono text-zinc-500">جاهزة للاستجابة فورياً</div>
         </div>
 
-        <div className="p-3.5 rounded-xl border border-white/10 bg-[#060608] space-y-1">
+        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             مخزون المصنع (SEALED)
           </div>
-          <div className="text-xl sm:text-2xl font-black font-mono text-yellow-400">
+          <div className="text-xl sm:text-2xl font-black font-mono text-zinc-300">
             {metrics.sealedTags}
           </div>
           <div className="text-[10px] font-mono text-zinc-500">جاهزة للبيع والإقتران</div>
         </div>
 
-        <div className="p-3.5 rounded-xl border border-white/10 bg-[#060608] space-y-1">
+        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             مفعلة بالبصمة (CLAIMED)
           </div>
-          <div className="text-xl sm:text-2xl font-black font-mono text-cyan-400">
+          <div className="text-xl sm:text-2xl font-black font-mono text-white">
             {metrics.claimedTags}
           </div>
           <div className="text-[10px] font-mono text-zinc-500">مرتبطة بمركبة ومستخدم</div>
         </div>
 
-        <div className="p-3.5 rounded-xl border border-white/10 bg-[#060608] space-y-1">
+        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             إجمالي المسحات (SCANS)
           </div>
@@ -372,7 +372,7 @@ export function AdminClient({
           <div className="text-[10px] font-mono text-zinc-500">NFC & QR Ingested</div>
         </div>
 
-        <div className="p-3.5 rounded-xl border border-white/10 bg-[#060608] space-y-1">
+        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             سجل الحوادث (EVENTS)
           </div>
@@ -385,10 +385,10 @@ export function AdminClient({
 
       {/* 3. Main Navigation Tabs */}
       <Tabs defaultValue="fleet" className="w-full space-y-4">
-        <TabsList className="bg-[#060608] border border-white/15 p-1 rounded-xl flex flex-wrap gap-1">
+        <TabsList className="glass-surface border border-white/[0.08] p-1.5 rounded-xl flex flex-wrap gap-1 shadow-glass">
           <TabsTrigger
             value="fleet"
-            className="data-[state=active]:bg-white data-[state=active]:text-black text-xs font-mono font-bold cursor-pointer"
+            className="data-[state=active]:bg-white data-[state=active]:text-black text-xs font-mono font-bold cursor-pointer rounded-lg transition-all"
           >
             سجل أسطول البطاقات ({tags.length})
           </TabsTrigger>
@@ -421,28 +421,28 @@ export function AdminClient({
         {/* TAB 1: FLEET REGISTRY */}
         <TabsContent value="fleet" className="space-y-4">
           {/* Search & Filter Bar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-white/10 bg-[#060608]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-xl border border-white/[0.08] glass-surface shadow-glass">
             <div className="relative flex-1">
               <Input
                 type="text"
                 placeholder="بحث برقم البطاقة UID، لوحة المركبة، أو نوع السيارة..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-black border-white/15 text-white placeholder-zinc-500 font-mono text-xs pr-9"
+                className="bg-black/40 border-white/[0.08] text-white placeholder-zinc-500 font-mono text-xs pr-9 rounded-lg focus:border-white/30"
               />
               <Search className="w-4 h-4 text-zinc-500 absolute top-2.5 right-3 pointer-events-none" />
             </div>
 
             {/* Quick Status Buttons */}
-            <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
               {["ALL", "ACTIVE", "AWAY", "DND", "SEALED", "CLAIMED"].map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
-                  className={`px-2.5 py-1 rounded text-[11px] font-mono transition-colors whitespace-nowrap cursor-pointer ${
+                  className={`px-3 py-1 rounded-full text-[11px] font-mono transition-colors whitespace-nowrap cursor-pointer ${
                     statusFilter === st
-                      ? "bg-white text-black font-bold"
-                      : "text-zinc-400 hover:text-white bg-black border border-white/10"
+                      ? "bg-white text-black font-bold shadow-sm"
+                      : "text-zinc-400 hover:text-white bg-white/[0.02] border border-white/[0.08]"
                   }`}
                 >
                   {st}
@@ -452,17 +452,17 @@ export function AdminClient({
           </div>
 
           {/* Table */}
-          <div className="rounded-xl border border-white/10 bg-[#060608] overflow-hidden">
+          <div className="rounded-xl border border-white/[0.08] glass-surface overflow-hidden shadow-glass">
             <div className="overflow-x-auto">
               <table className="w-full text-xs font-mono text-start">
-                <thead className="border-b border-white/10 bg-black text-zinc-400">
+                <thead className="border-b border-white/[0.08] bg-white/[0.02] text-zinc-400">
                   <tr>
-                    <th className="py-3 px-4 text-start font-bold">معرف البطاقة UID</th>
-                    <th className="py-3 px-4 text-start font-bold">بيانات المركبة واللوحة</th>
-                    <th className="py-3 px-4 text-start font-bold">حالة التشغيل</th>
-                    <th className="py-3 px-4 text-start font-bold">حالة التفعيل</th>
-                    <th className="py-3 px-4 text-start font-bold">المسحات</th>
-                    <th className="py-3 px-4 text-end font-bold">إجراءات الإدارة</th>
+                    <th className="py-3.5 px-4 text-start font-bold">معرف البطاقة UID</th>
+                    <th className="py-3.5 px-4 text-start font-bold">بيانات المركبة واللوحة</th>
+                    <th className="py-3.5 px-4 text-start font-bold">حالة التشغيل</th>
+                    <th className="py-3.5 px-4 text-start font-bold">حالة التفعيل</th>
+                    <th className="py-3.5 px-4 text-start font-bold">المسحات</th>
+                    <th className="py-3.5 px-4 text-end font-bold">إجراءات الإدارة</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.06]">
@@ -582,7 +582,7 @@ export function AdminClient({
         <TabsContent value="minting" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* 1-Click Minting Card */}
-            <div className="p-6 rounded-xl border border-white/15 bg-[#060608] space-y-4">
+            <div className="p-6 rounded-2xl border border-white/[0.08] glass-card space-y-4 shadow-glass">
               <div className="flex items-center gap-2 text-white">
                 <PlusCircle className="w-5 h-5 text-white" />
                 <h3 className="text-base font-mono font-bold">سك بطاقة فيزيائية فردية فورية</h3>
@@ -597,7 +597,7 @@ export function AdminClient({
                 <Button
                   onClick={handleMintSingle}
                   disabled={isPending}
-                  className="w-full bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer"
+                  className="w-full bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer rounded-xl shadow-sm"
                 >
                   <PlusCircle className="w-4 h-4 ml-2" />
                   <span>{isPending ? "جارٍ التوليد والتخزين في Neon..." : "سك بطاقة واحدة فورا (1-Click Mint)"}</span>
@@ -606,7 +606,7 @@ export function AdminClient({
             </div>
 
             {/* Batch Minting Card */}
-            <div className="p-6 rounded-xl border border-white/15 bg-[#060608] space-y-4">
+            <div className="p-6 rounded-2xl border border-white/[0.08] glass-card space-y-4 shadow-glass">
               <div className="flex items-center gap-2 text-white">
                 <Layers className="w-5 h-5 text-white" />
                 <h3 className="text-base font-mono font-bold">سك دفعة تصنيع وقص ليزري (Batch Factory)</h3>
@@ -621,7 +621,7 @@ export function AdminClient({
                   onClick={() => handleMintBatch(5)}
                   disabled={isPending}
                   variant="outline"
-                  className="flex-1 border-white/20 bg-black hover:bg-zinc-900 text-white font-mono text-xs py-5 cursor-pointer"
+                  className="flex-1 border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] text-white font-mono text-xs py-5 cursor-pointer rounded-xl"
                 >
                   <span>سك دفعة (5 بطاقات)</span>
                 </Button>
@@ -629,7 +629,7 @@ export function AdminClient({
                 <Button
                   onClick={() => handleMintBatch(10)}
                   disabled={isPending}
-                  className="flex-1 bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer"
+                  className="flex-1 bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer rounded-xl shadow-sm"
                 >
                   <span>سك دفعة (10 بطاقات)</span>
                 </Button>
@@ -638,7 +638,7 @@ export function AdminClient({
           </div>
 
           {/* Quick Studio Jump Banner */}
-          <div className="p-4 rounded-xl border border-zinc-700 bg-zinc-900/60 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="p-4 rounded-xl border border-white/[0.08] glass-surface shadow-glass flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Printer className="w-5 h-5 text-white shrink-0" />
               <div className="text-xs font-mono">
@@ -654,7 +654,7 @@ export function AdminClient({
             <Link href="/admin/qr-engine">
               <Button
                 size="sm"
-                className="bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs shrink-0 cursor-pointer"
+                className="bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs shrink-0 cursor-pointer rounded-lg shadow-sm"
               >
                 <span>فتح استوديو الطباعة</span>
                 <ArrowUpRight className="w-3.5 h-3.5 mr-1" />
@@ -665,8 +665,8 @@ export function AdminClient({
 
         {/* TAB 3: INCIDENTS STREAM */}
         <TabsContent value="incidents" className="space-y-4">
-          <div className="rounded-xl border border-white/10 bg-[#060608] overflow-hidden">
-            <div className="p-4 border-b border-white/10 flex items-center justify-between">
+          <div className="rounded-xl border border-white/[0.08] glass-surface overflow-hidden shadow-glass">
+            <div className="p-4 border-b border-white/[0.08] flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-white" />
                 <h3 className="text-xs font-mono font-bold text-white">سجل التيليمترية وبلاغات الأمان المباشرة</h3>
@@ -676,7 +676,7 @@ export function AdminClient({
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs font-mono text-start">
-                <thead className="border-b border-white/10 bg-black text-zinc-400">
+                <thead className="border-b border-white/[0.08] bg-white/[0.02] text-zinc-400">
                   <tr>
                     <th className="py-3 px-4 text-start font-bold">نوع الحدث</th>
                     <th className="py-3 px-4 text-start font-bold">البطاقة والمركبة</th>
@@ -697,7 +697,7 @@ export function AdminClient({
                     incidents.map((inc) => (
                       <tr key={inc.id} className="hover:bg-white/[0.02]">
                         <td className="py-3 px-4">
-                          <span className="px-2 py-0.5 rounded border border-white/10 bg-black text-[10px] font-bold text-zinc-300">
+                          <span className="px-2 py-0.5 rounded border border-white/[0.08] bg-white/[0.02] text-[10px] font-bold text-zinc-300">
                             {inc.eventType}
                           </span>
                         </td>
@@ -728,7 +728,7 @@ export function AdminClient({
                               onClick={() => handleResolveIncident(inc.id)}
                               size="sm"
                               variant="outline"
-                              className="text-[10px] h-7 border-white/20 hover:bg-zinc-800 text-white cursor-pointer"
+                              className="text-[10px] h-7 border-white/20 hover:bg-zinc-800 text-white cursor-pointer rounded-lg"
                             >
                               إغلاق البلاغ
                             </Button>
@@ -747,7 +747,7 @@ export function AdminClient({
         <TabsContent value="simulator" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Controls */}
-            <div className="p-5 rounded-xl border border-white/15 bg-[#060608] space-y-4">
+            <div className="p-6 rounded-2xl border border-white/[0.08] glass-card space-y-4 shadow-glass">
               <div className="flex items-center gap-2 text-white">
                 <Radio className="w-5 h-5 text-white" />
                 <h3 className="text-sm font-mono font-bold">محاكي لمس الـ NFC والمسح الحي</h3>
@@ -758,7 +758,7 @@ export function AdminClient({
                 <select
                   value={simTagUid}
                   onChange={(e) => setSimTagUid(e.target.value)}
-                  className="w-full bg-black border border-white/20 rounded-lg p-2.5 text-xs font-mono text-white focus:outline-none focus:border-white"
+                  className="w-full bg-black/50 border border-white/[0.08] rounded-xl p-2.5 text-xs font-mono text-white focus:outline-none focus:border-white/30"
                 >
                   {tags.map((t) => (
                     <option key={t.id} value={t.tagUid}>
@@ -770,14 +770,14 @@ export function AdminClient({
 
               <Button
                 onClick={() => handleRunSimulation(simTagUid)}
-                className="w-full bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer"
+                className="w-full bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer rounded-xl shadow-sm"
               >
                 <span>محاكاة مسح كود QR أو تقريب NFC</span>
               </Button>
 
               {/* Console Logs */}
-              <div className="p-3 rounded-lg border border-white/10 bg-black font-mono text-[11px] space-y-1.5 min-h-[140px]" dir="ltr">
-                <div className="text-zinc-500 text-[10px] border-b border-white/10 pb-1">
+              <div className="p-3.5 rounded-xl border border-white/[0.08] bg-black/60 font-mono text-[11px] space-y-1.5 min-h-[140px]" dir="ltr">
+                <div className="text-zinc-500 text-[10px] border-b border-white/[0.08] pb-1">
                   CONSOLE OUTPUT:
                 </div>
                 {simLogs.map((log, idx) => (
@@ -789,26 +789,26 @@ export function AdminClient({
             </div>
 
             {/* Simulated Mobile Gateway Screen */}
-            <div className="p-5 rounded-xl border border-white/15 bg-[#060608] flex flex-col items-center justify-center">
-              <div className="w-full max-w-[280px] rounded-2xl border-2 border-white/20 bg-black p-4 space-y-3 text-center">
-                <div className="w-8 h-1 rounded-full bg-zinc-700 mx-auto mb-2" />
-                <div className="text-[10px] font-mono text-white font-bold">
+            <div className="p-6 rounded-2xl border border-white/[0.08] glass-card flex flex-col items-center justify-center shadow-glass">
+              <div className="w-full max-w-[280px] rounded-3xl border border-white/[0.12] bg-black/80 backdrop-blur-xl p-5 space-y-3.5 text-center shadow-glass-elevated">
+                <div className="w-10 h-1 rounded-full bg-zinc-700 mx-auto mb-2" />
+                <div className="text-[10px] font-mono text-white font-bold tracking-wider">
                   TAPTAG SECURE GATEWAY
                 </div>
-                <div className="text-xs font-mono text-zinc-300">
+                <div className="text-xs font-mono text-zinc-300 font-bold">
                   {simTagUid}
                 </div>
-                <div className="p-2.5 rounded-lg border border-white/10 bg-[#0A0A0E] text-[11px] font-mono text-zinc-300">
+                <div className="p-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-[11px] font-mono text-zinc-300">
                   {tags.find((t) => t.tagUid === simTagUid)?.profile?.autoResponseText ||
                     "سأعود خلال 15 دقيقة"}
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-2">
-                  <div className="p-2 rounded border border-white/10 bg-zinc-900 text-[10px] font-mono text-white flex items-center justify-center gap-1">
-                    <Car className="w-3 h-3 text-white" />
+                  <div className="p-2.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-[10px] font-mono text-white flex items-center justify-center gap-1.5">
+                    <Car className="w-3.5 h-3.5 text-white" />
                     <span>تحريك سيارة</span>
                   </div>
-                  <div className="p-2 rounded border border-white/10 bg-zinc-900 text-[10px] font-mono text-white flex items-center justify-center gap-1">
-                    <PhoneCall className="w-3 h-3 text-white" />
+                  <div className="p-2.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-[10px] font-mono text-white flex items-center justify-center gap-1.5">
+                    <PhoneCall className="w-3.5 h-3.5 text-white" />
                     <span>اتصال مشفر</span>
                   </div>
                 </div>
@@ -830,29 +830,29 @@ export function AdminClient({
 
         {/* TAB 5: DIAGNOSTICS */}
         <TabsContent value="diagnostics" className="space-y-4">
-          <div className="p-5 rounded-xl border border-white/15 bg-[#060608] space-y-4">
+          <div className="p-6 rounded-2xl border border-white/[0.08] glass-card space-y-4 shadow-glass">
             <h3 className="text-sm font-mono font-bold text-white flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-white" />
               <span>فحص تكامل منظومة الإنتاج (Production Health Check)</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-              <div className="p-3 rounded-lg border border-white/10 bg-black flex items-center justify-between">
+              <div className="p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02] flex items-center justify-between">
                 <span className="text-zinc-400">قاعدة بيانات Neon PostgreSQL:</span>
                 <span className="text-white font-bold">متصلة وجاهزة (Online)</span>
               </div>
 
-              <div className="p-3 rounded-lg border border-white/10 bg-black flex items-center justify-between">
+              <div className="p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02] flex items-center justify-between">
                 <span className="text-zinc-400">خوارزميات التشفير:</span>
                 <span className="text-white font-bold">AES-256-GCM + HMAC</span>
               </div>
 
-              <div className="p-3 rounded-lg border border-white/10 bg-black flex items-center justify-between">
+              <div className="p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02] flex items-center justify-between">
                 <span className="text-zinc-400">النطاق والشهادة الأمنية SSL:</span>
                 <span className="text-white font-bold">https://taptag.one (Valid)</span>
               </div>
 
-              <div className="p-3 rounded-lg border border-white/10 bg-black flex items-center justify-between">
+              <div className="p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02] flex items-center justify-between">
                 <span className="text-zinc-400">محرك استجابة الـ QR:</span>
                 <span className="text-white font-bold">ISO-18004 Level H (30%)</span>
               </div>

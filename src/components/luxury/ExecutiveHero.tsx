@@ -2,17 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
-  Search,
-  Sparkles,
-  Sliders,
-  Navigation,
-  Crosshair,
   Shield,
-  Layers,
-  ArrowRight,
   Car,
+  QrCode,
 } from "lucide-react";
 import { Language } from "@/types";
 import { PhysicalCardRenderer } from "@/components/card/PhysicalCardRenderer";
@@ -26,11 +19,9 @@ interface ExecutiveHeroProps {
 const LOCAL_STORAGE_KEY = "taptag_card_customization_v2";
 
 export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
-  const router = useRouter();
-  const [searchTag, setSearchTag] = useState("");
   const isAr = lang === "ar";
 
-  // Hydrate user's custom card design if they saved one in the studio
+  // Hydrate user's custom card design if saved in studio
   const [userCardDesign, setUserCardDesign] = useState<CardDesignConfig>(DEFAULT_CARD_DESIGN);
 
   useEffect(() => {
@@ -39,7 +30,12 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
         const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
+          if (parsed.logoText === "taptag." || parsed.logoText === "tagtap.one" || !parsed.logoText) {
+            parsed.logoText = "taptag.one";
+          }
           setUserCardDesign((prev) => ({ ...prev, ...parsed }));
+        } else {
+          setUserCardDesign((prev) => ({ ...prev, logoText: "taptag.one" }));
         }
       } catch {
         // ignore
@@ -47,131 +43,103 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
     }
   }, []);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchTag.trim()) return;
-    router.push(`/t/${searchTag.trim().toUpperCase()}`);
-  };
-
   return (
-    <section className="w-full max-w-5xl mx-auto px-4 pt-12 pb-8 flex flex-col items-center text-center space-y-8">
-      {/* Top Institutional Badge */}
-      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/60 text-zinc-300 text-[11px] font-mono select-none">
-        <span className="w-1.5 h-1.5 rounded-full bg-white" />
-        <span className="tracking-widest font-semibold">
-          {isAr ? "منظومة الهوية الذكية وحماية السيارات" : "SMART VEHICLE IDENTITY PROTOCOL"}
-        </span>
-      </div>
-
-      {/* Main Title - Pure Authority & High Contrast */}
-      <div className="space-y-3 max-w-3xl">
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-[1.12]">
+    <section className="w-full max-w-5xl mx-auto px-4 pt-14 pb-12 flex flex-col items-center text-center space-y-10">
+      {/* Main Title - Pure Authority, High Contrast & Smart Concept */}
+      <div className="space-y-4 max-w-3xl">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-[1.14]">
           {isAr ? (
             <>
-              حماية سيارتك بلمسة ذكية واحدة.
+              تواصل مشفر لسيارتك.
               <br />
               <span className="text-zinc-400 font-bold">
-                خصوصية مطلقة بدون أي تطبيقات.
+                بلمسة ذكية واحدة وبدون تطبيقات.
               </span>
             </>
           ) : (
             <>
-              Vehicle Protection at a Single Touch.
+              Encrypted Vehicle Contact.
               <br />
               <span className="text-zinc-400 font-bold">
-                Zero-Knowledge. Zero Friction.
+                In a single tap. Zero apps.
               </span>
             </>
           )}
         </h1>
 
-        <p className="text-xs sm:text-sm font-sans text-zinc-400 max-w-xl mx-auto leading-relaxed">
+        <p className="text-sm sm:text-base font-sans text-zinc-400 max-w-xl mx-auto leading-relaxed">
           {isAr
-            ? "بطاقة ذكية أنيقة على زجاج سيارتك. إذا احتاج أحد تحريكها أو في الطوارئ، يلمس البطاقة بهاتفه أو يمسح الكود للتواصل الفوري معك بدون كشف رقمك الشخصي."
-            : "Sleek smart card on your windshield. Anyone needing car movement or assistance simply taps to connect instantly without seeing your phone number."}
+            ? "بطاقة أكريليك ذكية على زجاج سيارتك تتيح لأي شخص تنبيهك أو الاتصال بك عند الحاجة — دون كشف رقم هاتفك نهائياً، وبدون أي تطبيقات."
+            : "A sleek smart card for your windshield. Instant encrypted contact for parking alerts and emergencies — without exposing your phone number, and zero apps required."}
         </p>
-      </div>
 
-      {/* Centerpiece: Photorealistic Card Renderer */}
-      <div className="w-full flex flex-col items-center py-2">
-        <PhysicalCardRenderer
-          config={userCardDesign}
-          interactive={true}
-          allowFlip={true}
-          className="w-full max-w-[420px]"
-        />
-
-        {/* Quick Customization Button underneath card */}
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-          <Link
-            href="/studio"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-zinc-200 transition-all shadow-md"
-          >
-            <Sliders className="w-3.5 h-3.5" />
-            <span>{isAr ? "استوديو تخصيص وتصميم البطاقة" : "Card Studio & Customizer"}</span>
-          </Link>
-          <Link
-            href="/dashboard/find"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-xs font-bold hover:bg-zinc-800 transition-all"
-          >
-            <Navigation className="w-3.5 h-3.5 text-zinc-300" />
-            <span>{isAr ? "تحديد مكان السيارة" : "Find Vehicle"}</span>
-          </Link>
+        {/* Smart Concept 3-Step Flow: Tap -> Tag -> One */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-2">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glass-card text-xs font-mono text-zinc-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+            <strong className="text-white">1. Tap</strong>
+            <span className="text-zinc-400">{isAr ? "لمس بالهاتف أو مسح QR" : "Phone Tap or QR"}</span>
+          </div>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glass-card text-xs font-mono text-zinc-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+            <strong className="text-white">2. Tag</strong>
+            <span className="text-zinc-400">{isAr ? "بطاقة أكريليك على الزجاج" : "Acrylic Tag on Glass"}</span>
+          </div>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glass-card text-xs font-mono text-zinc-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <strong className="text-white">3. One</strong>
+            <span className="text-zinc-400">{isAr ? "تواصل مشفر بدون كشف رقمك" : "Masked Direct Alert"}</span>
+          </div>
         </div>
       </div>
 
-      {/* Direct Tag Search Form */}
-      <div className="w-full max-w-lg space-y-3 pt-2">
-        <form onSubmit={handleSearchSubmit} className="relative flex flex-col sm:flex-row gap-2">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              value={searchTag}
-              onChange={(e) => setSearchTag(e.target.value.toUpperCase())}
-              placeholder={
-                isAr
-                  ? "أدخل معرّف البطاقة أو رقم اللوحة (مثال: MW-88219-X)..."
-                  : "Enter Tag Serial UID (e.g. MW-88219-X)..."
-              }
-              className="w-full bg-[#0C0C0E] border border-zinc-800 rounded-xl px-4 py-3 text-xs font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-white transition-colors uppercase tracking-wider text-right"
-            />
-            <Search className="w-4 h-4 text-zinc-500 absolute top-3.5 start-3.5 pointer-events-none" />
+      {/* Centerpiece: Photorealistic Card Renderer Inside a Glass Showcase Pedestal */}
+      <div className="w-full flex flex-col items-center">
+        <div className="w-full max-w-lg glass-surface p-6 sm:p-8 rounded-3xl border border-white/[0.08] shadow-glass relative flex flex-col items-center">
+          {/* Subtle top indicator */}
+          <div className="flex items-center justify-between w-full mb-3 px-2 text-[11px] font-mono text-zinc-400">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
+              {isAr ? "معاينة البطاقة التفاعلية 3D" : "3D Interactive Specimen"}
+            </span>
+            <span className="text-zinc-500">70×50mm ACRYLIC</span>
           </div>
 
-          <button
-            type="submit"
-            className="px-5 py-3 rounded-xl border border-white bg-white hover:bg-zinc-200 text-black text-xs font-mono font-bold uppercase tracking-wider transition-colors shrink-0 cursor-pointer active:scale-95"
-          >
-            {isAr ? "فحص البطاقة" : "Inspect Tag"}
-          </button>
-        </form>
-
-        {/* Action Triggers */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
-          <Link
-            href="/demo/activate"
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-zinc-200 text-xs font-mono transition-all"
-          >
-            <Shield className="w-3.5 h-3.5 text-zinc-400" />
-            <span>{isAr ? "تفعيل كارت جديد بالبصمة" : "Activate Card"}</span>
-          </Link>
-
-          <Link
-            href="/dashboard/calibrate"
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-zinc-200 text-xs font-mono transition-all"
-          >
-            <Crosshair className="w-3.5 h-3.5 text-zinc-400" />
-            <span>{isAr ? "معايرة موقع السيارة" : "Calibrate Stance"}</span>
-          </Link>
-
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-zinc-200 text-xs font-mono transition-all"
-          >
-            <Car className="w-3.5 h-3.5 text-zinc-400" />
-            <span>{isAr ? "لوحة سياراتي" : "My Vehicles"}</span>
-          </Link>
+          <PhysicalCardRenderer
+            config={userCardDesign}
+            interactive={true}
+            allowFlip={true}
+            showFlipButton={false}
+            className="w-full max-w-[420px]"
+          />
         </div>
+      </div>
+
+      {/* Primary Conversion CTAs */}
+      <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <Link
+          href="/dashboard/activate"
+          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-black font-bold text-xs hover:bg-zinc-200 transition-all shadow-glass active:scale-95 cursor-pointer"
+        >
+          <Shield className="w-4 h-4 text-black" />
+          <span>{isAr ? "تفعيل واقتران بطاقة جديدة" : "Activate Your Card"}</span>
+        </Link>
+
+        <Link
+          href="/scan"
+          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl glass-card text-emerald-400 hover:text-emerald-300 hover:border-emerald-500/30 font-bold text-xs transition-all shadow-glass cursor-pointer active:scale-95"
+        >
+          <QrCode className="w-4 h-4 text-emerald-400" />
+          <span>{isAr ? "مسح البطاقة (كاميرا QR أو NFC)" : "Scan Tag (Camera QR / NFC)"}</span>
+        </Link>
+
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl glass-card text-white font-bold text-xs hover:border-white/20 transition-all cursor-pointer"
+        >
+          <Car className="w-4 h-4 text-zinc-300" />
+          <span>{isAr ? "لوحة إدارة سياراتي" : "My Vehicles Dashboard"}</span>
+        </Link>
       </div>
     </section>
   );

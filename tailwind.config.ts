@@ -13,9 +13,9 @@ const config: Config = {
         obsidian: {
           DEFAULT: "#000000",
           card: "#08080A",
-          elevated: "#101014",
-          border: "#1C1C20",
-          hover: "#18181D",
+          elevated: "#0E0E12",
+          border: "rgba(255, 255, 255, 0.08)",
+          hover: "rgba(255, 255, 255, 0.04)",
         },
         emerald: {
           lux: "#00C853",
@@ -28,9 +28,9 @@ const config: Config = {
         },
         foundation: {
           deep: "#000000",
-          surface: "#08080A",
-          elevated: "#101014",
-          border: "#1C1C20",
+          surface: "#070709",
+          elevated: "#0E0E12",
+          border: "rgba(255, 255, 255, 0.08)",
         },
         institutional: {
           green: "#00C853",
@@ -51,8 +51,15 @@ const config: Config = {
         display: ["var(--font-ibm-plex)", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
       },
+      boxShadow: {
+        glass: "0 8px 32px 0 rgba(0, 0, 0, 0.4)",
+        "glass-elevated": "0 20px 50px -10px rgba(0, 0, 0, 0.7)",
+      },
       borderRadius: {
-        DEFAULT: "6px",
+        DEFAULT: "8px",
+        xl: "12px",
+        "2xl": "16px",
+        "3xl": "24px",
       },
     },
   },

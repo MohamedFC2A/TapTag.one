@@ -14,111 +14,80 @@ export function ProtocolGrid({ lang }: ProtocolGridProps) {
   const pillars = [
     {
       num: "01",
-      tag: "استجابة فورية",
       icon: Radio,
-      title: isAr ? "استجابة فورية بدون أي تطبيقات" : "Zero-App Instant Interaction",
+      title: isAr ? "استجابة فورية بدون تطبيقات" : "Instant App-Free Contact",
       desc: isAr
-        ? "بمجرد تقريب هاتف ذكي يدعم NFC أو مسح الرمز، تفتح صفحة السيارة مباشرة دون الحاجة لتحميل أي تطبيق."
-        : "NFC tap or code scan opens the vehicle gateway directly in the mobile browser without installing apps.",
-      metaLeft: isAr ? "خلال لحظات" : "Instant Launch",
-      metaRight: isAr ? "NFC + كود ذكي" : "NFC & QR",
+        ? "تقريب الهاتف أو مسح الكود يفتح صفحة السيارة مباشرة في المتصفح خلال ثوانٍ دون الحاجة لتثبيت أي تطبيق."
+        : "NFC tap or QR scan opens the vehicle gateway directly in any mobile browser with zero app installation.",
     },
     {
       num: "02",
-      tag: "خصوصية كاملة",
       icon: Lock,
-      title: isAr ? "حجب كامل لرقم هاتفك وهويتك" : "100% Identity & Phone Privacy",
+      title: isAr ? "خصوصية مطلقة لرقمك وهويتك" : "Absolute Identity & Phone Privacy",
       desc: isAr
-        ? "رقم هاتفك الحقيقي وبياناتك الشخصية محمية ومحجوبة كلياً؛ لا يستطيع أي شخص الاطلاع عليها أو استغلالها."
-        : "Your personal phone number and identity remain completely hidden and encrypted at all times.",
-      metaLeft: isAr ? "تشفير سحابي" : "Encrypted",
-      metaRight: isAr ? "أمان تام" : "Zero-Leak",
+        ? "رقم هاتفك الحقيقي وبياناتك الشخصية محجوبة ومشفرة 100%؛ لن يظهر رقمك لأي شخص بجانب سيارتك."
+        : "Your actual phone number and identity remain completely encrypted and hidden from bystanders.",
     },
     {
       num: "03",
-      tag: "مكالمات مشفرة",
       icon: PhoneCall,
-      title: isAr ? "مكالمات صوتية مباشرة ومجانية" : "Encrypted Direct Audio Calls",
+      title: isAr ? "مكالمات صوتية مشفرة ومجانية" : "Encrypted Direct Voice Calls",
       desc: isAr
-        ? "قناة اتصال صوتية ذكية عبر المتصفح تمكّن من يحتاج تحريك السيارة من التحدث معك مباشرة بضغطة زر."
-        : "Direct browser-to-browser voice calling enables immediate contact without revealing personal phone numbers.",
-      metaLeft: isAr ? "عبر المتصفح" : "Browser-Based",
-      metaRight: isAr ? "بدون إزعاج" : "Anti-Spam",
+        ? "قناة اتصال صوتية ذكية ومجانية عبر المتصفح تمكّن المتصل من التحدث معك مباشرة دون معرفة رقمك."
+        : "Direct browser-to-browser voice calling enables immediate verbal contact with zero number disclosure.",
     },
     {
       num: "04",
-      tag: "خامات فيزيائية",
       icon: Layers,
-      title: isAr ? "خامات متينة ومقاومة لحرارة الشمس" : "Automotive-Grade Materials",
+      title: isAr ? "أكريليك عالي التحمل ومقاوم للشمس" : "Automotive Heat-Resistant Acrylic",
       desc: isAr
-        ? "بطاقات وميداليات مصممة من الأكريليك المقسى وألياف الكربون مع طبقة عازلة للمعادن ومقاومة لأشعة الشمس."
-        : "Engineered from hardened acrylic and carbon fiber with anti-metal ferrite shielding resistant to high sun heat.",
-      metaLeft: isAr ? "مقاومة للشمس" : "Heat Resistant",
-      metaRight: isAr ? "عزل للمعادن" : "Shielded",
+        ? "ألواح أكريليك مقسى مصممة خصيصاً للزجاج الأمامي مع طبقة عازلة للمعادن وتتحمل حرارة الشمس حتى 85° مئوية."
+        : "Engineered from cast acrylic with anti-metal ferrite shielding, rigorously tested from -40°C to +85°C.",
     },
   ];
 
   return (
-    <section id="pillars-section" className="w-full py-16 max-w-5xl mx-auto px-4 space-y-6">
+    <section id="pillars-section" className="w-full py-10 max-w-5xl mx-auto px-4 space-y-6">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-zinc-800 pb-4">
-        <div className="space-y-1.5 text-start">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.08] pb-4">
+        <div className="space-y-1 text-start">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-white" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
             <span className="text-[11px] font-mono text-zinc-300 uppercase font-bold tracking-widest">
-              {isAr ? "مزايا منظومة تابتج" : "SYSTEM ADVANTAGES"}
+              {isAr ? "مميزات المنظومة" : "CORE ADVANTAGES"}
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            {isAr ? "كيف تحمي منظومة تابتج سيارتك الذكية؟" : "How TapTag Protects Your Vehicle"}
+            {isAr ? "حماية سيارتك وخصوصيتك بأعلى معايير الأمان" : "Automotive Privacy & Protection Built-In"}
           </h2>
         </div>
-
-        <span className="text-[11px] font-mono text-zinc-500">
-          TAPTAG AUTOMOTIVE STANDARDS
-        </span>
       </div>
 
-      {/* 4-Quadrant Precision Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+      {/* 4-Quadrant Glassmorphic Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {pillars.map((p) => {
           const Icon = p.icon;
           return (
             <div
               key={p.num}
-              className="group p-6 rounded-2xl border border-zinc-800 hover:border-zinc-600 bg-[#09090B] flex flex-col justify-between space-y-4 transition-colors duration-200 studio-card-shadow"
+              className="p-6 sm:p-7 rounded-3xl glass-card border border-white/[0.08] flex flex-col justify-between space-y-4 shadow-glass hover:border-white/20 transition-all"
             >
-              <div className="space-y-3">
-                {/* Header with Number and Icon */}
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-zinc-400 font-bold px-2 py-0.5 rounded bg-zinc-800/80 border border-zinc-700">
-                    {p.num}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider px-2 py-0.5 rounded border border-zinc-800 bg-black">
-                      {p.tag}
-                    </span>
-                    <div className="w-7 h-7 rounded-lg border border-zinc-800 bg-zinc-900 flex items-center justify-center text-white">
-                      <Icon className="w-3.5 h-3.5 text-zinc-200" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Title & Description */}
-                <div className="space-y-1.5 text-start">
-                  <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
-                    {p.title}
-                  </h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-                    {p.desc}
-                  </p>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-zinc-400 font-bold px-2.5 py-1 rounded-lg glass-pill">
+                  {p.num}
+                </span>
+                <div className="w-9 h-9 rounded-xl border border-white/[0.10] bg-white/[0.04] flex items-center justify-center text-white">
+                  <Icon className="w-4 h-4 text-white" />
                 </div>
               </div>
 
-              {/* Bottom Technical Status Bar */}
-              <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-[10px] font-mono text-zinc-500">
-                <span className="text-zinc-400">{p.metaLeft}</span>
-                <span className="text-zinc-200 font-semibold">{p.metaRight}</span>
+              <div className="space-y-1.5 text-start">
+                <h3 className="text-base font-bold text-white tracking-tight">
+                  {p.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-sans">
+                  {p.desc}
+                </p>
               </div>
             </div>
           );

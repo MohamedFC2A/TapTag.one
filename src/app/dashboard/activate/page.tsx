@@ -103,7 +103,6 @@ export default function ActivateTagPage() {
     setErrorMsg(null);
 
     try {
-      // 1. Mandatory Native Fingerprint / WebAuthn Challenge
       const bioAuth = await performBiometricAuth(scannedTagUid);
 
       if (!bioAuth.success) {
@@ -131,6 +130,15 @@ export default function ActivateTagPage() {
         if (res.success) {
           setStep(3);
           setSuccessMsg(res.message || "تم التفعيل والاقتران بالبصمة بنجاح!");
+          // Auto-redirect to tag portal after 2.5 seconds
+          const targetTag = scannedTagUid.trim();
+          setTimeout(() => {
+            if (targetTag) {
+              router.push(`/t/${targetTag}`);
+            } else {
+              router.push("/dashboard");
+            }
+          }, 2500);
         } else {
           setErrorMsg(res.error || "فشل التفعيل.");
         }
@@ -143,30 +151,46 @@ export default function ActivateTagPage() {
   };
 
   return (
-    <div className={`min-h-screen bg-[#000000] text-[#E4E4E7] flex flex-col ${isAr ? "rtl" : "ltr"}`} dir={isAr ? "rtl" : "ltr"}>
+    <div className={`min-h-screen bg-[#000000] text-[#E4E4E7] flex flex-col relative overflow-hidden ${isAr ? "rtl" : "ltr"}`} dir={isAr ? "rtl" : "ltr"}>
+      {/* Precision Micro-Grid Horizon */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
+
+      {/* Floating Glassmorphic Header */}
       <Header lang={lang} onLanguageChange={setLang} />
 
-      <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-8 space-y-6">
+      <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-8 space-y-6 relative z-10">
         {/* Back Link */}
         <div>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-xs text-zinc-400 hover:text-white transition-colors"
           >
             {isAr ? <ArrowRight className="w-3.5 h-3.5" /> : <ArrowLeft className="w-3.5 h-3.5" />}
             <span>{isAr ? "العودة للوحة التحكم" : "Back to Dashboard"}</span>
           </Link>
         </div>
 
-        {/* Title */}
-        <div className="border-b border-[#1F2228] pb-4">
-          <div className="flex items-center gap-2">
-            <Fingerprint className="w-5 h-5 text-white" />
-            <h1 className="text-xl font-bold text-white tracking-wide">
-              {isAr ? "تفعيل واقتران بطاقة ذكية بالبصمة (NFC / QR)" : "Zero-Password Smart Tag Activation"}
-            </h1>
+        {/* Title & Glass Stepper */}
+        <div className="border-b border-white/[0.08] pb-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl glass-pill">
+                <Fingerprint className="w-5 h-5 text-white" />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                {isAr ? "تفعيل واقتران بطاقة ذكية بالبصمة" : "Zero-Password Smart Tag Activation"}
+              </h1>
+            </div>
+            {/* Step Pills */}
+            <div className="flex items-center gap-1.5 text-xs font-mono">
+              <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold ${step >= 1 ? "bg-white text-black" : "glass-pill text-zinc-500"}`}>1</span>
+              <span className="w-3 h-0.5 bg-white/20" />
+              <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold ${step >= 2 ? "bg-white text-black" : "glass-pill text-zinc-500"}`}>2</span>
+              <span className="w-3 h-0.5 bg-white/20" />
+              <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold ${step >= 3 ? "bg-white text-black" : "glass-pill text-zinc-500"}`}>3</span>
+            </div>
           </div>
-          <p className="text-xs text-[#A1A1AA] mt-1">
+          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
             {isAr
               ? "تفعيل فوري عبر تقريب NFC أو مسح QR بدون كلمات مرور، مع قفل الملكية ببصمة جوالك الحصرية."
               : "Instant passwordless pairing via NFC tap or camera scan, cryptographically locked to your smartphone fingerprint."}
@@ -175,7 +199,7 @@ export default function ActivateTagPage() {
 
         {/* Alerts */}
         {errorMsg && (
-          <div className="p-3.5 rounded-lg border border-red-900/60 bg-red-950/40 text-red-200 text-xs flex items-center gap-2">
+          <div className="p-4 rounded-2xl glass-surface-elevated border border-red-500/30 text-red-200 text-xs flex items-center gap-2.5 animate-in fade-in duration-200">
             <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
             <span>{errorMsg}</span>
           </div>
@@ -185,63 +209,63 @@ export default function ActivateTagPage() {
         {/* STEP 1: SCAN QR OR TAP NFC                                    */}
         {/* ------------------------------------------------------------- */}
         {step === 1 && (
-          <div className="border border-[#1F2228] rounded-xl bg-[#08080A] p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-[#1F2228] pb-3">
+          <div className="glass-surface-elevated rounded-3xl p-6 sm:p-8 space-y-6 border border-white/[0.12] shadow-glass">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
               <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
                 {isAr ? "الخطوة 1: مسح رمز الـ QR أو تقريب الـ NFC" : "Step 1: Scan QR or Tap NFC"}
               </span>
-              <span className="text-[10px] font-mono text-zinc-500">NO PASSWORDS REQUIRED</span>
+              <span className="text-[10px] font-mono text-zinc-400 px-2 py-0.5 rounded-full glass-pill">NO PASSWORDS REQUIRED</span>
             </div>
 
             {/* Mode Selector Tabs */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2.5">
               <button
                 type="button"
                 onClick={() => setScanMode("nfc")}
-                className={`p-3 rounded-lg border text-xs font-medium flex flex-col items-center gap-2 transition-colors ${
+                className={`p-3.5 rounded-2xl border text-xs font-medium flex flex-col items-center gap-2 transition-all cursor-pointer ${
                   scanMode === "nfc"
-                    ? "border-white bg-zinc-800 text-white font-bold"
-                    : "border-[#1F2228] bg-[#0A0A0E] text-zinc-400 hover:text-white"
+                    ? "glass-surface-elevated border-white text-white font-bold shadow-sm"
+                    : "glass-card text-zinc-400 hover:text-white"
                 }`}
               >
-                <Radio className="w-5 h-5 text-zinc-300" />
+                <Radio className="w-5 h-5 text-white" />
                 <span>{isAr ? "تقريب NFC" : "Tap NFC"}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setScanMode("camera")}
-                className={`p-3 rounded-lg border text-xs font-medium flex flex-col items-center gap-2 transition-colors ${
+                className={`p-3.5 rounded-2xl border text-xs font-medium flex flex-col items-center gap-2 transition-all cursor-pointer ${
                   scanMode === "camera"
-                    ? "border-white bg-zinc-800 text-white font-bold"
-                    : "border-[#1F2228] bg-[#0A0A0E] text-zinc-400 hover:text-white"
+                    ? "glass-surface-elevated border-white text-white font-bold shadow-sm"
+                    : "glass-card text-zinc-400 hover:text-white"
                 }`}
               >
-                <Camera className="w-5 h-5 text-zinc-300" />
+                <Camera className="w-5 h-5 text-white" />
                 <span>{isAr ? "كاميرا الـ QR" : "Scan QR"}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setScanMode("manual")}
-                className={`p-3 rounded-lg border text-xs font-medium flex flex-col items-center gap-2 transition-colors ${
+                className={`p-3.5 rounded-2xl border text-xs font-medium flex flex-col items-center gap-2 transition-all cursor-pointer ${
                   scanMode === "manual"
-                    ? "border-white bg-zinc-800 text-white font-bold"
-                    : "border-[#1F2228] bg-[#0A0A0E] text-zinc-400 hover:text-white"
+                    ? "glass-surface-elevated border-white text-white font-bold shadow-sm"
+                    : "glass-card text-zinc-400 hover:text-white"
                 }`}
               >
-                <Cpu className="w-5 h-5 text-zinc-300" />
+                <Cpu className="w-5 h-5 text-white" />
                 <span>{isAr ? "إدخال المعرّف" : "Enter UID"}</span>
               </button>
             </div>
 
             {/* Interactive Scanner / Reader Viewfinder */}
             {scanMode === "nfc" && (
-              <div className="p-8 rounded-xl border border-dashed border-[#27272A] bg-[#000000] flex flex-col items-center justify-center text-center space-y-4">
-                <div className={`w-20 h-20 rounded-full border border-white/30 bg-zinc-900 flex items-center justify-center text-white relative ${isScanning ? "animate-pulse" : ""}`}>
-                  <Radio className="w-10 h-10 text-white" />
+              <div className="p-8 sm:p-10 rounded-2xl glass-surface border border-white/[0.08] flex flex-col items-center justify-center text-center space-y-5">
+                <div className={`w-20 h-20 rounded-full glass-surface-elevated border border-white/20 flex items-center justify-center text-white relative ${isScanning ? "animate-pulse" : ""}`}>
+                  <Radio className="w-9 h-9 text-white" />
                   {isScanning && (
-                    <span className="absolute inset-0 rounded-full border-2 border-white animate-ping opacity-40" />
+                    <span className="absolute inset-0 rounded-full border border-white animate-ping opacity-30" />
                   )}
                 </div>
 
@@ -251,7 +275,7 @@ export default function ActivateTagPage() {
                       ? (isAr ? "جارٍ قراءة شريحة الـ NFC والمصادقة..." : "Reading NFC IC Tag...")
                       : (isAr ? "قرّب بطاقة الأكريليك من ظهر جوالك" : "Hold Acrylic Tag Near Phone")}
                   </h3>
-                  <p className="text-xs text-[#A1A1AA] mt-1 max-w-sm">
+                  <p className="text-xs text-zinc-400 mt-1 max-w-sm leading-relaxed">
                     {isAr
                       ? "يتم قراءة معرّف الشريحة المشفر آلياً دون الحاجة لأي تطبيق أو كلمة سر."
                       : "Direct hardware IC reading via standard NFC frequency (13.56 MHz)."}
@@ -262,7 +286,7 @@ export default function ActivateTagPage() {
                   type="button"
                   onClick={handleNfcSimulate}
                   disabled={isScanning}
-                  className="px-6 py-2.5 rounded-lg border border-white bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-colors disabled:opacity-50"
+                  className="px-6 py-3 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 shadow-glass active:scale-95 cursor-pointer"
                 >
                   {isScanning ? (isAr ? "جارٍ الالتقاط..." : "Detecting...") : (isAr ? "بدء استشعار تقريب الـ NFC" : "Simulate NFC Tap")}
                 </button>
@@ -270,12 +294,11 @@ export default function ActivateTagPage() {
             )}
 
             {scanMode === "camera" && (
-              <div className="p-6 rounded-xl border border-[#27272A] bg-[#000000] flex flex-col items-center justify-center text-center space-y-4">
-                {/* Simulated Live Viewfinder with scanning laser */}
-                <div className="w-64 h-64 rounded-xl border-2 border-zinc-600 relative overflow-hidden flex items-center justify-center bg-black">
+              <div className="p-6 sm:p-8 rounded-2xl glass-surface border border-white/[0.08] flex flex-col items-center justify-center text-center space-y-5">
+                <div className="w-56 h-56 rounded-2xl border-2 border-white/20 relative overflow-hidden flex items-center justify-center bg-black/60 shadow-glass">
                   <div className="absolute inset-x-0 h-0.5 bg-white animate-bounce shadow-none" style={{ top: "45%" }} />
-                  <ScanLine className="w-24 h-24 text-zinc-500" />
-                  <span className="absolute bottom-3 text-[10px] font-mono text-white bg-black/90 px-2 py-0.5 rounded border border-zinc-700 font-bold">
+                  <ScanLine className="w-20 h-20 text-zinc-500" />
+                  <span className="absolute bottom-3 text-[10px] font-mono text-white glass-pill px-2.5 py-1 rounded-full font-bold">
                     ALIGN QR IN FRAME
                   </span>
                 </div>
@@ -284,7 +307,7 @@ export default function ActivateTagPage() {
                   <h3 className="text-sm font-bold text-white">
                     {isAr ? "وجّه الكاميرا نحو كود الـ QR على البطاقة" : "Point Camera at Tag QR Code"}
                   </h3>
-                  <p className="text-xs text-[#A1A1AA] mt-1">
+                  <p className="text-xs text-zinc-400 mt-1">
                     {isAr ? "التعرف التلقائي على معرّف البطاقة الفيزيائية" : "Auto-detects hardware serial UID from ISO 18004 code."}
                   </p>
                 </div>
@@ -293,7 +316,7 @@ export default function ActivateTagPage() {
                   type="button"
                   onClick={handleCameraScanSimulate}
                   disabled={isScanning}
-                  className="px-6 py-2.5 rounded-lg border border-white bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-colors disabled:opacity-50"
+                  className="px-6 py-3 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 shadow-glass active:scale-95 cursor-pointer"
                 >
                   {isScanning ? (isAr ? "جارٍ قراءة الـ QR..." : "Scanning...") : (isAr ? "محاكاة تصوير كود الـ QR" : "Capture QR Code")}
                 </button>
@@ -301,7 +324,7 @@ export default function ActivateTagPage() {
             )}
 
             {scanMode === "manual" && (
-              <div className="p-6 rounded-xl border border-[#1F2228] bg-[#000000] space-y-4">
+              <div className="p-6 rounded-2xl glass-surface border border-white/[0.08] space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-zinc-300 mb-1.5 font-mono">
                     {isAr ? "أدخل الرقم التسلسلي للبطاقة (UID):" : "Serial Tag UID:"}
@@ -311,14 +334,14 @@ export default function ActivateTagPage() {
                     value={scannedTagUid}
                     onChange={(e) => setScannedTagUid(e.target.value.toUpperCase())}
                     placeholder="TT-88219-X"
-                    className="w-full bg-[#08080A] border border-[#27272A] rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-white uppercase"
+                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs font-mono text-white focus:outline-none uppercase"
                   />
                 </div>
 
                 <button
                   type="button"
                   onClick={handleManualProceed}
-                  className="w-full py-2.5 rounded-lg border border-white bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-colors"
+                  className="w-full py-3 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all shadow-glass cursor-pointer"
                 >
                   {isAr ? "التحقق والمتابعة للربط بالبصمة" : "Verify & Proceed to Biometrics"}
                 </button>
@@ -331,18 +354,20 @@ export default function ActivateTagPage() {
         {/* STEP 2: CONFIGURE & ONE-TOUCH BIOMETRIC CLAIM                  */}
         {/* ------------------------------------------------------------- */}
         {step === 2 && (
-          <div className="border border-[#27272A] rounded-xl bg-[#09090B] p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-[#27272A] pb-3">
+          <div className="glass-surface-elevated rounded-3xl p-6 sm:p-8 space-y-6 border border-white/[0.12] shadow-glass">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
               <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
                 {isAr ? "الخطوة 2: ربط وقفل الملكية بالبصمة البيومترية" : "Step 2: Lock Ownership via Fingerprint"}
               </span>
-              <span className="text-[10px] font-mono text-zinc-400">HARDWARE VERIFIED</span>
+              <span className="text-[10px] font-mono text-zinc-400 px-2 py-0.5 rounded-full glass-pill">HARDWARE VERIFIED</span>
             </div>
 
             {/* Hardware Verified Banner */}
-            <div className="p-3.5 rounded-lg border border-zinc-700 bg-zinc-900/60 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-white" />
+            <div className="p-4 rounded-2xl glass-surface border border-white/[0.08] flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl glass-pill">
+                  <ShieldCheck className="w-5 h-5 text-[#00C853]" />
+                </div>
                 <div>
                   <span className="text-xs font-bold text-white block">
                     {isAr ? "تم التحقق من معرّف البطاقة الفيزيائية بنجاح" : "Hardware UID Verified in System"}
@@ -352,79 +377,79 @@ export default function ActivateTagPage() {
                   </span>
                 </div>
               </div>
-              <span className="px-2 py-0.5 rounded border border-zinc-600 bg-black text-white text-[10px] font-mono font-bold">
+              <span className="px-2.5 py-1 rounded-full glass-pill text-white text-[10px] font-mono font-bold">
                 READY
               </span>
             </div>
 
             {/* Vehicle Profile Input */}
             <div className="space-y-4">
-              <h2 className="text-xs font-bold text-white uppercase tracking-wider">
+              <h2 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
                 {isAr ? "بيانات المركبة المقترنة:" : "Vehicle Details:"}
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-300 mb-1">
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                     {isAr ? "رقم اللوحة الرسمي:" : "License Plate:"} *
                   </label>
                   <input
                     type="text"
                     value={vehiclePlate}
                     onChange={(e) => setVehiclePlate(e.target.value)}
-                    className="w-full bg-[#000000] border border-[#27272A] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-white"
+                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-300 mb-1">
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                     {isAr ? "الشركة المصنعة (Make):" : "Make:"} *
                   </label>
                   <input
                     type="text"
                     value={vehicleMake}
                     onChange={(e) => setVehicleMake(e.target.value)}
-                    className="w-full bg-[#000000] border border-[#27272A] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-white"
+                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-300 mb-1">
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                     {isAr ? "الموديل والفئة:" : "Model / Trim:"}
                   </label>
                   <input
                     type="text"
                     value={vehicleModel}
                     onChange={(e) => setVehicleModel(e.target.value)}
-                    className="w-full bg-[#000000] border border-[#27272A] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-white"
+                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-300 mb-1">
+                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                     {isAr ? "رقم هاتفك لاستقبال التنبيهات (مشفر ومحجوب):" : "Emergency Contact (Private):"} *
                   </label>
                   <input
                     type="tel"
                     value={emergencyPhone}
                     onChange={(e) => setEmergencyPhone(e.target.value)}
-                    className="w-full bg-[#000000] border border-[#27272A] rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-white"
+                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs font-mono text-white focus:outline-none"
                   />
                 </div>
               </div>
             </div>
 
             {/* ONE-TOUCH BIOMETRIC CLAIM BUTTON */}
-            <div className="p-4 rounded-xl border border-zinc-700 bg-zinc-900/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full border border-zinc-600 bg-black flex items-center justify-center text-white shrink-0">
-                  <Fingerprint className="w-7 h-7 text-white" />
+            <div className="p-5 rounded-2xl glass-surface border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-5">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl glass-pill flex items-center justify-center text-white shrink-0">
+                  <Fingerprint className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white">
                     {isAr ? "المصادقة بالبصمة وقفل الملكية الحصرية" : "Biometric Passkey Claim"}
                   </h3>
-                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                  <p className="text-xs text-zinc-400 leading-relaxed mt-0.5">
                     {isAr
                       ? "سيتم تسجيل معرّف جوالك الحالي بالبصمة ليرتبط هذا الـ QR بجوالك فقط."
                       : "Cryptographically pairs this QR code to this smartphone device ID."}
@@ -436,7 +461,7 @@ export default function ActivateTagPage() {
                 type="button"
                 onClick={handleBiometricClaimSubmit}
                 disabled={isPending || isBiometricAuthenticating}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-white bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-colors disabled:opacity-50 shrink-0"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 shrink-0 shadow-glass active:scale-95 cursor-pointer"
               >
                 <Fingerprint className="w-4 h-4 text-black" />
                 <span>
@@ -453,22 +478,22 @@ export default function ActivateTagPage() {
         {/* STEP 3: ACTIVATION COMPLETED OK                               */}
         {/* ------------------------------------------------------------- */}
         {step === 3 && (
-          <div className="border border-zinc-700 rounded-xl bg-[#09090B] p-8 text-center space-y-6">
-            <div className="w-16 h-16 rounded-full border-2 border-white bg-zinc-900 flex items-center justify-center text-white mx-auto">
-              <Check className="w-9 h-9" />
+          <div className="glass-surface-elevated rounded-3xl p-8 sm:p-10 text-center space-y-6 border border-white/[0.12] shadow-glass-elevated">
+            <div className="w-16 h-16 rounded-full glass-surface border border-white/20 flex items-center justify-center text-white mx-auto shadow-glass">
+              <Check className="w-8 h-8 text-[#00C853]" />
             </div>
 
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded border border-zinc-700 bg-black text-white text-xs font-mono font-bold">
-                <ShieldCheck className="w-4 h-4 text-white" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-white text-xs font-mono font-bold">
+                <ShieldCheck className="w-4 h-4 text-[#00C853]" />
                 <span>FIRST-CLAIM OWNERSHIP LOCKED</span>
               </div>
 
-              <h2 className="text-xl sm:text-2xl font-bold text-white">
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 {isAr ? "تم التفعيل والاقتران بالبصمة بنجاح! (OK)" : "Tag Activated Successfully! (OK)"}
               </h2>
 
-              <p className="text-xs text-zinc-400 max-w-lg mx-auto leading-relaxed">
+              <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto leading-relaxed">
                 {isAr
                   ? `تحول رمز الـ QR (${scannedTagUid}) الآن إلى بوابتك المشفرة بالكامل. إذا قام أي شخص غريب بتصويره سيتوجه لبوابة الإجراءات الآمنة دون كشف أي معلومات عنك، وإذا صورته أنت من هذا الجوال سيفتح لك لوحة التحكم وتعديل الإعدادات فورياً بالبصمة.`
                   : `Tag ${scannedTagUid} is now cryptographically locked to this smartphone. External scans route to the privacy-masked portal, while your scans open the Owner Management suite.`}
@@ -478,7 +503,7 @@ export default function ActivateTagPage() {
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href={`/t/${scannedTagUid}`}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg border border-white bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all shadow-glass"
               >
                 <span>{isAr ? "فتح بوابة البطاقة الآن" : "Open Tag Portal"}</span>
                 {isAr ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
@@ -486,7 +511,7 @@ export default function ActivateTagPage() {
 
               <Link
                 href="/dashboard"
-                className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-[#27272A] bg-[#0A0A0E] text-xs text-zinc-300 hover:text-white hover:border-zinc-500 transition-colors"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl glass-card text-xs text-zinc-300 hover:text-white transition-all"
               >
                 {isAr ? "الانتقال للوحة التحكم" : "Go to Dashboard"}
               </Link>

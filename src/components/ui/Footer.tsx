@@ -7,7 +7,6 @@ import { Language } from "@/types";
 
 /**
  * Official 3D Faceted Architectural M Emblem of Matany Group
- * Directly aligned with C:\Best Projects\matanygroup
  */
 export function LogoSvgM({ className = "h-3.5 w-auto shrink-0 inline-block" }: { className?: string }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
@@ -60,66 +59,69 @@ export function Footer({ lang = "ar" }: FooterProps) {
   };
 
   return (
-    <footer className="w-full border-t border-[#1C1C20] bg-[#000000] py-8 px-4 text-xs text-[#A1A1AA]">
-      {/* Quick Navigation Links */}
-      <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2 pb-6 mb-6 border-b border-zinc-800 font-mono text-[11px]">
-        <Link href="/" className="text-zinc-400 hover:text-white transition-colors">
-          {isAr ? "الرئيسية" : "Home"}
-        </Link>
-        <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors">
-          {isAr ? "لوحة سياراتي" : "My Vehicles"}
-        </Link>
-        <Link href="/admin/qr-engine" className="text-white hover:underline font-bold transition-colors">
-          {isAr ? "استوديو تصميم البطاقات" : "Card Studio"}
-        </Link>
-        <Link href="/dashboard/find" className="text-zinc-400 hover:text-white transition-colors">
-          {isAr ? "تحديد مكان السيارة" : "Find Vehicle"}
-        </Link>
-        <Link href="/dashboard/calibrate" className="text-zinc-400 hover:text-white transition-colors">
-          {isAr ? "معايرة السيارة" : "Calibrate"}
-        </Link>
-        <Link href="/demo/activate" className="text-zinc-400 hover:text-white transition-colors">
-          {isAr ? "تفعيل بالبصمة" : "Biometric Claim"}
-        </Link>
-        <Link href="/admin" className="text-zinc-400 hover:text-white transition-colors">
-          {isAr ? "مركز الإدارة" : "Admin Hub"}
-        </Link>
-      </div>
+    <footer className="w-full border-t border-white/[0.08] glass-surface mt-16 py-10 px-4 text-xs text-zinc-400">
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Quick Navigation Links */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/[0.06] font-mono text-xs">
+          <div className="flex flex-wrap items-center gap-5 sm:gap-6">
+            <Link href="/" className="text-zinc-400 hover:text-white transition-colors">
+              {isAr ? "الرئيسية" : "Home"}
+            </Link>
+            <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors">
+              {isAr ? "لوحة سياراتي" : "Dashboard"}
+            </Link>
+            <Link href="/dashboard/activate" className="text-zinc-400 hover:text-white transition-colors">
+              {isAr ? "تفعيل بطاقة" : "Activate"}
+            </Link>
+            <Link href="/admin/qr-engine" className="text-zinc-400 hover:text-white transition-colors">
+              {isAr ? "استوديو البطاقات" : "Studio"}
+            </Link>
+            <Link href="/dashboard/find" className="text-zinc-400 hover:text-white transition-colors">
+              {isAr ? "أين سيارتي؟" : "Find Vehicle"}
+            </Link>
+            <Link href="/admin" className="text-zinc-500 hover:text-zinc-300 transition-colors">
+              {isAr ? "مركز الإدارة" : "Admin"}
+            </Link>
+          </div>
 
-      <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        {/* Brand System Notice */}
-        <div className="flex items-center gap-2 text-center sm:text-start">
-          <ShieldCheck className="w-4 h-4 text-white shrink-0" />
-          <span className="font-mono text-[11px]">
-            {isAr
-              ? "منظومة TapTag.one • الهوية الذكية وحماية السيارات بلمسة واحدة وتقنيات NFC المشفرة"
-              : "TapTag.one • Smart NFC/QR Identity & Vehicle Protection"}
-          </span>
-        </div>
-
-        {/* Built by Matany Group with Official 3D M Emblem */}
-        <div dir="ltr" className="inline-flex items-center gap-1.5 text-xs text-zinc-400 font-mono select-none">
-          <span>Built by</span>
-          <a
-            href="https://matanygroup.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-bold text-white hover:text-zinc-300 transition-colors group cursor-pointer"
-            title="MATANY GROUP"
+          {/* Scroll To Top */}
+          <button
+            onClick={scrollToTop}
+            className="px-3 py-1.5 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.08] hover:text-white transition-all flex items-center gap-1.5 text-xs text-zinc-300 font-mono cursor-pointer"
           >
-            <LogoSvgM className="h-3.5 w-auto shrink-0 group-hover:scale-105 transition-transform" />
-            <span className="tracking-wide text-white group-hover:text-zinc-200 transition-colors">Matany Group</span>
-          </a>
+            <span>{isAr ? "للأعلى" : "Top"}</span>
+            <ArrowUp className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {/* Scroll To Top */}
-        <button
-          onClick={scrollToTop}
-          className="px-3 py-1.5 rounded-lg border border-[#27272A] bg-[#08080A] hover:border-white/30 hover:text-white transition-all flex items-center gap-1.5 text-[11px] text-zinc-300 font-mono cursor-pointer"
-        >
-          <span>{isAr ? "للأعلى" : "Top"}</span>
-          <ArrowUp className="w-3.5 h-3.5" />
-        </button>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
+          {/* Brand System Notice */}
+          <div className="flex items-center gap-2.5 text-center sm:text-start">
+            <div className="p-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03]">
+              <ShieldCheck className="w-4 h-4 text-white shrink-0" />
+            </div>
+            <span className="font-mono text-xs text-zinc-300">
+              {isAr
+                ? "منظومة TapTag.one • هوية المركبات وحمايتها بالـ NFC المشفر بدون تطبيقات"
+                : "TapTag.one • Smart NFC/QR Identity & Vehicle Protection"}
+            </span>
+          </div>
+
+          {/* Built by Matany Group with Official 3D M Emblem */}
+          <div dir="ltr" className="inline-flex items-center gap-2 text-xs text-zinc-400 font-mono select-none">
+            <span>Built by</span>
+            <a
+              href="https://matanygroup.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-bold text-white hover:text-zinc-200 transition-colors group cursor-pointer"
+              title="MATANY GROUP"
+            >
+              <LogoSvgM className="h-3.5 w-auto shrink-0 group-hover:scale-105 transition-transform" />
+              <span className="tracking-wide text-white group-hover:text-zinc-200 transition-colors">Matany Group</span>
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   );

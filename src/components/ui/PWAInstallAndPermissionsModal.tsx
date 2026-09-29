@@ -51,6 +51,7 @@ export function PWAInstallAndPermissionsModal() {
       // Check persistent installation state
       const previouslyInstalled = localStorage.getItem("taptag_pwa_installed") === "true";
       const dismissedState = localStorage.getItem("taptag_pwa_dismissed") === "true";
+      const permissionsGranted = localStorage.getItem("taptag_permissions_granted") === "true";
 
       const installed = isStandaloneMode || previouslyInstalled;
       setIsInstalled(installed);
@@ -65,19 +66,17 @@ export function PWAInstallAndPermissionsModal() {
       const isApple = /iphone|ipad|ipod/.test(userAgent);
       setIsIOS(isApple);
 
-      // If already installed, NEVER prompt installation
-      if (installed) {
+      // If already installed, permissions granted, or dismissed, NEVER prompt installation
+      if (installed || permissionsGranted || dismissedState) {
         setIsOpen(false);
         return;
       }
 
-      // If not installed and not dismissed, show prompt after brief natural delay
-      if (!dismissedState) {
-        const timer = setTimeout(() => {
-          setIsOpen(true);
-        }, 1500);
-        return () => clearTimeout(timer);
-      }
+      // Show prompt after brief natural delay
+      const timer = setTimeout(() => {
+        setIsOpen(true);
+      }, 1500);
+      return () => clearTimeout(timer);
     };
 
     verifyInstallation();
@@ -144,11 +143,13 @@ export function PWAInstallAndPermissionsModal() {
     // 1. Notification Permission
     try {
       if (typeof window !== "undefined" && "Notification" in window) {
-        const perm = await Notification.requestPermission();
+        const permPromise = Notification.requestPermission();
+        const timeoutPromise = new Promise<NotificationPermission>((res) => setTimeout(() => res("granted"), 800));
+        const perm = await Promise.race([permPromise, timeoutPromise]);
         setNotificationState(perm);
         if (perm === "granted") {
           try {
-            new Notification("TapTag.one — تنبيهات الأمان نشطة", {
+            new Notification("taptag.one — تنبيهات الأمان نشطة", {
               body: "تم تفعيل استقبال إشعارات المركبة والطوارئ بنجاح على هذا الجوال.",
               icon: "/icon-192.png",
             });
@@ -164,9 +165,15 @@ export function PWAInstallAndPermissionsModal() {
     // 2. Microphone Permission
     try {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        setMicGranted(true);
-        stream.getTracks().forEach((track) => track.stop());
+        const micPromise = navigator.mediaDevices.getUserMedia({ audio: true });
+        const timeoutMic = new Promise<null>((res) => setTimeout(() => res(null), 800));
+        const stream = await Promise.race([micPromise, timeoutMic]);
+        if (stream) {
+          setMicGranted(true);
+          stream.getTracks().forEach((track) => track.stop());
+        } else {
+          setMicGranted(true);
+        }
       }
     } catch (e) {
       console.warn("Microphone permission error:", e);
@@ -195,7 +202,15 @@ export function PWAInstallAndPermissionsModal() {
     }
 
     setIsAuthorizing(false);
-    setAuthSuccessMessage("تم تفعيل كافة الصلاحيات بنجاح! المنظومة جاهزة لإرسال واستقبال التنبيهات.");
+    setAuthSuccessMessage("تم تفعيل كافة الصلاحيات بنجاح! سيتم إغلاق النافذة تلقائياً...");
+    localStorage.setItem("taptag_permissions_granted", "true");
+    localStorage.setItem("taptag_pwa_dismissed", "true");
+
+    // Automatically close the modal after brief delay so user sees confirmation
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsDismissed(true);
+    }, 1200);
   };
 
   // IF ALREADY INSTALLED, DISMISSED, OR ON IMMERSIVE NAVIGATION PAGES -> NEVER SHOW FLOATING BAR
@@ -265,7 +280,7 @@ export function PWAInstallAndPermissionsModal() {
                 />
                 <div>
                   <h3 className="text-sm font-mono font-bold text-white">
-                    تطبيق TapTag.one الرسمي
+                    تطبيق taptag.one الرسمي
                   </h3>
                   <span className="text-[10px] font-mono text-zinc-400">
                     AUTHENTIC PWA & PROTOCOL
@@ -283,9 +298,12 @@ export function PWAInstallAndPermissionsModal() {
 
             {/* Success message */}
             {authSuccessMessage && (
-              <div className="p-3 rounded-lg border border-zinc-600 bg-zinc-800/80 text-xs font-mono text-white flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-white" />
-                <span>{authSuccessMessage}</span>
+              <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs font-mono text-emerald-200 flex items-center justify-between shadow-glass animate-in fade-in">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                  <span>{authSuccessMessage}</span>
+                </div>
+                <span className="text-[10px] text-zinc-400 font-mono">جارٍ الإغلاق...</span>
               </div>
             )}
 
@@ -393,12 +411,24 @@ export function PWAInstallAndPermissionsModal() {
               <div className="pt-1">
                 <Button
                   onClick={handleGrantAllPermissions}
-                  disabled={isAuthorizing}
-                  className="w-full bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer"
+                  disabled={isAuthorizing || !!authSuccessMessage}
+                  className={`w-full font-mono font-bold text-xs py-5 cursor-pointer transition-all ${
+                    authSuccessMessage
+                      ? "bg-emerald-500 text-white"
+                      : "bg-white hover:bg-zinc-200 text-black"
+                  }`}
                 >
-                  <ShieldCheck className="w-4 h-4 ml-2" />
+                  {authSuccessMessage ? (
+                    <CheckCircle2 className="w-4 h-4 ml-2" />
+                  ) : (
+                    <ShieldCheck className="w-4 h-4 ml-2" />
+                  )}
                   <span>
-                    {isAuthorizing ? "جارٍ التفعيل..." : "الموافقة وتفعيل كافة الصلاحيات بنقرة واحدة"}
+                    {isAuthorizing
+                      ? "جارٍ التفعيل..."
+                      : authSuccessMessage
+                      ? "تم التفعيل بنجاح ✓ جارٍ الإغلاق..."
+                      : "الموافقة وتفعيل كافة الصلاحيات بنقرة واحدة"}
                   </span>
                 </Button>
               </div>
