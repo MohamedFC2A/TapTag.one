@@ -69,26 +69,26 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
 
         <p className="text-sm sm:text-base font-sans text-zinc-400 max-w-xl mx-auto leading-relaxed">
           {isAr
-            ? "بطاقة أكريليك ذكية على زجاج سيارتك تتيح لأي شخص تنبيهك أو الاتصال بك عند الحاجة — دون كشف رقم هاتفك نهائياً، وبدون أي تطبيقات."
-            : "A sleek smart card for your windshield. Instant encrypted contact for parking alerts and emergencies — without exposing your phone number, and zero apps required."}
+            ? "بطاقة أكريليك ذكية على زجاج سيارتك لتنبيهات المواقف والطوارئ فورياً — دون كشف رقم هاتفك نهائياً، وبدون تطبيقات."
+            : "A sleek smart card for your windshield. Instant encrypted parking alerts and contact — zero apps, zero phone number disclosure."}
         </p>
 
         {/* Smart Concept 3-Step Flow: Tap -> Tag -> One */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-2">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glass-card text-xs font-mono text-zinc-300">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 pt-1">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl glass-card text-xs font-mono text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-            <strong className="text-white">1. Tap</strong>
-            <span className="text-zinc-400">{isAr ? "لمس بالهاتف أو مسح QR" : "Phone Tap or QR"}</span>
+            <strong className="text-white">Tap</strong>
+            <span className="text-zinc-400">{isAr ? "لمس أو مسح" : "Touch / Scan"}</span>
           </div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glass-card text-xs font-mono text-zinc-300">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl glass-card text-xs font-mono text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
-            <strong className="text-white">2. Tag</strong>
-            <span className="text-zinc-400">{isAr ? "بطاقة أكريليك على الزجاج" : "Acrylic Tag on Glass"}</span>
+            <strong className="text-white">Tag</strong>
+            <span className="text-zinc-400">{isAr ? "بطاقة أكريليك" : "Acrylic Tag"}</span>
           </div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glass-card text-xs font-mono text-zinc-300">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl glass-card text-xs font-mono text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <strong className="text-white">3. One</strong>
-            <span className="text-zinc-400">{isAr ? "تواصل مشفر بدون كشف رقمك" : "Masked Direct Alert"}</span>
+            <strong className="text-white">One</strong>
+            <span className="text-zinc-400">{isAr ? "تواصل محمي" : "Masked Alert"}</span>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
           <div className="flex items-center justify-between w-full mb-3 px-2 text-[11px] font-mono text-zinc-400">
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
-              {isAr ? "معاينة البطاقة التفاعلية 3D" : "3D Interactive Specimen"}
+              {isAr ? "معاينة البطاقة التفاعلية" : "Interactive Specimen"}
             </span>
             <span className="text-zinc-500">70×50mm ACRYLIC</span>
           </div>
@@ -115,14 +115,14 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
         </div>
       </div>
 
-      {/* Primary Conversion CTAs */}
+      {/* Primary Conversion CTAs (Clean, High Contrast, Two Actions Only) */}
       <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
         <Link
           href="/dashboard/activate"
           className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-black font-bold text-xs hover:bg-zinc-200 transition-all shadow-glass active:scale-95 cursor-pointer"
         >
           <Shield className="w-4 h-4 text-black" />
-          <span>{isAr ? "تفعيل واقتران بطاقة جديدة" : "Activate Your Card"}</span>
+          <span>{isAr ? "تفعيل بطاقة جديدة" : "Activate Tag"}</span>
         </Link>
 
         <Link
@@ -130,15 +130,7 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
           className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl glass-card text-emerald-400 hover:text-emerald-300 hover:border-emerald-500/30 font-bold text-xs transition-all shadow-glass cursor-pointer active:scale-95"
         >
           <QrCode className="w-4 h-4 text-emerald-400" />
-          <span>{isAr ? "مسح البطاقة (كاميرا QR أو NFC)" : "Scan Tag (Camera QR / NFC)"}</span>
-        </Link>
-
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl glass-card text-white font-bold text-xs hover:border-white/20 transition-all cursor-pointer"
-        >
-          <Car className="w-4 h-4 text-zinc-300" />
-          <span>{isAr ? "لوحة إدارة سياراتي" : "My Vehicles Dashboard"}</span>
+          <span>{isAr ? "مسح البطاقة (QR / NFC)" : "Scan Tag (QR / NFC)"}</span>
         </Link>
       </div>
     </section>

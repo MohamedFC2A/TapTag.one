@@ -117,7 +117,7 @@ export function ScanClient() {
     const trimmed = rawText.trim();
     let tagUid = "";
 
-    // If it's a full URL like https://tagtap.one/r/MW-88219-X or https://taptag.one/r/...
+    // If it's a full URL like https://taptag.one/r/MW-88219-X
     if (trimmed.includes("/r/")) {
       const parts = trimmed.split("/r/");
       tagUid = parts[parts.length - 1].split(/[?#]/)[0].toUpperCase();
@@ -471,13 +471,13 @@ export function ScanClient() {
             )}
 
             {/* Apple iPhone Guidance */}
-            <div className="p-3.5 rounded-2xl glass-card text-right space-y-1.5 w-full">
+            <div className="p-3 rounded-2xl glass-card text-right space-y-1 w-full">
               <div className="flex items-center gap-2 text-white">
                 <Smartphone className="w-4 h-4 text-zinc-300" />
-                <span className="text-xs font-bold">مستخدمو آيفون (iOS):</span>
+                <span className="text-xs font-bold">مستخدمو آيفون:</span>
               </div>
-              <p className="text-[11px] text-zinc-400 leading-relaxed font-mono">
-                لا تحتاج لأي تطبيق أو زر: فقط قرّب أعلى ظهر الآيفون من رمز NFC على بطاقة الأكريليك وستظهر لك شارة الإشعار فوراً.
+              <p className="text-[11px] text-zinc-400 leading-relaxed font-sans">
+                قرّب أعلى الهاتف مباشرة من البطاقة وسيفتح الرابط فورياً بدون أي خطوات إضافية.
               </p>
             </div>
 

@@ -26,37 +26,37 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
 
   const scenarios = {
     movement: {
-      title: isAr ? "طلب تحريك السيارة" : "Move Vehicle Request",
+      title: isAr ? "تحريك السيارة" : "Move Vehicle",
       desc: isAr
-        ? "تنبيه فوري مهذب عند الوقوف المزدوج أو إغلاق مدخل أو موقف."
-        : "Polite instant notification to adjust parking if blocking access.",
-      phoneTitle: isAr ? "طلب تحريك المركبة" : "Vehicle Movement Notice",
+        ? "تنبيه فوري مهذب عند الوقوف المزدوج أو إغلاق مدخل."
+        : "Polite instant notification for double parking or blocked exit.",
+      phoneTitle: isAr ? "طلب تحريك المركبة" : "Move Vehicle Notice",
       phoneBody: isAr
-        ? "تنبيه: سيارتك تقف أمام سيارة أخرى، يرجى تحريكها إذا أمكن."
-        : "Alert: Someone needs access. Please adjust your parking if possible.",
+        ? "يرجى تحريك سيارتك لإفساح الطريق إذا أمكن."
+        : "Please adjust your parking if possible to allow access.",
       phoneAction: isAr ? "سأحضر خلال دقائق" : "On my way",
     },
     emergency: {
-      title: isAr ? "إنذار طوارئ فوري" : "Emergency Alert",
+      title: isAr ? "إنذار طوارئ" : "Emergency Alert",
       desc: isAr
-        ? "تنبيه عاجل في حال وجود نافذة مفتوحة، تسريب، أو خطر داهم."
-        : "High-priority alert for open windows, fluid leaks, or hazard.",
-      phoneTitle: isAr ? "إنذار طوارئ عاجل!" : "Urgent Vehicle Alert!",
+        ? "إشعار عاجل عند وجود نافذة مفتوحة أو خطر داهم."
+        : "Urgent alert for open windows, leaks, or hazards.",
+      phoneTitle: isAr ? "إنذار طوارئ للمركبة!" : "Urgent Vehicle Alert!",
       phoneBody: isAr
-        ? "تنبيه طوارئ: تم رصد مشكلة تستدعي انتباهك العاجل بجوار سيارتك."
-        : "Immediate alert: Urgent attention required near your vehicle.",
+        ? "تنبيه: تم رصد أمر طارئ يستدعي انتباهك فوراً."
+        : "Immediate attention required near your vehicle.",
       phoneAction: isAr ? "تأكيد واستجابة" : "Acknowledge",
     },
     call: {
       title: isAr ? "اتصال صوتي مشفر" : "Masked Voice Call",
       desc: isAr
-        ? "مكالمة صوتية مجانية عبر المتصفح دون كشف رقمك الحقيقي إطلاقاً."
-        : "Direct secure web audio call with zero personal number disclosure.",
-      phoneTitle: isAr ? "مكالمة واردة من زائر" : "Incoming Masked Voice Call",
+        ? "مكالمة صوتية مجانية عبر المتصفح بدون كشف رقمك."
+        : "Direct secure web audio call with zero number disclosure.",
+      phoneTitle: isAr ? "مكالمة مشفرة واردة" : "Incoming Masked Call",
       phoneBody: isAr
-        ? "مكالمة صوتية مشفرة عبر بطاقة سيارتك الذكية (هويتك ورقمك محجوبان)."
+        ? "مكالمة صوتية مباشرة عبر بطاقة سيارتك الذكية."
         : "Encrypted call initiated via your vehicle smart tag.",
-      phoneAction: isAr ? "رد على المكالمة" : "Accept Call",
+      phoneAction: isAr ? "قبول المكالمة" : "Accept Call",
     },
   };
 

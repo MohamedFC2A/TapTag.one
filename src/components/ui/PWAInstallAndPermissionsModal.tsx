@@ -67,16 +67,14 @@ export function PWAInstallAndPermissionsModal() {
       setIsIOS(isApple);
 
       // If already installed, permissions granted, or dismissed, NEVER prompt installation
+      // If already installed, permissions granted, or dismissed, NEVER prompt installation
       if (installed || permissionsGranted || dismissedState) {
         setIsOpen(false);
         return;
       }
 
-      // Show prompt after brief natural delay
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-      }, 1500);
-      return () => clearTimeout(timer);
+      // DO NOT auto-open intrusive modal on page load
+      setIsOpen(false);
     };
 
     verifyInstallation();
@@ -215,55 +213,13 @@ export function PWAInstallAndPermissionsModal() {
 
   // IF ALREADY INSTALLED, DISMISSED, OR ON IMMERSIVE NAVIGATION PAGES -> NEVER SHOW FLOATING BAR
   const isNavPage = pathname?.includes("/dashboard/calibrate") || pathname?.includes("/dashboard/find");
-  if (isInstalled || isDismissed || isNavPage) {
+  if (!isOpen || isNavPage) {
     return null;
   }
 
   return (
     <>
-      {/* Floating Trigger Bar (Only shown if NOT installed and NOT on navigation pages) */}
-      <div
-        className="fixed bottom-3 inset-x-3 z-40 max-w-lg mx-auto p-2.5 rounded-xl border border-zinc-700 bg-[#09090B]/95 backdrop-blur-md text-white flex items-center justify-between gap-3 shadow-2xl"
-        dir="rtl"
-      >
-        <div className="flex items-center gap-2.5 text-xs font-mono">
-          <img
-            src="/icon-192.png"
-            alt="TapTag Icon"
-            className="w-7 h-7 rounded-lg border border-white/20 shrink-0 object-cover"
-          />
-          <div className="flex flex-col text-start">
-            <span className="font-bold text-white text-[11px] sm:text-xs">
-              تثبيت تطبيق TapTag على الجوال
-            </span>
-            <span className="text-[10px] text-zinc-400">
-              مطلوب لاستقبال إشعارات الطوارئ الفورية
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-1.5 shrink-0">
-          <Button
-            size="sm"
-            onClick={() => setIsOpen(true)}
-            className="bg-white hover:bg-zinc-200 text-black font-mono font-bold text-[11px] h-8 px-3 cursor-pointer shrink-0"
-          >
-            <Download className="w-3 h-3 ml-1" />
-            <span>تثبيت</span>
-          </Button>
-
-          <button
-            type="button"
-            onClick={() => setIsDismissed(true)}
-            className="w-7 h-7 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-colors"
-            title="إخفاء شريط التثبيت"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Main Installation & Permissions Modal */}
+      {/* Main Installation & Permissions Modal (Only when explicitly open) */}
       {isOpen && (
         <div
           className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-4"

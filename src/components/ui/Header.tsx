@@ -131,7 +131,7 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
             onClick={() => setMobileMenuOpen(false)}
             className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-white text-black font-bold text-xs mb-2 shadow-sm"
           >
-            <span>{isAr ? "تفعيل بطاقة جديدة بالبصمة" : "Activate New Card"}</span>
+            <span>{isAr ? "تفعيل بطاقة جديدة" : "Activate New Card"}</span>
             <ShieldCheck className="w-4 h-4 text-black" />
           </Link>
           {navLinks.map((link, idx) => (

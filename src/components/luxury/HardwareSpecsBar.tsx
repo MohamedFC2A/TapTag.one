@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Cpu, ShieldCheck, Thermometer, Layers, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Thermometer, Layers, Smartphone } from "lucide-react";
 import { Language } from "@/types";
 
 interface HardwareSpecsBarProps {
@@ -13,52 +13,49 @@ export function HardwareSpecsBar({ lang }: HardwareSpecsBarProps) {
 
   const specs = [
     {
-      icon: Cpu,
-      label: isAr ? "شريحة الـ RFID" : "RFID IC CHIP",
-      value: "NXP NTAG216 (888 Bytes)",
-    },
-    {
       icon: Layers,
-      label: isAr ? "الأبعاد والخامة" : "MATERIAL SPEC",
-      value: "70×50×3mm Cast Acrylic",
-    },
-    {
-      icon: ShieldCheck,
-      label: isAr ? "عازل المعادن" : "METAL BARRIER",
-      value: "0.2mm Sintered Ferrite",
+      title: isAr ? "أكريليك مصقول 3mm" : "3mm Pure Acrylic",
+      subtitle: isAr ? "خامة متينة ومقاومة للخدش" : "Scratch-resistant",
     },
     {
       icon: Thermometer,
-      label: isAr ? "تحمل الحرارة" : "OPERATING TEMP",
-      value: "-40°C to +85°C",
+      title: isAr ? "مقاومة تامة لحرارة الصيف" : "Heat & UV Resistant",
+      subtitle: isAr ? "تتحمل حرارة الشمس حتى 85°C" : "Tested up to +85°C",
     },
     {
-      icon: CheckCircle2,
-      label: isAr ? "المعايير المعتمدة" : "STANDARDS",
-      value: "ISO 14443-A • IP68",
+      icon: ShieldCheck,
+      title: isAr ? "بدون بطارية أو شحن" : "Battery-Free NFC",
+      subtitle: isAr ? "تعمل بالحث الكهرومغناطيسي مدى الحياة" : "Lifetime passive chip",
+    },
+    {
+      icon: Smartphone,
+      title: isAr ? "توافق شامل مع كل الهواتف" : "Universal Support",
+      subtitle: isAr ? "تدعم جميع أجهزة iPhone و Android" : "All iOS & Android devices",
     },
   ];
 
   return (
-    <section className="w-full max-w-5xl mx-auto px-4 py-6">
-      <div className="rounded-2xl glass-surface p-5 sm:p-6 border border-white/[0.08] shadow-glass">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+    <section className="w-full max-w-5xl mx-auto px-4 py-4">
+      <div className="rounded-2xl glass-surface p-4 sm:p-5 border border-white/[0.08] shadow-glass">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {specs.map((item, idx) => {
             const Icon = item.icon;
             return (
               <div
                 key={idx}
-                className="space-y-1.5 text-start p-3 rounded-xl glass-card border border-white/[0.05] hover:border-white/[0.12] transition-all"
+                className="p-3 rounded-xl glass-card border border-white/[0.05] hover:border-white/[0.12] transition-all flex items-start gap-3 text-start"
               >
-                <div className="flex items-center gap-1.5 text-zinc-400">
-                  <Icon className="w-3.5 h-3.5 text-zinc-300" />
-                  <span className="text-[9px] font-mono tracking-wider uppercase text-zinc-400">
-                    {item.label}
+                <div className="w-8 h-8 rounded-lg bg-white/[0.05] border border-white/[0.08] flex items-center justify-center shrink-0 mt-0.5">
+                  <Icon className="w-4 h-4 text-white" />
+                </div>
+                <div className="space-y-0.5">
+                  <span className="text-xs font-bold text-white block">
+                    {item.title}
+                  </span>
+                  <span className="text-[10px] text-zinc-400 block font-sans">
+                    {item.subtitle}
                   </span>
                 </div>
-                <span className="text-xs font-mono font-bold text-white block">
-                  {item.value}
-                </span>
               </div>
             );
           })}

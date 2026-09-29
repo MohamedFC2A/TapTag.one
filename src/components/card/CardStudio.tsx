@@ -878,11 +878,10 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                 <label className="text-xs font-mono uppercase tracking-wider text-zinc-400 block mb-2">
                   مكان طباعة رمز الـ QR
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {[
                     { id: "BACK_ONLY" as CardQrPlacement, label: "في الخلف فقط" },
                     { id: "FRONT_CORNER" as CardQrPlacement, label: "زاوية أمامية" },
-                    { id: "BOTH" as CardQrPlacement, label: "على الوجهين" },
                   ].map((item) => (
                     <button
                       key={item.id}
