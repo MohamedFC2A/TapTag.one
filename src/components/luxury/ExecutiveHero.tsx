@@ -75,18 +75,18 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
 
         {/* Smart Concept 3-Step Flow: Tap -> Tag -> One */}
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 pt-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl glass-card text-xs font-mono text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glass-card text-xs font-mono text-zinc-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-white" />
             <strong className="text-white">Tap</strong>
             <span className="text-zinc-400">{isAr ? "لمس أو مسح" : "Touch / Scan"}</span>
           </div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl glass-card text-xs font-mono text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glass-card text-xs font-mono text-zinc-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
             <strong className="text-white">Tag</strong>
             <span className="text-zinc-400">{isAr ? "بطاقة أكريليك" : "Acrylic Tag"}</span>
           </div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl glass-card text-xs font-mono text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl glass-card text-xs font-mono text-zinc-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
             <strong className="text-white">One</strong>
             <span className="text-zinc-400">{isAr ? "تواصل محمي" : "Masked Alert"}</span>
           </div>
@@ -99,10 +99,10 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
           {/* Subtle top indicator */}
           <div className="flex items-center justify-between w-full mb-3 px-2 text-[11px] font-mono text-zinc-400">
             <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
               {isAr ? "معاينة البطاقة التفاعلية" : "Interactive Specimen"}
             </span>
-            <span className="text-zinc-500">70×50mm ACRYLIC</span>
+            <span className="text-zinc-500 font-mono tracking-wider">ACRYLIC • ISO 14443-A</span>
           </div>
 
           <PhysicalCardRenderer
@@ -127,9 +127,9 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
 
         <Link
           href="/scan"
-          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl glass-card text-emerald-400 hover:text-emerald-300 hover:border-emerald-500/30 font-bold text-xs transition-all shadow-glass cursor-pointer active:scale-95"
+          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/15 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/30 text-white font-bold text-xs transition-all shadow-glass cursor-pointer active:scale-95"
         >
-          <QrCode className="w-4 h-4 text-emerald-400" />
+          <QrCode className="w-4 h-4 text-white" />
           <span>{isAr ? "مسح البطاقة (QR / NFC)" : "Scan Tag (QR / NFC)"}</span>
         </Link>
       </div>

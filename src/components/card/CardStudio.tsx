@@ -313,7 +313,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10] shadow-glass">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-white" />
             <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest">
               TAPTAG ACRYLIC STUDIO
             </span>
@@ -362,9 +362,9 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
       {/* Save Toast Notification */}
       {saveMessage && (
-        <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs font-mono text-emerald-300 flex items-center justify-between shadow-glass animate-in fade-in">
+        <div className="p-3.5 rounded-xl border border-white/20 bg-white/10 text-xs font-mono text-white flex items-center justify-between shadow-glass animate-in fade-in">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 text-white" />
             <span>{saveMessage}</span>
           </div>
           <button onClick={() => setSaveMessage(null)} className="text-zinc-400 hover:text-white text-xs">
@@ -383,7 +383,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
             {/* Top Showcase Toolbar */}
             <div className="w-full flex items-center justify-between mb-4 text-[11px] font-mono text-zinc-400">
               <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                 <span>معاينة حية ثلاثية الأبعاد (3D Stage)</span>
               </span>
 
@@ -413,14 +413,14 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
             {/* Stage Footer Spec Banner */}
             <div className="mt-6 w-full pt-4 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono text-zinc-400">
               <span className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#00C853]" />
+                <ShieldCheck className="w-3.5 h-3.5 text-white" />
                 <span>الخامة: أكريليك نقي 3mm معتمد</span>
               </span>
               <div className="flex items-center gap-3">
                 <span className="text-zinc-500">
                   {selectedDimension.sizeCm}
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-[#00C853]/15 text-[#00C853] font-bold border border-[#00C853]/30">
+                <span className="px-3 py-0.5 rounded-full bg-white text-black font-mono font-bold">
                   {totalPriceEgp} ج.م
                 </span>
               </div>
@@ -544,14 +544,14 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
               <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-white">
-                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <Sparkles className="w-4 h-4 text-white" />
                   </div>
                   <div>
                     <span className="text-xs font-bold text-white block">خامة الأكريليك الموحدة</span>
                     <span className="text-[10px] text-zinc-400 font-mono">Pure Cast Acrylic 3mm Laser Cut</span>
                   </div>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white border border-white/20">
                   موحدة رسمياً ✓
                 </span>
               </div>

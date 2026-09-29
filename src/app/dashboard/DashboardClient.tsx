@@ -229,7 +229,7 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
           <div>
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-xl glass-pill">
-                <ShieldCheck className="w-5 h-5 text-[#00C853]" />
+                <ShieldCheck className="w-5 h-5 text-white" />
               </div>
               <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 {isAr ? "لوحة إدارة سياراتي" : t.dashboard.title}
@@ -292,7 +292,7 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
               <span className="text-xs text-zinc-500 font-normal">/ {stats.totalTags}</span>
             </div>
             <div className="mt-2.5 text-[10px] text-zinc-300 flex items-center gap-1.5 font-mono font-bold">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-white" />
               <span>{Math.round((stats.activeTags / Math.max(1, stats.totalTags)) * 100)}% OPERATIONAL</span>
             </div>
           </div>
@@ -313,11 +313,11 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
             <span className="text-[11px] font-mono uppercase text-zinc-400 block mb-1.5 font-semibold">
               {t.dashboard.pendingAlerts}
             </span>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-amber-400">
+            <div className="text-2xl sm:text-3xl font-black font-mono text-white">
               {stats.pendingAlerts}
             </div>
-            <div className="mt-2.5 text-[10px] text-amber-400 flex items-center gap-1.5 font-mono font-bold">
-              <Clock className="w-3 h-3" />
+            <div className="mt-2.5 text-[10px] text-zinc-400 flex items-center gap-1.5 font-mono">
+              <Clock className="w-3 h-3 text-zinc-400" />
               <span>AWAITING RESOLUTION</span>
             </div>
           </div>
@@ -330,7 +330,7 @@ export function DashboardClient({ tags: initialTags, incidents: initialIncidents
               {stats.resolvedRate}%
             </div>
             <div className="mt-2.5 text-[10px] text-zinc-300 flex items-center gap-1.5 font-mono font-bold">
-              <CheckCircle2 className="w-3 h-3 text-[#00C853]" />
+              <CheckCircle2 className="w-3 h-3 text-white" />
               <span>SLA COMPLIANCE</span>
             </div>
           </div>

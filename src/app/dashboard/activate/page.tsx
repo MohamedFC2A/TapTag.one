@@ -366,7 +366,7 @@ export default function ActivateTagPage() {
             <div className="p-4 rounded-2xl glass-surface border border-white/[0.08] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl glass-pill">
-                  <ShieldCheck className="w-5 h-5 text-[#00C853]" />
+                  <ShieldCheck className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <span className="text-xs font-bold text-white block">
@@ -480,12 +480,12 @@ export default function ActivateTagPage() {
         {step === 3 && (
           <div className="glass-surface-elevated rounded-3xl p-8 sm:p-10 text-center space-y-6 border border-white/[0.12] shadow-glass-elevated">
             <div className="w-16 h-16 rounded-full glass-surface border border-white/20 flex items-center justify-center text-white mx-auto shadow-glass">
-              <Check className="w-8 h-8 text-[#00C853]" />
+              <Check className="w-8 h-8 text-white" />
             </div>
 
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-white text-xs font-mono font-bold">
-                <ShieldCheck className="w-4 h-4 text-[#00C853]" />
+                <ShieldCheck className="w-4 h-4 text-white" />
                 <span>FIRST-CLAIM OWNERSHIP LOCKED</span>
               </div>
 

@@ -427,7 +427,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             }`}
           >
             {feedback.type === "success" ? (
-              <CheckCircle2 className="w-5 h-5 text-[#00C853] shrink-0" />
+              <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
             ) : (
               <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
             )}
@@ -441,7 +441,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 rounded-xl bg-white/[0.06] border border-white/[0.10]">
-                  <CheckCircle2 className="w-5 h-5 text-[#00C853] shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
                 </div>
                 <span className="text-sm font-bold text-white font-mono">
                   {isAr ? "تم تسجيل البلاغ في المنظومة وإرساله لمالك المركبة" : "Alert Dispatched to Owner"}
@@ -503,7 +503,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-white text-xs font-mono font-bold mb-2.5">
-                  <ShieldCheck className="w-4 h-4 text-[#00C853]" />
+                  <ShieldCheck className="w-4 h-4 text-white" />
                   <span>AUTHENTIC HARDWARE VERIFIED • READY FOR FIRST-CLAIM</span>
                 </div>
                 <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
@@ -627,7 +627,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 p-4 rounded-2xl glass-surface border border-white/[0.08]">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl glass-pill flex items-center justify-center text-white shrink-0 border border-white/[0.10]">
-                  <Fingerprint className="w-4 h-4 text-[#00C853]" />
+                  <Fingerprint className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -856,7 +856,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             {/* Verification & Privacy Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl glass-surface border border-white/[0.08]">
               <div className="flex items-center gap-2.5 text-xs text-zinc-300">
-                <ShieldCheck className="w-4 h-4 text-[#00C853] shrink-0" />
+                <ShieldCheck className="w-4 h-4 text-white shrink-0" />
                 <span className="font-semibold text-white">{t.officialSeal}</span>
                 <span className="text-zinc-600">|</span>
                 <span className="font-mono text-zinc-400 font-bold">{tag.tagUid}</span>
@@ -900,7 +900,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
 
                 {/* Privacy Shield Pill */}
                 <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl glass-card text-xs text-zinc-300 max-w-xs border border-white/[0.08]">
-                  <Lock className="w-4 h-4 text-[#00C853] shrink-0" />
+                  <Lock className="w-4 h-4 text-white shrink-0" />
                   <span className="text-[11px] leading-relaxed">
                     {t.privacyNotice}
                   </span>

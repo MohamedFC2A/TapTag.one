@@ -52,9 +52,9 @@ export function ProtocolGrid({ lang }: ProtocolGridProps) {
       <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 text-start">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
             <span className="text-[10px] font-mono text-zinc-400 uppercase font-bold tracking-widest">
-              {isAr ? "مزايا المنظومة" : "CORE ADVANTAGES"}
+              {isAr ? "مزايا المنظومة" : "CORE ARCHITECTURE"}
             </span>
           </div>
           <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">

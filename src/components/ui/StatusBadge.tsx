@@ -14,7 +14,7 @@ export function StatusBadge({ status, lang = "ar", className = "" }: StatusBadge
     case "ACTIVE":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass-pill border border-emerald-500/20 text-white ${className}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium glass-pill border border-white/15 text-white ${className}`}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
           <span>{isAr ? "نشطة وجاهزة للتنبيه" : "Active & Ready"}</span>
@@ -24,7 +24,7 @@ export function StatusBadge({ status, lang = "ar", className = "" }: StatusBadge
     case "AWAY":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass-pill border border-amber-500/20 text-amber-300 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium glass-pill border border-white/15 text-zinc-200 ${className}`}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
           <span>{isAr ? "المالك بالخارج مؤقتاً" : "Temporarily Away"}</span>
@@ -34,7 +34,7 @@ export function StatusBadge({ status, lang = "ar", className = "" }: StatusBadge
     case "DND":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass-pill border border-white/[0.10] text-zinc-300 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium glass-pill border border-white/10 text-zinc-400 ${className}`}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
           <span>{isAr ? "عدم الإزعاج (طوارئ فقط)" : "Do Not Disturb (Emergency Only)"}</span>
@@ -44,7 +44,7 @@ export function StatusBadge({ status, lang = "ar", className = "" }: StatusBadge
     case "SUSPENDED":
       return (
         <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass-pill border border-red-500/20 text-red-300 ${className}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium glass-pill border border-white/10 text-zinc-400 ${className}`}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
           <span>{isAr ? "البطاقة معلقة" : "Suspended"}</span>

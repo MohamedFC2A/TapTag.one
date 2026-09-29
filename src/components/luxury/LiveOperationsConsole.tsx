@@ -81,9 +81,9 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.08] pb-4">
         <div className="space-y-1 text-start">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00C853]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
             <span className="text-[11px] font-mono text-zinc-300 uppercase font-bold tracking-widest">
-              {isAr ? "تجربة حية" : "LIVE DEMO"}
+              {isAr ? "تجربة حية" : "LIVE SIMULATOR"}
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
@@ -138,8 +138,9 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
             {/* Phone Notch & Dynamic Island */}
             <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] text-[10px] font-mono text-zinc-400">
               <span>09:41</span>
-              <div className="w-20 h-4 bg-black rounded-full border border-white/10 flex items-center justify-center">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
+              <div className="w-24 h-4 bg-black rounded-full border border-white/10 flex items-center justify-center gap-1.5 px-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                <span className="text-[8px] font-mono text-zinc-400">TapTag</span>
               </div>
               <span>5G 100%</span>
             </div>
@@ -155,7 +156,7 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
               >
                 <div className="flex items-center justify-between pb-2.5 border-b border-white/[0.08] text-[11px]">
                   <div className="flex items-center gap-1.5 font-bold text-white">
-                    <BellRing className="w-3.5 h-3.5 text-[#00C853]" />
+                    <BellRing className="w-3.5 h-3.5 text-white" />
                     <span>TapTag Protocol</span>
                   </div>
                   <span className="text-[10px] font-mono text-zinc-400">{isAr ? "الآن" : "Now"}</span>
@@ -178,7 +179,7 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
 
               {/* Status pill under phone */}
               <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-zinc-400 pt-2">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#00C853]" />
+                <ShieldCheck className="w-3.5 h-3.5 text-white" />
                 <span>{isAr ? "تشفير فوري بدون وسيط أو تطبيقات خارجية" : "End-to-End Encrypted Without Apps"}</span>
               </div>
             </div>

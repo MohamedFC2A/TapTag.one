@@ -360,31 +360,31 @@ export function ScanClient() {
               />
               <canvas ref={canvasRef} className="hidden" />
 
-              {/* Scanning HUD Reticle with Corner Brackets */}
+              {/* Scanning HUD Reticle with Corner Brackets (Crisp Minimalist Hairlines) */}
               <div className="absolute inset-8 pointer-events-none flex flex-col justify-between">
                 <div className="flex justify-between">
-                  <div className="w-8 h-8 border-t-2 border-r-2 border-emerald-400 rounded-tr-lg" />
-                  <div className="w-8 h-8 border-t-2 border-l-2 border-emerald-400 rounded-tl-lg" />
+                  <div className="w-7 h-7 border-t-2 border-r-2 border-white rounded-tr-sm" />
+                  <div className="w-7 h-7 border-t-2 border-l-2 border-white rounded-tl-sm" />
                 </div>
 
-                {/* Laser Scanning Line Animation */}
-                <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_12px_rgba(52,211,153,0.8)] animate-pulse" />
+                {/* Laser Scanning Line (Clean White Hairline Beam, Zero Neon Glow) */}
+                <div className="w-full h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent opacity-80 animate-pulse" />
 
                 <div className="flex justify-between">
-                  <div className="w-8 h-8 border-b-2 border-r-2 border-emerald-400 rounded-br-lg" />
-                  <div className="w-8 h-8 border-b-2 border-l-2 border-emerald-400 rounded-bl-lg" />
+                  <div className="w-7 h-7 border-b-2 border-r-2 border-white rounded-br-sm" />
+                  <div className="w-7 h-7 border-b-2 border-l-2 border-white rounded-bl-sm" />
                 </div>
               </div>
 
               {/* Success Detected Overlay */}
               {detectedTag && (
                 <div className="absolute inset-0 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center animate-in fade-in zoom-in-95">
-                  <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400 mb-3 shadow-[0_0_20px_rgba(52,211,153,0.4)]">
-                    <CheckCircle className="w-8 h-8" />
+                  <div className="w-14 h-14 rounded-full bg-white/10 border border-white/30 flex items-center justify-center text-white mb-3 shadow-glass">
+                    <CheckCircle className="w-7 h-7 text-white" />
                   </div>
                   <span className="text-xs font-mono text-zinc-400">تم رصد بطاقة الأكريليك بنجاح</span>
                   <strong className="text-lg font-mono font-black text-white mt-1">{detectedTag}</strong>
-                  <span className="text-xs text-emerald-300 mt-2 font-mono animate-pulse">
+                  <span className="text-xs text-zinc-300 mt-2 font-mono animate-pulse">
                     جارٍ فتح البوابة الآمنة...
                   </span>
                 </div>
@@ -393,7 +393,7 @@ export function ScanClient() {
               {/* Camera Error / Permission Notice */}
               {cameraError && (
                 <div className="absolute inset-0 bg-[#0A0A0E]/95 p-6 flex flex-col items-center justify-center text-center space-y-3">
-                  <AlertCircle className="w-10 h-10 text-red-400" />
+                  <AlertCircle className="w-10 h-10 text-zinc-400" />
                   <p className="text-xs text-zinc-300 leading-relaxed max-w-xs">{cameraError}</p>
                   <button
                     type="button"
@@ -413,7 +413,7 @@ export function ScanClient() {
                   type="button"
                   onClick={toggleTorch}
                   className={`p-3 rounded-2xl glass-card transition-all cursor-pointer ${
-                    torchOn ? "bg-yellow-400 text-black shadow-lg" : "text-zinc-300 hover:text-white"
+                    torchOn ? "bg-white text-black shadow-lg" : "text-zinc-300 hover:text-white"
                   }`}
                   title="تشغيل إضاءة الفلاش"
                 >
@@ -442,16 +442,16 @@ export function ScanClient() {
         {/* ============================================================== */}
         {mode === "nfc" && (
           <div className="w-full flex flex-col items-center text-center space-y-6 max-w-sm">
-            {/* Visual NFC Concentric Radar Circle */}
-            <div className="relative w-44 h-44 rounded-full border border-dashed border-emerald-500/30 flex items-center justify-center p-6 bg-emerald-500/[0.02]">
-              <div className="w-32 h-32 rounded-full border border-emerald-500/50 flex items-center justify-center animate-pulse bg-emerald-500/[0.05]">
-                <div className="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center shadow-[0_0_30px_rgba(52,211,153,0.3)]">
-                  <Wifi className="w-10 h-10 text-emerald-400" />
+            {/* Visual NFC Concentric Minimalist Radar (Swiss / AirTag Style) */}
+            <div className="relative w-48 h-48 rounded-full border border-white/10 flex items-center justify-center p-6 bg-white/[0.02]">
+              <div className="w-36 h-36 rounded-full border border-white/20 flex items-center justify-center bg-white/[0.03] animate-pulse">
+                <div className="w-20 h-20 rounded-full bg-white/10 border border-white/30 flex items-center justify-center shadow-glass">
+                  <Wifi className="w-8 h-8 text-white" />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <h2 className="text-lg font-black text-white">قرّب بطاقتك من ظهر الجوال</h2>
               <p className="text-xs text-zinc-400 leading-relaxed max-w-xs mx-auto">
                 شريحة الـ NFC اللاتلامسية (NTAG216) تفتح بوابة التواصل فورياً عند ملامستها للجوال.
@@ -471,7 +471,7 @@ export function ScanClient() {
             )}
 
             {/* Apple iPhone Guidance */}
-            <div className="p-3 rounded-2xl glass-card text-right space-y-1 w-full">
+            <div className="p-3.5 rounded-2xl glass-card text-right space-y-1 w-full">
               <div className="flex items-center gap-2 text-white">
                 <Smartphone className="w-4 h-4 text-zinc-300" />
                 <span className="text-xs font-bold">مستخدمو آيفون:</span>
@@ -482,7 +482,7 @@ export function ScanClient() {
             </div>
 
             {nfcError && (
-              <p className="text-xs text-amber-300 font-mono leading-relaxed">{nfcError}</p>
+              <p className="text-xs text-zinc-300 font-mono leading-relaxed">{nfcError}</p>
             )}
           </div>
         )}

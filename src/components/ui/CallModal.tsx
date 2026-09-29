@@ -96,7 +96,7 @@ export function CallModal({
         <div className="flex items-center justify-between border-b border-white/[0.08] pb-4 mb-6">
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg glass-pill">
-              <Shield className="w-4 h-4 text-[#00C853]" />
+              <Shield className="w-4 h-4 text-white" />
             </div>
             <span className="text-xs font-mono uppercase text-white font-bold tracking-wider">
               {lang === "ar" ? "قناة صوتية مشفرة (VoIP Tunnel)" : "Encrypted VoIP Tunnel"}
@@ -117,8 +117,8 @@ export function CallModal({
             </div>
             {callState === "active" && (
               <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#00C853] animate-ping opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#00C853]"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-white animate-ping opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-white"></span>
               </span>
             )}
           </div>
@@ -132,7 +132,7 @@ export function CallModal({
 
             {callState === "active" ? (
               <div className="flex items-center justify-center gap-2 text-white font-mono text-sm font-bold">
-                <Radio className="w-3.5 h-3.5 text-[#00C853] animate-pulse" />
+                <Radio className="w-3.5 h-3.5 text-white animate-pulse" />
                 <span>{formatDuration(durationSeconds)}</span>
               </div>
             ) : (
