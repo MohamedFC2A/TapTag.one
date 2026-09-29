@@ -1,5 +1,6 @@
-import ActivateTagPage from "@/app/dashboard/activate/page";
+import { redirect } from "next/navigation";
 
 export default function DemoActivatePage() {
-  return <ActivateTagPage />;
+  redirect("/dashboard/activate");
 }
+

@@ -36,7 +36,7 @@ export function HardwareSpecsBar({ lang }: HardwareSpecsBarProps) {
 
   return (
     <section className="w-full max-w-5xl mx-auto px-4 py-4">
-      <div className="rounded-2xl glass-surface p-4 sm:p-5 border border-white/[0.08] shadow-glass">
+      <div className="rounded-2xl glass-surface p-4 sm:p-5 border border-white/[0.08]">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {specs.map((item, idx) => {
             const Icon = item.icon;

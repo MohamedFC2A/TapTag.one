@@ -41,9 +41,9 @@ const config: Config = {
         },
         typography: {
           primary: "#FFFFFF",
-          body: "#E4E4E7",
-          muted: "#A1A1AA",
-          subtle: "#71717A",
+          body: "#F4F4F5",
+          muted: "#D4D4D8",
+          subtle: "#A1A1AA",
         },
       },
       fontFamily: {
@@ -52,8 +52,16 @@ const config: Config = {
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
       },
       boxShadow: {
-        glass: "0 8px 32px 0 rgba(0, 0, 0, 0.4)",
-        "glass-elevated": "0 20px 50px -10px rgba(0, 0, 0, 0.7)",
+        none: "none",
+        glass: "none",
+        "glass-elevated": "none",
+        sm: "none",
+        DEFAULT: "none",
+        md: "none",
+        lg: "none",
+        xl: "none",
+        "2xl": "none",
+        inner: "none",
       },
       borderRadius: {
         DEFAULT: "8px",

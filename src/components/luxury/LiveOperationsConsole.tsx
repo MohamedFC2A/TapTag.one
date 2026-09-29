@@ -111,7 +111,7 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
                   onClick={() => handleTrigger(sc.id)}
                   className={`w-full text-start p-4 rounded-2xl border transition-all duration-200 flex items-center gap-4 cursor-pointer ${
                     isSelected
-                      ? "glass-surface-elevated border-white text-white shadow-glass scale-[1.01]"
+                      ? "glass-surface-elevated border-white text-white scale-[1.01]"
                       : "glass-card border-white/[0.06] text-zinc-300 hover:border-white/15"
                   }`}
                 >
@@ -134,9 +134,9 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
 
         {/* Right Side: Virtual Phone Simulation Notification Display */}
         <div className="md:col-span-6 flex justify-center">
-          <div className="w-full max-w-[340px] rounded-[36px] glass-surface-elevated border border-white/[0.12] p-5 shadow-glass-elevated relative overflow-hidden">
+          <div className="w-full max-w-[340px] rounded-[36px] glass-surface-elevated border border-white/[0.12] p-5 relative overflow-hidden">
             {/* Phone Notch & Dynamic Island */}
-            <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] text-[10px] font-mono text-zinc-400">
+            <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] text-[10px] font-mono text-zinc-400 tabular-nums">
               <span>09:41</span>
               <div className="w-24 h-4 bg-black rounded-full border border-white/10 flex items-center justify-center gap-1.5 px-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
@@ -150,7 +150,7 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
               <div
                 className={`p-4 rounded-2xl border transition-all duration-300 ${
                   isDelivered
-                    ? "glass-card border-white/20 text-white translate-y-0 opacity-100 shadow-glass"
+                    ? "glass-card border-white/20 text-white translate-y-0 opacity-100"
                     : "glass-surface border-white/[0.06] text-zinc-400 translate-y-1 opacity-90"
                 }`}
               >
@@ -170,7 +170,7 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
                 </div>
 
                 <div className="mt-3.5 pt-2.5 border-t border-white/[0.08] flex items-center justify-between">
-                  <span className="text-[10px] text-zinc-400 font-mono">{isAr ? "لوحة: أ ب ج 1234" : "Plate: ABC 1234"}</span>
+                  <span className="text-[10px] text-zinc-400 font-mono tabular-nums">{isAr ? "لوحة: أ ب ج 1234" : "Plate: ABC 1234"}</span>
                   <span className="text-[10px] px-2.5 py-1 rounded-lg bg-white text-black font-bold">
                     {active.phoneAction}
                   </span>

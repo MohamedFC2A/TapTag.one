@@ -11,6 +11,8 @@ import type {
   CardLayoutPreset,
   CardQrPlacement,
   AcrylicFinish,
+  CardFontFamily,
+  CardQrStyle,
 } from "@/types/card-design";
 import { DEFAULT_CARD_DESIGN } from "@/types/card-design";
 import { saveCardDesignAction } from "@/app/actions/card-customization-actions";
@@ -51,7 +53,7 @@ interface CardStudioProps {
 
 const LOCAL_STORAGE_KEY = "taptag_card_customization_v2";
 
-// Official Printzone 2026 Production Dimensions
+// Official Printzone 2026 Production Dimensions (Doubled base prices)
 const PRINTZONE_DIMENSIONS: {
   id: CardDimension;
   title: string;
@@ -66,45 +68,45 @@ const PRINTZONE_DIMENSIONS: {
     title: "بطاقة سيارة قياسية",
     sizeCm: "5.5 × 8.5 cm",
     category: "CARD",
-    desc: "المقاس القياسي العالمي لزجاج السيارة الأمامي والمحفظة الشخصية.",
+    desc: "للزجاج والمحفظة",
     ratio: "85 / 55",
-    basePriceEgp: 50,
+    basePriceEgp: 100,
   },
   {
     id: "COASTER_90X90",
     title: "كوستر مربع صغير",
     sizeCm: "9.0 × 9.0 cm",
     category: "COASTER",
-    desc: "أكريليك مربع للمكاتب وطاولات العمل واستقبال العملاء.",
+    desc: "للمكاتب والطاولات",
     ratio: "1:1",
-    basePriceEgp: 100,
+    basePriceEgp: 200,
   },
   {
     id: "COASTER_120X120",
     title: "كوستر مربع كبير",
     sizeCm: "12.0 × 12.0 cm",
     category: "COASTER",
-    desc: "أكريليك عريض وفاخر للشركات والمنشآت وقاعات الانتظار.",
+    desc: "صالات واستقبال",
     ratio: "1:1",
-    basePriceEgp: 120,
+    basePriceEgp: 240,
   },
   {
     id: "STAND_100X150",
     title: "ستاند مكتبي عمودي",
     sizeCm: "10.0 × 15.0 cm",
     category: "STAND",
-    desc: "ستاند أكريليك عمودي أنيق مع كود QR كبير وواضح من مسافة.",
+    desc: "كاونتر ونقاط دفع",
     ratio: "2:3",
-    basePriceEgp: 250,
+    basePriceEgp: 500,
   },
   {
     id: "STAND_150X200",
     title: "ستاند مكتبي كبير",
     sizeCm: "15.0 × 20.0 cm",
     category: "STAND",
-    desc: "ستاند العرض الفاخر للمعارض ونقاط الدفع ومداخل المنشآت.",
+    desc: "معارض ومداخل رئيسية",
     ratio: "3:4",
-    basePriceEgp: 300,
+    basePriceEgp: 600,
   },
 ];
 
@@ -117,6 +119,21 @@ const LUXURY_COLORS = [
   { id: "#450A0A", label: "عودي فاخر", border: "border-red-950" },
   { id: "#1E293B", label: "رمادي سلايت", border: "border-slate-700" },
   { id: "#EAB308", label: "أصفر سايبر", border: "border-yellow-600" },
+];
+
+// Curated Luxury Font Choices
+const LUXURY_FONTS: {
+  id: CardFontFamily;
+  label: string;
+  sub: string;
+  fee: number;
+}[] = [
+  { id: "INTER", label: "إنتر الحديث", sub: "Inter Modern", fee: 0 },
+  { id: "NEO_GROTESK", label: "نيو جروتسك", sub: "Swiss Minimal", fee: 0 },
+  { id: "GEIST_MONO", label: "مونو تقني", sub: "Geist Monospace", fee: 50 },
+  { id: "SPACE_GROTESK", label: "سبيس كابيتال", sub: "Space Grotesk", fee: 50 },
+  { id: "SERIF_LUXURY", label: "سيريف إيطالي", sub: "Luxury Editorial", fee: 50 },
+  { id: "ARABIC_KUFIC", label: "كوفي هندسي", sub: "Modern Kufic", fee: 50 },
 ];
 
 export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProps) {
@@ -134,7 +151,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
             cardColor: parsed.cardColor || initialConfig?.cardColor || "#0E0F12",
             logoText: parsed.logoText || initialConfig?.logoText || "taptag.one",
             brandType: parsed.brandType || initialConfig?.brandType || "OFFICIAL_TAPTAG",
-            customBrandFee: (parsed.brandType || initialConfig?.brandType) === "CUSTOM_BRAND" ? 50 : 0,
+            customBrandFee: (parsed.brandType || initialConfig?.brandType) === "CUSTOM_BRAND" ? 100 : 0,
           };
         }
       } catch {
@@ -148,7 +165,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
       cardColor: initialConfig?.cardColor || "#0E0F12",
       logoText: initialConfig?.logoText || "taptag.one",
       brandType: initialConfig?.brandType || "OFFICIAL_TAPTAG",
-      customBrandFee: initialConfig?.brandType === "CUSTOM_BRAND" ? 50 : 0,
+      customBrandFee: initialConfig?.brandType === "CUSTOM_BRAND" ? 100 : 0,
     };
   });
 
@@ -157,14 +174,53 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
   const [isSaving, startSaving] = useTransition();
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
-  // Dynamic Live Pricing Calculation
+  // Dynamic Live Pricing Calculation - All base prices doubled, every customization adds a fee
   const selectedDimension =
     PRINTZONE_DIMENSIONS.find((d) => d.id === config.dimensionStandard) ||
     PRINTZONE_DIMENSIONS.find((d) => d.id === "CARD_55X85") ||
     PRINTZONE_DIMENSIONS[0];
   const basePriceEgp = selectedDimension.basePriceEgp;
-  const brandCustomizationFee = config.brandType === "CUSTOM_BRAND" ? 50 : 0;
-  const totalPriceEgp = basePriceEgp + brandCustomizationFee;
+
+  // Customization Fees
+  const nfcFee = config.showNfcIcon ? 80 : 0;
+  const brandCustomizationFee = config.brandType === "CUSTOM_BRAND" ? 100 : 0;
+  const isCustomColor =
+    (config.cardColor || "#0E0F12").toUpperCase() !== "#0E0F12" &&
+    (config.cardColor || "#0E0F12").toUpperCase() !== "#0A0B0E";
+  const colorFee = isCustomColor ? 60 : 0;
+  const isCustomFont =
+    config.fontFamily &&
+    config.fontFamily !== "INTER" &&
+    config.fontFamily !== "NEO_GROTESK";
+  const fontFee = isCustomFont ? 50 : 0;
+  const isCustomFinish =
+    config.acrylicFinish && config.acrylicFinish !== "GLOSSY_CRYSTAL";
+  const finishFee = isCustomFinish ? 50 : 0;
+  const qrStyleFee =
+    config.qrStyle === "BRAND_CENTER"
+      ? 40
+      : config.qrStyle === "CHAMFER_OCTA"
+      ? 30
+      : 0;
+  const qrFee =
+    config.qrPlacement === "BOTH"
+      ? 60
+      : config.qrPlacement === "FRONT_CORNER" || config.qrPlacement === "FRONT_CENTER"
+      ? 40
+      : 0;
+  const metallicFee =
+    config.logoColor === "GOLD" || config.logoColor === "SILVER" ? 40 : 0;
+
+  const totalPriceEgp =
+    basePriceEgp +
+    nfcFee +
+    brandCustomizationFee +
+    colorFee +
+    fontFee +
+    finishFee +
+    qrStyleFee +
+    qrFee +
+    metallicFee;
 
   // Sync to localStorage immediately on any change
   useEffect(() => {
@@ -310,20 +366,11 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
   return (
     <div className="w-full flex flex-col space-y-6 select-none" dir="rtl">
       {/* Studio Header Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10] shadow-glass">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-white" />
-            <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest">
-              TAPTAG ACRYLIC STUDIO
-            </span>
-          </div>
           <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            استوديو تخصيص وتصنيع الأكريليك الذكي
+            استوديو الأكريليك
           </h1>
-          <p className="text-xs text-zinc-400">
-            أكريليك نقي معتمد • مواصفات إنتاج ومطابع Printzone 2026 • كود QR مشفر ونبض NFC لاتلامسي
-          </p>
         </div>
 
         {/* Global Action CTAs */}
@@ -352,7 +399,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
             type="button"
             onClick={handleSaveToCloud}
             disabled={isSaving}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all shadow-glass cursor-pointer disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all cursor-pointer disabled:opacity-50"
           >
             <Save className="w-3.5 h-3.5 text-black" />
             <span>{isSaving ? "جارٍ الحفظ..." : "حفظ التصميم سحابياً"}</span>
@@ -362,7 +409,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
       {/* Save Toast Notification */}
       {saveMessage && (
-        <div className="p-3.5 rounded-xl border border-white/20 bg-white/10 text-xs font-mono text-white flex items-center justify-between shadow-glass animate-in fade-in">
+        <div className="p-3.5 rounded-xl border border-white/20 bg-white/10 text-xs font-mono text-white flex items-center justify-between animate-in fade-in">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-white" />
             <span>{saveMessage}</span>
@@ -379,7 +426,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
         {/* LEFT COLUMN: 3D PHOTOREALISTIC ACRYLIC STAGE                   */}
         {/* ============================================================== */}
         <div className="lg:col-span-7 flex flex-col items-center space-y-4">
-          <div className="w-full glass-surface-elevated rounded-3xl p-6 sm:p-8 border border-white/[0.10] shadow-glass relative flex flex-col items-center">
+          <div className="w-full glass-surface-elevated rounded-3xl p-6 sm:p-8 border border-white/[0.10] relative flex flex-col items-center">
             {/* Top Showcase Toolbar */}
             <div className="w-full flex items-center justify-between mb-4 text-[11px] font-mono text-zinc-400">
               <span className="flex items-center gap-2">
@@ -391,7 +438,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                 <button
                   type="button"
                   onClick={() => setIsFlipped((prev) => !prev)}
-                  className="px-3 py-1.5 rounded-xl glass-card text-xs text-zinc-300 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                  className="px-3 py-1.5 rounded-xl glass-card text-xs text-zinc-300 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5 text-zinc-400" />
                   <span>{isFlipped ? "عرض الوجه الأمامي" : "عرض الوجه الخلفي"}</span>
@@ -417,10 +464,10 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                 <span>الخامة: أكريليك نقي 3mm معتمد</span>
               </span>
               <div className="flex items-center gap-3">
-                <span className="text-zinc-500">
+                <span className="text-zinc-400">
                   {selectedDimension.sizeCm}
                 </span>
-                <span className="px-3 py-0.5 rounded-full bg-white text-black font-mono font-bold">
+                <span className="px-3 py-0.5 rounded-full bg-white text-black font-mono font-bold tabular-nums">
                   {totalPriceEgp} ج.م
                 </span>
               </div>
@@ -439,7 +486,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
               onClick={() => setActiveTab("dimensions")}
               className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer ${
                 activeTab === "dimensions"
-                  ? "bg-white text-black font-bold shadow-sm"
+                  ? "bg-white text-black font-bold"
                   : "text-zinc-400 hover:text-white"
               }`}
             >
@@ -450,7 +497,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
               onClick={() => setActiveTab("colors")}
               className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer ${
                 activeTab === "colors"
-                  ? "bg-white text-black font-bold shadow-sm"
+                  ? "bg-white text-black font-bold"
                   : "text-zinc-400 hover:text-white"
               }`}
             >
@@ -461,18 +508,18 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
               onClick={() => setActiveTab("branding")}
               className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer ${
                 activeTab === "branding"
-                  ? "bg-white text-black font-bold shadow-sm"
+                  ? "bg-white text-black font-bold"
                   : "text-zinc-400 hover:text-white"
               }`}
             >
-              الهوية واللوجو
+              الهوية والخط
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("connectivity")}
               className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer ${
                 activeTab === "connectivity"
-                  ? "bg-white text-black font-bold shadow-sm"
+                  ? "bg-white text-black font-bold"
                   : "text-zinc-400 hover:text-white"
               }`}
             >
@@ -482,10 +529,10 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
           {/* TAB 1: OFFICIAL 2026 DIMENSIONS & FORM FACTORS */}
           {activeTab === "dimensions" && (
-            <div className="space-y-3 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10] shadow-glass">
+            <div className="space-y-3 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-xs font-mono uppercase tracking-wider text-zinc-300 font-bold">
-                  مقاسات وأشكال الأكريليك الرسمية
+                  المقاس والشكل
                 </h3>
                 <span className="text-[10px] font-mono text-zinc-400 font-bold">
                   Printzone 2026
@@ -505,7 +552,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                       onClick={() => updateField("dimensionStandard", dim.id)}
                       className={`w-full text-right p-3 rounded-2xl border transition-all flex items-center justify-between cursor-pointer ${
                         isSelected
-                          ? "bg-white text-black border-white shadow-md font-bold"
+                          ? "bg-white text-black border-white font-bold"
                           : "bg-white/[0.02] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:bg-white/[0.04]"
                       }`}
                     >
@@ -513,23 +560,28 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-bold">{dim.title}</span>
                           <span
-                            className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                            className={`text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-full ${
                               isSelected ? "bg-black text-white" : "bg-white/10 text-zinc-300"
                             }`}
                           >
                             {dim.sizeCm}
                           </span>
                         </div>
-                        <p className={`text-[11px] leading-relaxed ${isSelected ? "text-zinc-800" : "text-zinc-400"}`}>
+                        <p className={`text-[11px] ${isSelected ? "text-zinc-800" : "text-zinc-400"}`}>
                           {dim.desc}
                         </p>
                       </div>
 
-                      {isSelected && (
-                        <div className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center flex-shrink-0">
-                          <Check className="w-3 h-3 stroke-[3]" />
-                        </div>
-                      )}
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs font-mono font-bold tabular-nums ${isSelected ? "text-black" : "text-zinc-400"}`}>
+                          {dim.basePriceEgp} ج.م
+                        </span>
+                        {isSelected && (
+                          <div className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center flex-shrink-0">
+                            <Check className="w-3 h-3 stroke-[3]" />
+                          </div>
+                        )}
+                      </div>
                     </button>
                   );
                 })}
@@ -539,31 +591,20 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
           {/* TAB 2: UNIFIED ACRYLIC MATERIAL & COLOR PICKER */}
           {activeTab === "colors" && (
-            <div className="space-y-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10] shadow-glass">
-              {/* Material Confirmation */}
-              <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-white">
-                    <Sparkles className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-white block">خامة الأكريليك الموحدة</span>
-                    <span className="text-[10px] text-zinc-400 font-mono">Pure Cast Acrylic 3mm Laser Cut</span>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white border border-white/20">
-                  موحدة رسمياً ✓
-                </span>
-              </div>
-
+            <div className="space-y-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
               {/* Custom Color Selector (Color Wheel + Hex Input) */}
               <div className="space-y-2">
-                <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block font-bold">
-                  اختر أي لون تريده (Color Picker)
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block font-bold">
+                    اختر أي لون تريده (Color Picker)
+                  </label>
+                  <span className="text-[10px] font-mono tabular-nums text-zinc-400">
+                    {colorFee > 0 ? "+60 ج.م لون مخصص" : "الأسود الأساسي (0 ج.م)"}
+                  </span>
+                </div>
                 <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-white/[0.10]">
                   {/* Live Color Input Preview */}
-                  <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-white/20 shadow-inner flex-shrink-0 cursor-pointer">
+                  <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-white/20 flex-shrink-0 cursor-pointer">
                     <input
                       type="color"
                       value={config.cardColor || "#0E0F12"}
@@ -594,7 +635,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
               {/* Preset Luxury Palette */}
               <div className="space-y-2">
-                <span className="text-xs font-mono text-zinc-400 block">أو اختر من الباليت الفاخرة السريعة:</span>
+                <span className="text-xs font-mono text-zinc-400 block">أو اختر من الباليت السريعة:</span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {LUXURY_COLORS.map((col) => {
                     const isColSelected = (config.cardColor || "#0E0F12").toLowerCase() === col.id.toLowerCase();
@@ -605,12 +646,12 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                         onClick={() => updateField("cardColor", col.id)}
                         className={`p-2.5 rounded-xl border text-xs font-medium transition-all flex items-center gap-2 cursor-pointer ${
                           isColSelected
-                            ? "bg-zinc-800 border-white text-white shadow-sm"
+                            ? "bg-zinc-800 border-white text-white"
                             : "bg-white/[0.02] border-white/[0.08] text-zinc-400 hover:text-white hover:border-white/20"
                         }`}
                       >
                         <div
-                          className={`w-4 h-4 rounded-full border ${col.border} flex-shrink-0 shadow-sm`}
+                          className={`w-4 h-4 rounded-full border ${col.border} flex-shrink-0`}
                           style={{ backgroundColor: col.id }}
                         />
                         <span className="text-[11px] truncate">{col.label}</span>
@@ -622,14 +663,19 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
               {/* Acrylic Finish Options */}
               <div className="space-y-2 pt-2 border-t border-white/[0.08]">
-                <label className="text-xs font-mono uppercase tracking-wider text-zinc-400 block mb-1">
-                  تشطيب ملمس سطح الأكريليك
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block font-bold">
+                    تشطيب السطح
+                  </label>
+                  <span className="text-[10px] font-mono tabular-nums text-zinc-400">
+                    {finishFee > 0 ? "+50 ج.م تشطيب مخصص" : "لامع (0 ج.م)"}
+                  </span>
+                </div>
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { id: "GLOSSY_CRYSTAL" as AcrylicFinish, title: "كريستالي لامع", desc: "شفافية فائقة ولمعان زجاجي" },
-                    { id: "SATIN_MATTE" as AcrylicFinish, title: "أملس مطفي", desc: "مانع للبصمات والانعكاس" },
-                    { id: "SMOKED_FROST" as AcrylicFinish, title: "مثلج سموك", desc: "مظهر داكن فاخر شبه شفاف" },
+                    { id: "GLOSSY_CRYSTAL" as AcrylicFinish, title: "لامع", fee: 0 },
+                    { id: "SATIN_MATTE" as AcrylicFinish, title: "مطفي", fee: 50 },
+                    { id: "SMOKED_FROST" as AcrylicFinish, title: "سموك", fee: 50 },
                   ].map((fin) => (
                     <button
                       key={fin.id}
@@ -641,8 +687,10 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                           : "bg-white/[0.02] border-white/[0.08] text-zinc-400 hover:text-white"
                       }`}
                     >
-                      <span className="text-xs block font-bold">{fin.title}</span>
-                      <span className="text-[9px] block text-current/70 mt-0.5">{fin.desc}</span>
+                      <span className="text-xs font-bold block">{fin.title}</span>
+                      <span className="text-[9px] font-mono tabular-nums opacity-75 block mt-0.5">
+                        {fin.fee > 0 ? `+${fin.fee} ج.م` : "مشمول"}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -652,7 +700,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
           {/* TAB 3: BRANDING & TYPOGRAPHY */}
           {activeTab === "branding" && (
-            <div className="space-y-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10] shadow-glass">
+            <div className="space-y-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
               {/* Brand Architecture Selection */}
               <div>
                 <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block mb-2 font-bold">
@@ -669,26 +717,26 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                     }}
                     className={`p-3.5 rounded-2xl border text-right transition-all flex flex-col justify-between gap-3 cursor-pointer ${
                       config.brandType !== "CUSTOM_BRAND"
-                        ? "bg-white text-black border-white shadow-md font-bold"
+                        ? "bg-white text-black border-white font-bold"
                         : "bg-white/[0.02] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:bg-white/[0.04]"
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-bold font-sans">شعار taptag.one الرسمي</span>
-                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                        <span className="text-xs font-bold">شعار taptag.one الرسمي</span>
+                        <span className={`text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-full ${
                           config.brandType !== "CUSTOM_BRAND" ? "bg-black text-white" : "bg-white/10 text-white border border-white/20"
                         }`}>
-                          مشمول مجاناً (0 ج.م)
+                          0 ج.م
                         </span>
                       </div>
-                      <p className={`text-[11px] leading-relaxed ${config.brandType !== "CUSTOM_BRAND" ? "text-zinc-700" : "text-zinc-400"}`}>
-                        اللوجو الرسمي المعتمد لمنظومة taptag.one المطبوع بدقة عالية.
+                      <p className={`text-[11px] ${config.brandType !== "CUSTOM_BRAND" ? "text-zinc-700" : "text-zinc-400"}`}>
+                        اللوجو الرسمي المعتمد بدقة ليزر عالية
                       </p>
                     </div>
                     <div className="flex items-center gap-1.5 text-[10px] font-mono opacity-80">
                       <Check className="w-3.5 h-3.5" />
-                      <span>taptag.one الرسمية</span>
+                      <span>taptag.one الرسمي</span>
                     </div>
                   </button>
 
@@ -697,28 +745,28 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                     type="button"
                     onClick={() => {
                       updateField("brandType", "CUSTOM_BRAND");
-                      updateField("customBrandFee", 50);
+                      updateField("customBrandFee", 100);
                       if (!config.logoText || config.logoText === "taptag.one" || config.logoText === "tagtap.one") {
                         updateField("logoText", "");
                       }
                     }}
                     className={`p-3.5 rounded-2xl border text-right transition-all flex flex-col justify-between gap-3 cursor-pointer ${
                       config.brandType === "CUSTOM_BRAND"
-                        ? "bg-white text-black border-white shadow-md font-bold"
+                        ? "bg-white text-black border-white font-bold"
                         : "bg-white/[0.02] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:bg-white/[0.04]"
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-bold font-sans">براند واسم مخصص</span>
-                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                        <span className="text-xs font-bold">براند واسم مخصص</span>
+                        <span className={`text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-full ${
                           config.brandType === "CUSTOM_BRAND" ? "bg-black text-white" : "bg-white/10 text-white border border-white/20"
                         }`}>
-                          + 50 ج.م إضافية
+                          + 100 ج.م
                         </span>
                       </div>
-                      <p className={`text-[11px] leading-relaxed ${config.brandType === "CUSTOM_BRAND" ? "text-zinc-700" : "text-zinc-400"}`}>
-                        حفر وتخصيص بالليزر باسم علامتك، شركتك، معرضك، أو اسمك الشخصي.
+                      <p className={`text-[11px] ${config.brandType === "CUSTOM_BRAND" ? "text-zinc-700" : "text-zinc-400"}`}>
+                        حفر ليزر باسم علامتك أو معرضك أو اسمك
                       </p>
                     </div>
                     <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-300">
@@ -734,7 +782,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                 <div className="p-3.5 rounded-2xl glass-surface-elevated border border-white/15 space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-mono uppercase tracking-wider text-white block font-bold">
-                      اكتب نص البراند المخصص (+50 ج.م)
+                      نص البراند المخصص (+100 ج.م)
                     </label>
                     <span className="text-[10px] font-mono text-zinc-400">تحديث مباشر على البطاقة</span>
                   </div>
@@ -742,44 +790,82 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                     type="text"
                     value={config.logoText || ""}
                     onChange={(e) => updateField("logoText", e.target.value)}
-                    placeholder="مثال: Al-Safwa Motors أو اسم معرضك أو شركتك"
+                    placeholder="مثال: Al-Safwa Motors أو اسم معرضك"
                     className="w-full glass-input rounded-xl px-3 py-2 text-white font-sans text-sm font-bold focus:outline-none focus:border-white transition-colors"
                     dir="auto"
                   />
-                  <p className="text-[10px] text-zinc-400">
-                    سيظهر هذا الاسم أو الشعار محفوراً بدقة على واجهة القطعة الأكريليك بدلاً من شعار taptag.one.
-                  </p>
                 </div>
               ) : (
                 <div>
                   <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block mb-1 font-bold">
                     نص الشعار الرسمي
                   </label>
-                  <div className="flex items-center gap-2 mb-2">
-                    <input
-                      type="text"
-                      value="taptag.one"
-                      disabled
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-zinc-400 font-sans text-sm font-bold lowercase opacity-75 cursor-not-allowed"
-                    />
-                  </div>
-                  <span className="text-[10px] text-zinc-500">
-                    هذا هو الشعار الرسمي المعتمد لمنظومة taptag.one. لتغييره إلى براند خاص اختر (براند واسم مخصص + 50 ج).
-                  </span>
+                  <input
+                    type="text"
+                    value="taptag.one"
+                    disabled
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-zinc-400 font-sans text-sm font-bold lowercase opacity-75 cursor-not-allowed"
+                  />
                 </div>
               )}
 
+              {/* FONT SELECTOR UI */}
+              <div className="pt-2 border-t border-white/[0.08]">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block font-bold">
+                    نمط الخط والتيبوغرافي
+                  </label>
+                  <span className="text-[10px] font-mono tabular-nums text-zinc-400">
+                    {fontFee > 0 ? "+50 ج.م خط خاص" : "خط قياسي (0 ج.م)"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {LUXURY_FONTS.map((f) => {
+                    const isSelected = (config.fontFamily || "INTER") === f.id;
+                    return (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => updateField("fontFamily", f.id)}
+                        className={`p-2.5 rounded-xl border text-right transition-all flex flex-col justify-between cursor-pointer ${
+                          isSelected
+                            ? "bg-white text-black font-bold border-white"
+                            : "bg-white/[0.02] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:text-white"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <span className="text-xs font-bold">{f.label}</span>
+                          <span
+                            className={`text-[9px] font-mono tabular-nums px-1.5 py-0.5 rounded ${
+                              isSelected ? "bg-black text-white" : "bg-white/10 text-zinc-400"
+                            }`}
+                          >
+                            {f.fee > 0 ? `+${f.fee}` : "0"}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-current/70 font-mono mt-1">{f.sub}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Logo Color */}
-              <div>
-                <label className="text-xs font-mono uppercase tracking-wider text-zinc-400 block mb-2">
-                  لون حفر وطباعة الشعار
-                </label>
+              <div className="pt-2 border-t border-white/[0.08]">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-mono uppercase tracking-wider text-zinc-400 block">
+                    لون حفر وطباعة الشعار
+                  </label>
+                  <span className="text-[10px] font-mono tabular-nums text-zinc-400">
+                    {metallicFee > 0 ? "+40 ج.م حفر معدني" : "أبيض/داكن (0 ج.م)"}
+                  </span>
+                </div>
                 <div className="grid grid-cols-4 gap-2">
                   {[
-                    { id: "WHITE" as CardLogoColor, label: "أبيض ناصع", colorBg: "bg-white text-black" },
-                    { id: "SILVER" as CardLogoColor, label: "فضي كروم", colorBg: "bg-zinc-300 text-black" },
-                    { id: "GOLD" as CardLogoColor, label: "ذهبي فاخر", colorBg: "bg-[#E5C158] text-black" },
-                    { id: "STEALTH" as CardLogoColor, label: "داكن خفي", colorBg: "bg-zinc-700 text-white" },
+                    { id: "WHITE" as CardLogoColor, label: "أبيض", fee: 0, colorBg: "bg-white text-black" },
+                    { id: "SILVER" as CardLogoColor, label: "كروم", fee: 40, colorBg: "bg-zinc-300 text-black" },
+                    { id: "GOLD" as CardLogoColor, label: "ذهبي", fee: 40, colorBg: "bg-[#E5C158] text-black" },
+                    { id: "STEALTH" as CardLogoColor, label: "خفي", fee: 0, colorBg: "bg-zinc-700 text-white" },
                   ].map((col) => (
                     <button
                       key={col.id}
@@ -787,12 +873,13 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                       onClick={() => updateField("logoColor", col.id)}
                       className={`p-2 rounded-xl border text-xs font-medium transition-all flex flex-col items-center gap-1.5 cursor-pointer ${
                         (config.logoColor || "WHITE") === col.id
-                          ? "bg-zinc-800 border-white text-white"
+                          ? "bg-zinc-800 border-white text-white font-bold"
                           : "bg-black/40 border-white/10 text-zinc-400 hover:text-white"
                       }`}
                     >
                       <div className={`w-4 h-4 rounded-full border border-black/20 ${col.colorBg}`} />
                       <span className="text-[10px]">{col.label}</span>
+                      <span className="text-[8px] font-mono tabular-nums opacity-75">{col.fee > 0 ? `+${col.fee}` : "0"}</span>
                     </button>
                   ))}
                 </div>
@@ -843,110 +930,211 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
             </div>
           )}
 
-          {/* TAB 4: CONNECTIVITY (QR PLACEMENT & NFC) */}
+          {/* TAB 4: CONNECTIVITY (QR STYLES, PLACEMENT & NFC) */}
           {activeTab === "connectivity" && (
-            <div className="space-y-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10] shadow-glass">
-              {/* Layout Presets */}
+            <div className="space-y-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
+              {/* QR Code Style Selector */}
               <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block font-bold">
+                    نمط وشكل كود الـ QR
+                  </label>
+                  <span className="text-[10px] font-mono tabular-nums text-zinc-400">
+                    {qrStyleFee > 0 ? `+${qrStyleFee} ج.م نمط مخصص` : "مشمول (0 ج.م)"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: "ROUNDED_DOTS" as CardQrStyle, label: "نقاط ناعمة", fee: 0 },
+                    { id: "CLASSIC_SQUARE" as CardQrStyle, label: "مربعات كلاسيكية", fee: 0 },
+                    { id: "CHAMFER_OCTA" as CardQrStyle, label: "هندسي تقني", fee: 30 },
+                    { id: "BRAND_CENTER" as CardQrStyle, label: "شعار بالمنتصف", fee: 40 },
+                  ].map((styleItem) => {
+                    const isSelected = (config.qrStyle || "ROUNDED_DOTS") === styleItem.id;
+                    return (
+                      <button
+                        key={styleItem.id}
+                        type="button"
+                        onClick={() => updateField("qrStyle", styleItem.id)}
+                        className={`p-2.5 rounded-xl border text-right transition-all flex items-center justify-between cursor-pointer ${
+                          isSelected
+                            ? "bg-white text-black font-bold border-white"
+                            : "bg-white/[0.02] border-white/[0.08] text-zinc-400 hover:text-white"
+                        }`}
+                      >
+                        <span className="text-xs">{styleItem.label}</span>
+                        <span className="text-[9px] font-mono tabular-nums opacity-75">
+                          {styleItem.fee > 0 ? `+${styleItem.fee} ج.م` : "مشمول"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Layout Presets */}
+              <div className="pt-2 border-t border-white/[0.08]">
                 <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block mb-2 font-bold">
                   نمط توزيع العناصر (Layout Presets)
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   {[
-                    { id: "TAP_MINIMAL" as CardLayoutPreset, title: "النمط البسيط", desc: "الشعار في الأمام والـ QR بالخلف" },
-                    { id: "ALL_IN_ONE" as CardLayoutPreset, title: "الكل في واحد", desc: "الشعار والـ QR واللوحة معاً" },
+                    { id: "TAP_MINIMAL" as CardLayoutPreset, title: "النمط البسيط", desc: "الشعار بالأمام" },
+                    { id: "ALL_IN_ONE" as CardLayoutPreset, title: "الكل في واحد", desc: "شعار + لوحة + QR" },
+                    { id: "QR_HERO" as CardLayoutPreset, title: "تركيز الـ QR", desc: "QR رئيسي كبير" },
                   ].map((preset) => (
                     <button
                       key={preset.id}
                       type="button"
                       onClick={() => updateField("layoutPreset", preset.id)}
-                      className={`p-3 rounded-2xl border text-right transition-all cursor-pointer ${
+                      className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                         (config.layoutPreset || "TAP_MINIMAL") === preset.id
                           ? "bg-white text-black font-bold border-white"
                           : "bg-white/[0.02] border-white/[0.08] text-zinc-400 hover:text-white"
                       }`}
                     >
                       <span className="text-xs block font-bold">{preset.title}</span>
-                      <span className="text-[10px] block text-current/70 mt-0.5">{preset.desc}</span>
+                      <span className="text-[9px] block text-current/70 mt-0.5">{preset.desc}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* QR Placement */}
-              <div>
-                <label className="text-xs font-mono uppercase tracking-wider text-zinc-400 block mb-2">
-                  مكان طباعة رمز الـ QR
-                </label>
-                <div className="grid grid-cols-2 gap-2">
+              <div className="pt-2 border-t border-white/[0.08]">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block font-bold">
+                    مكان طباعة رمز الـ QR
+                  </label>
+                  <span className="text-[10px] font-mono tabular-nums text-zinc-400">
+                    {qrFee > 0 ? `+${qrFee} ج.م` : "مشمول"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
-                    { id: "BACK_ONLY" as CardQrPlacement, label: "في الخلف فقط" },
-                    { id: "FRONT_CORNER" as CardQrPlacement, label: "زاوية أمامية" },
+                    { id: "BACK_ONLY" as CardQrPlacement, label: "في الخلف فقط", fee: 0 },
+                    { id: "FRONT_CORNER" as CardQrPlacement, label: "زاوية أمامية", fee: 40 },
+                    { id: "FRONT_CENTER" as CardQrPlacement, label: "في المنتصف", fee: 40 },
+                    { id: "BOTH" as CardQrPlacement, label: "الوجهين معاً", fee: 60 },
                   ].map((item) => (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => updateField("qrPlacement", item.id)}
-                      className={`p-2.5 rounded-xl border text-xs font-medium text-center transition-all cursor-pointer ${
+                      className={`p-2 rounded-xl border text-center transition-all cursor-pointer ${
                         (config.qrPlacement || "BACK_ONLY") === item.id
                           ? "bg-zinc-800 border-white text-white font-bold"
                           : "bg-black/40 border-white/10 text-zinc-400 hover:text-white"
                       }`}
                     >
-                      {item.label}
+                      <span className="text-xs block">{item.label}</span>
+                      <span className="text-[8px] font-mono tabular-nums opacity-75 block mt-0.5">
+                        {item.fee > 0 ? `+${item.fee} ج.م` : "مشمول"}
+                      </span>
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* NFC Toggle */}
-              <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between">
-                <div className="flex items-center gap-2">
+              <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
                   <NfcWaveSymbol className="w-5 h-5 text-white" />
                   <div>
-                    <span className="text-xs font-bold text-white block">رمز NFC اللاتلامسي</span>
-                    <span className="text-[10px] text-zinc-400 font-mono">NTAG216 Chip Active</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-white block">شريحة NFC اللاتلامسية</span>
+                      <span className={`text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-full ${
+                        config.showNfcIcon ? "bg-white text-black font-bold" : "bg-white/10 text-zinc-400"
+                      }`}>
+                        {config.showNfcIcon ? "+80 ج.م" : "معطلة (0 ج.م)"}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-zinc-400 font-mono">
+                      {config.showNfcIcon ? "NTAG216 Chip Active" : "بدون شريحة"}
+                    </span>
                   </div>
                 </div>
                 <input
                   type="checkbox"
                   checked={config.showNfcIcon}
                   onChange={(e) => updateField("showNfcIcon", e.target.checked)}
-                  className="w-4 h-4 accent-white rounded cursor-pointer"
+                  className="w-5 h-5 accent-white rounded cursor-pointer"
                 />
               </div>
             </div>
           )}
 
-          {/* LIVE PRICE BREAKDOWN SUMMARY CARD */}
-          <div className="p-4 rounded-3xl bg-gradient-to-b from-white/[0.06] to-white/[0.02] border border-white/[0.12] shadow-glass space-y-3">
+          {/* LIVE PRICE BREAKDOWN SUMMARY CARD (Minimalist, High Contrast) */}
+          <div className="p-4 rounded-3xl bg-zinc-950 border border-white/[0.12] space-y-3">
             <div className="flex items-center justify-between text-xs font-mono text-zinc-400 border-b border-white/[0.08] pb-2">
               <span className="font-bold text-white flex items-center gap-1.5">
                 <Sliders className="w-3.5 h-3.5 text-white" />
-                <span>حساب التكلفة والإنتاج الفوري</span>
+                <span>حساب التكلفة والإنتاج</span>
               </span>
-              <span className="text-zinc-400 font-bold">Printzone 2026</span>
+              <span className="text-zinc-400 font-bold tabular-nums">Printzone 2026</span>
             </div>
 
-            <div className="space-y-1.5 text-xs">
+            <div className="space-y-1.5 text-xs font-medium">
               <div className="flex items-center justify-between text-zinc-300">
-                <span>سعر المقاس الأساسي ({selectedDimension.title} - {selectedDimension.sizeCm}):</span>
-                <span className="font-mono font-bold text-white">{basePriceEgp} ج.م</span>
+                <span>المقاس ({selectedDimension.title}):</span>
+                <span className="font-mono font-bold text-white tabular-nums">{basePriceEgp} ج.م</span>
               </div>
               <div className="flex items-center justify-between text-zinc-300">
-                <span>تخصيص الشعار ({config.brandType === "CUSTOM_BRAND" ? "براند واسم مخصص" : "شعار taptag.one الرسمي"}):</span>
-                <span className="font-mono font-bold text-white">
-                  {brandCustomizationFee > 0 ? `+${brandCustomizationFee} ج.م` : "مشمول مجاناً"}
+                <span>شريحة NFC:</span>
+                <span className="font-mono font-bold text-white tabular-nums">
+                  {nfcFee > 0 ? `+${nfcFee} ج.م` : "0 ج.م"}
                 </span>
               </div>
+              {brandCustomizationFee > 0 && (
+                <div className="flex items-center justify-between text-zinc-300">
+                  <span>حفر براند شخصي:</span>
+                  <span className="font-mono font-bold text-white tabular-nums">+{brandCustomizationFee} ج.م</span>
+                </div>
+              )}
+              {colorFee > 0 && (
+                <div className="flex items-center justify-between text-zinc-300">
+                  <span>لون مخصص:</span>
+                  <span className="font-mono font-bold text-white tabular-nums">+{colorFee} ج.م</span>
+                </div>
+              )}
+              {fontFee > 0 && (
+                <div className="flex items-center justify-between text-zinc-300">
+                  <span>خط مخصص:</span>
+                  <span className="font-mono font-bold text-white tabular-nums">+{fontFee} ج.م</span>
+                </div>
+              )}
+              {finishFee > 0 && (
+                <div className="flex items-center justify-between text-zinc-300">
+                  <span>تشطيب السطح ({config.acrylicFinish === "SMOKED_FROST" ? "سموك" : "مطفي"}):</span>
+                  <span className="font-mono font-bold text-white tabular-nums">+{finishFee} ج.م</span>
+                </div>
+              )}
+              {qrStyleFee > 0 && (
+                <div className="flex items-center justify-between text-zinc-300">
+                  <span>نمط QR ({config.qrStyle === "BRAND_CENTER" ? "شعار بالمنتصف" : "هندسي تقني"}):</span>
+                  <span className="font-mono font-bold text-white tabular-nums">+{qrStyleFee} ج.م</span>
+                </div>
+              )}
+              {qrFee > 0 && (
+                <div className="flex items-center justify-between text-zinc-300">
+                  <span>طباعة QR إضافية ({config.qrPlacement === "BOTH" ? "الوجهين" : "أمامية"}):</span>
+                  <span className="font-mono font-bold text-white tabular-nums">+{qrFee} ج.م</span>
+                </div>
+              )}
+              {metallicFee > 0 && (
+                <div className="flex items-center justify-between text-zinc-300">
+                  <span>حفر معدني:</span>
+                  <span className="font-mono font-bold text-white tabular-nums">+{metallicFee} ج.م</span>
+                </div>
+              )}
               <div className="pt-2 border-t border-white/[0.10] flex items-center justify-between text-sm font-bold text-white">
-                <span className="font-sans">الإجمالي النهائي للقطعة:</span>
-                <span className="text-base font-black font-mono text-white">{totalPriceEgp} ج.م</span>
+                <span>الإجمالي النهائي:</span>
+                <span className="text-base font-black font-mono text-white tabular-nums">{totalPriceEgp} ج.م</span>
               </div>
             </div>
 
             <div className="text-[10px] text-zinc-400 font-mono text-center pt-1 border-t border-white/[0.05]">
-              خامة أكريليك 3mm نقية • حفر ليزر دقيق • كود QR دائم • شريحة NFC ذكية
+              أكريليك 3mm • ليزر دقيق • كود QR دائم • شريحة NFC
             </div>
           </div>
         </div>

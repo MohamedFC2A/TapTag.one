@@ -17,32 +17,32 @@ export function ProtocolGrid({ lang }: ProtocolGridProps) {
       icon: Radio,
       title: isAr ? "استجابة فورية بدون تطبيقات" : "Instant App-Free Contact",
       desc: isAr
-        ? "لمس الهاتف أو مسح الكود يفتح صفحة السيارة مباشرة في المتصفح خلال ثانية واحدة."
-        : "NFC tap or QR scan opens the vehicle gateway directly in any mobile browser in one second.",
+        ? "فتح فوري في المتصفح خلال ثانية واحدة بدون تطبيقات."
+        : "Direct instant browser access in one second without apps.",
     },
     {
       num: "02",
       icon: Lock,
       title: isAr ? "خصوصية مطلقة لرقمك" : "Absolute Identity Privacy",
       desc: isAr
-        ? "رقم هاتفك الحقيقي وبياناتك الشخصية محجوبة ومشفرة 100% ولا تظهر لأحد."
-        : "Your actual phone number and personal identity remain completely encrypted and hidden.",
+        ? "رقم هاتفك الحقيقي مشفر ومحجوب تماماً."
+        : "Your real phone number is 100% encrypted and hidden.",
     },
     {
       num: "03",
       icon: PhoneCall,
       title: isAr ? "مكالمات صوتية مشفرة" : "Encrypted Voice Calls",
       desc: isAr
-        ? "اتصال صوتي فوري ومجاني عبر المتصفح بين المارّة والمالك دون كشف الأرقام."
-        : "Direct browser-to-browser audio call enables instant verbal contact with zero number disclosure.",
+        ? "اتصال صوتي فوري عبر المتصفح بدون كشف الأرقام."
+        : "Direct browser voice calls with zero number disclosure.",
     },
     {
       num: "04",
       icon: Layers,
       title: isAr ? "أكريليك عالي التحمل" : "Automotive Acrylic",
       desc: isAr
-        ? "مصممة خصيصاً للزجاج الأمامي بمقاومة تامة لحرارة الصيف والشمس حتى 85°C."
-        : "Engineered from premium cast acrylic, rigorously tested against extreme solar heat up to +85°C.",
+        ? "مقاومة تامة لحرارة الصيف والشمس حتى 85°C."
+        : "Engineered acrylic tested up to +85°C extreme heat.",
     },
   ];
 
@@ -70,10 +70,10 @@ export function ProtocolGrid({ lang }: ProtocolGridProps) {
           return (
             <div
               key={p.num}
-              className="p-5 sm:p-6 rounded-2xl glass-card border border-white/[0.08] flex flex-col justify-between space-y-3 shadow-glass hover:border-white/20 transition-all text-start"
+              className="p-5 sm:p-6 rounded-2xl glass-card border border-white/[0.08] flex flex-col justify-between space-y-3 hover:border-white/20 transition-all text-start"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-zinc-400 font-bold px-2 py-0.5 rounded-md glass-pill">
+                <span className="text-xs font-mono text-zinc-400 font-bold tabular-nums px-2 py-0.5 rounded-md border border-white/10 bg-white/[0.04]">
                   {p.num}
                 </span>
                 <div className="w-8 h-8 rounded-lg border border-white/[0.10] bg-white/[0.04] flex items-center justify-center text-white">

@@ -59,7 +59,7 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
 
   return (
     <div className="w-full sticky top-3 z-50 px-3 sm:px-6 select-none">
-      <header className="max-w-6xl mx-auto glass-surface-elevated rounded-2xl border border-white/[0.10] shadow-glass px-4 sm:px-5 h-16 flex items-center justify-between transition-all">
+      <header className="max-w-6xl mx-auto glass-surface-elevated rounded-2xl border border-white/[0.10] px-4 sm:px-5 h-16 flex items-center justify-between transition-all">
         {/* Brand Logo */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3 group">
@@ -78,7 +78,7 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
               href={link.href}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 ${
                 link.active
-                  ? "bg-white text-black font-bold shadow-sm"
+                  ? "bg-white text-black font-bold"
                   : "text-zinc-400 hover:text-white hover:bg-white/[0.05]"
               }`}
             >
@@ -93,7 +93,7 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
           {tagUid && (
             <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg border border-white/[0.10] bg-black/50">
               <Cpu className="w-3.5 h-3.5 text-zinc-400" />
-              <span className="text-xs text-white font-mono font-bold tracking-wider">
+              <span className="text-xs text-white font-mono font-bold tracking-wider tabular-nums">
                 {tagUid}
               </span>
             </div>
@@ -102,7 +102,7 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
           {/* Primary Action Button */}
           <Link
             href="/dashboard/activate"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white text-black font-bold text-xs hover:bg-zinc-200 transition-all shadow-sm active:scale-95 cursor-pointer"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white text-black font-bold text-xs hover:bg-zinc-200 transition-all active:scale-95 cursor-pointer"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-black" />
             <span>{isAr ? "تفعيل بطاقة" : "Activate Tag"}</span>
@@ -125,11 +125,11 @@ export function Header({ lang, onLanguageChange = () => {}, tagUid }: HeaderProp
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-2 max-w-6xl mx-auto glass-surface-elevated rounded-2xl border border-white/[0.10] p-3 space-y-1 shadow-glass animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="md:hidden mt-2 max-w-6xl mx-auto glass-surface-elevated rounded-2xl border border-white/[0.10] p-3 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
           <Link
             href="/dashboard/activate"
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-white text-black font-bold text-xs mb-2 shadow-sm"
+            className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-white text-black font-bold text-xs mb-2"
           >
             <span>{isAr ? "تفعيل بطاقة جديدة" : "Activate New Card"}</span>
             <ShieldCheck className="w-4 h-4 text-black" />

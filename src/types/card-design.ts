@@ -32,13 +32,25 @@ export type CardLogoPosition = "TOP_LEFT" | "TOP_RIGHT" | "CENTER" | "BOTTOM_LEF
 
 export type CardLogoColor = "WHITE" | "SILVER" | "GOLD" | "STEALTH";
 
-export type CardFontFamily = "IBM_PLEX" | "CAIRO" | "INTER";
+export type CardFontFamily =
+  | "NEO_GROTESK"
+  | "INTER"
+  | "GEIST_MONO"
+  | "SPACE_GROTESK"
+  | "SERIF_LUXURY"
+  | "ARABIC_KUFIC";
 
 export type CardPlateStyle = "SAUDI" | "EGYPT" | "STANDARD" | "MINIMAL";
 
-export type CardLayoutPreset = "TAP_MINIMAL" | "ALL_IN_ONE" | "CLASSIC_EXECUTIVE";
+export type CardLayoutPreset = "TAP_MINIMAL" | "ALL_IN_ONE" | "QR_HERO" | "CLASSIC_EXECUTIVE";
 
 export type CardQrPlacement = "BACK_ONLY" | "FRONT_CORNER" | "FRONT_CENTER" | "BOTH";
+
+export type CardQrStyle =
+  | "CLASSIC_SQUARE"
+  | "ROUNDED_DOTS"
+  | "CHAMFER_OCTA"
+  | "BRAND_CENTER";
 
 export interface CardDesignConfig {
   id?: string;
@@ -60,6 +72,7 @@ export interface CardDesignConfig {
   layoutPreset?: CardLayoutPreset;
   logoText?: string;
   qrPlacement?: CardQrPlacement;
+  qrStyle?: CardQrStyle;
   nfcPosition?: "BOTTOM_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT";
   brandType?: "OFFICIAL_TAPTAG" | "CUSTOM_BRAND";
   customBrandFee?: number;
@@ -84,6 +97,7 @@ export const DEFAULT_CARD_DESIGN: CardDesignConfig = {
   layoutPreset: "TAP_MINIMAL",
   logoText: "taptag.one",
   qrPlacement: "BACK_ONLY",
+  qrStyle: "ROUNDED_DOTS",
   nfcPosition: "BOTTOM_LEFT",
   brandType: "OFFICIAL_TAPTAG",
   customBrandFee: 0,

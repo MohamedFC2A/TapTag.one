@@ -58,6 +58,7 @@ async function ensureCardDesignTable() {
     await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "logoText" TEXT DEFAULT 'taptag.one';`);
     await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "layoutPreset" TEXT DEFAULT 'TAP_MINIMAL';`);
     await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "qrPlacement" TEXT DEFAULT 'BACK_ONLY';`);
+    await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "qrStyle" TEXT DEFAULT 'ROUNDED_DOTS';`);
     await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "nfcPosition" TEXT DEFAULT 'BOTTOM_LEFT';`);
     await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "cardColor" TEXT DEFAULT '#0E0F12';`);
     await db.$executeRawUnsafe(`ALTER TABLE "CardDesign" ADD COLUMN IF NOT EXISTS "acrylicFinish" TEXT DEFAULT 'GLOSSY_CRYSTAL';`);
@@ -86,8 +87,8 @@ export async function saveCardDesignAction(config: CardDesignConfig) {
         "id", "tagUid", "material", "dimensionStandard", "codeType",
         "logoPosition", "logoColor", "fontFamily", "plateStyle", "plateNumber",
         "showNfcIcon", "showEmergency", "customText", "logoText", "layoutPreset",
-        "qrPlacement", "nfcPosition", "cardColor", "acrylicFinish", "updatedAt"
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, NOW())
+        "qrPlacement", "qrStyle", "nfcPosition", "cardColor", "acrylicFinish", "updatedAt"
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, NOW())
       ON CONFLICT ("tagUid") DO UPDATE SET
         "material" = EXCLUDED."material",
         "dimensionStandard" = EXCLUDED."dimensionStandard",
@@ -103,6 +104,7 @@ export async function saveCardDesignAction(config: CardDesignConfig) {
         "logoText" = EXCLUDED."logoText",
         "layoutPreset" = EXCLUDED."layoutPreset",
         "qrPlacement" = EXCLUDED."qrPlacement",
+        "qrStyle" = EXCLUDED."qrStyle",
         "nfcPosition" = EXCLUDED."nfcPosition",
         "cardColor" = EXCLUDED."cardColor",
         "acrylicFinish" = EXCLUDED."acrylicFinish",
@@ -124,6 +126,7 @@ export async function saveCardDesignAction(config: CardDesignConfig) {
       config.logoText || "taptag.one",
       config.layoutPreset || "TAP_MINIMAL",
       config.qrPlacement || "BACK_ONLY",
+      config.qrStyle || "ROUNDED_DOTS",
       config.nfcPosition || "BOTTOM_LEFT",
       config.cardColor || "#0E0F12",
       config.acrylicFinish || "GLOSSY_CRYSTAL"
@@ -192,9 +195,10 @@ export async function getCardDesignAction(tagUid?: string): Promise<{
           showNfcIcon: Boolean(row.showNfcIcon),
           showEmergency: Boolean(row.showEmergency),
           customText: row.customText,
-          logoText: row.logoText || "tagtap.one",
+          logoText: row.logoText || "taptag.one",
           layoutPreset: (row.layoutPreset as CardLayoutPreset) || "TAP_MINIMAL",
           qrPlacement: (row.qrPlacement as CardQrPlacement) || "BACK_ONLY",
+          qrStyle: (row.qrStyle as any) || "ROUNDED_DOTS",
           nfcPosition: row.nfcPosition || "BOTTOM_LEFT",
           cardColor: row.cardColor || "#0E0F12",
           acrylicFinish: row.acrylicFinish || "GLOSSY_CRYSTAL",

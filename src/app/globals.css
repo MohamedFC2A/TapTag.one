@@ -30,91 +30,71 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Pure Apple/Linear Grade Glassmorphic Design System Tokens */
+/* Pure Architectural Swiss Minimalist Design Tokens (ZERO Shadows, ZERO Glowing) */
 .glass-surface {
   background: rgba(255, 255, 255, 0.025);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  box-shadow: none !important;
 }
 
 .glass-surface-elevated {
-  background: rgba(14, 14, 18, 0.75);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: #09090B;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 
-    0 20px 48px -12px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  box-shadow: none !important;
 }
 
 .glass-card {
   background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 
-    0 4px 20px -2px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none !important;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.04);
-  transform: translateY(-1px);
 }
 
 .glass-pill {
   background: rgba(255, 255, 255, 0.035);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  box-shadow: none !important;
 }
 
 .glass-input {
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #FFFFFF;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  box-shadow: none !important;
+  transition: border-color 0.2s ease;
 }
 
 .glass-input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(0, 0, 0, 0.6);
+  border-color: #FFFFFF;
+  background: #09090B;
 }
 
-/* Studio & Physical Card Textures & Lighting */
+/* Crisp Architectural Tabular Numbers for Pricing & Serial Tags */
+.tabular-nums,
+.font-mono {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: -0.01em;
+}
+
+/* Studio & Physical Card Textures - Pure Flat Solid (Zero Glow) */
 .acrylic-sheen {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.14) 0%,
-    rgba(255, 255, 255, 0.03) 25%,
-    rgba(255, 255, 255, 0) 50%,
-    rgba(255, 255, 255, 0.06) 80%,
-    rgba(255, 255, 255, 0.16) 100%
-  );
+  background: none;
 }
 
 .brushed-metal {
-  background: repeating-linear-gradient(
-    90deg,
-    #18181B 0px,
-    #27272A 2px,
-    #18181B 4px
-  );
+  background: #18181B;
 }
 
 .chamfer-bevel {
-  box-shadow: 
-    inset 1px 1px 1px 0px rgba(255, 255, 255, 0.2),
-    inset -1px -1px 1px 0px rgba(0, 0, 0, 0.6),
-    0 16px 36px -12px rgba(0, 0, 0, 0.85);
+  box-shadow: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Oscillating audio frequency bars for VoIP call simulator */
