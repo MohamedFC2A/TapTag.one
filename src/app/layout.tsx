@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans_Arabic, Readex_Pro } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Space_Grotesk, Archivo } from "next/font/google";
 import "./globals.css";
 import { PWAInstallAndPermissionsModal } from "@/components/ui/PWAInstallAndPermissionsModal";
 
@@ -10,15 +10,22 @@ const ibmPlexArabic = IBM_Plex_Sans_Arabic({
   display: "swap",
 });
 
-const readexPro = Readex_Pro({
-  subsets: ["arabic", "latin"],
-  variable: "--font-readex",
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
+const archivoBrand = Archivo({
+  subsets: ["latin"],
+  variable: "--font-taptag",
+  weight: ["700", "800", "900"],
+  display: "swap",
+});
+
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: "#09090B",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -26,14 +33,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "TapTag.one - منظومة الهوية الذكية",
-  description:
-    "منظومة الهوية الذكية المعتمدة للمركبات والأصول عبر تقنيات NFC و QR المشفرة من TapTag.one مع حجب تام لبيانات المالك الشخصية.",
+  title: "taptag. — Smart QR",
+  description: "Dynamic Smart QR platform",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "TapTag",
+    title: "taptag.",
   },
   icons: {
     icon: [
@@ -51,14 +57,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" className={`${ibmPlexArabic.variable} ${readexPro.variable}`}>
+    <html lang="ar" dir="rtl" className={`${ibmPlexArabic.variable} ${spaceGrotesk.variable} ${archivoBrand.variable}`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className="min-h-screen bg-[#000000] text-[#E4E4E7] antialiased selection:bg-white selection:text-black font-sans">
+      <body className="min-h-screen bg-[#09090B] text-[#F4F4F5] antialiased selection:bg-white selection:text-black font-sans">
         {children}
         <PWAInstallAndPermissionsModal />
       </body>

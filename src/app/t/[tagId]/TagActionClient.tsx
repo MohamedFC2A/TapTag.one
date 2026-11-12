@@ -403,11 +403,8 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
   };
 
   return (
-    <div className={`min-h-screen bg-[#000000] text-[#E4E4E7] flex flex-col relative overflow-hidden ${isAr ? "rtl" : "ltr"}`} dir={isAr ? "rtl" : "ltr"}>
-      {/* Precision Micro-Grid Horizon */}
-      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
-
-      {/* Floating Glassmorphic Header */}
+    <div className={`min-h-screen bg-[#09090B] hw-pixel-grid text-[#FAFAFA] flex flex-col relative overflow-hidden ${isAr ? "rtl" : "ltr"}`} dir={isAr ? "rtl" : "ltr"}>
+      {/* Hardware Header */}
       <Header
         lang={lang}
         onLanguageChange={setLang}
@@ -418,18 +415,18 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
         {/* Global Feedback Banner */}
         {feedback && (
           <div
-            className={`p-4 rounded-2xl glass-surface-elevated text-xs flex items-center gap-3 transition-all animate-in fade-in duration-200 ${
+            className={`p-4 rounded-xl bg-[#121215] border text-xs flex items-center gap-3 transition-all duration-150 ease-out ${
               feedback.type === "success"
-                ? "border-white/20 text-white font-bold"
+                ? "border-[#27272A] text-white font-bold"
                 : feedback.type === "error"
-                ? "border-red-500/30 text-red-200"
-                : "border-white/[0.08] text-zinc-200"
+                ? "border-white text-white font-bold"
+                : "border-[#27272A] text-zinc-200"
             }`}
           >
             {feedback.type === "success" ? (
               <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
             ) : (
-              <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+              <AlertCircle className="w-5 h-5 text-white shrink-0" />
             )}
             <div className="flex-1 font-medium leading-relaxed">{feedback.message}</div>
           </div>
@@ -437,10 +434,10 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
 
         {/* Immediate Direct Dispatch Action Banner (WhatsApp & SMS) */}
         {lastDispatchResult && (
-          <div className="p-5 sm:p-6 rounded-3xl glass-surface-elevated border border-white/[0.12] space-y-4 shadow-glass animate-in fade-in zoom-in-95">
+          <div className="p-5 sm:p-6 rounded-xl bg-[#121215] border border-[#27272A] space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-white/[0.06] border border-white/[0.10]">
+                <div className="p-2 rounded-lg bg-[#09090B] border border-[#27272A]">
                   <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
                 </div>
                 <span className="text-sm font-bold text-white font-mono">
@@ -448,7 +445,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                 </span>
               </div>
               {lastDispatchResult.recipientPhoneMasked && (
-                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full glass-pill text-zinc-300">
+                <span className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-[#09090B] border border-[#27272A] text-zinc-300">
                   {lastDispatchResult.recipientPhoneMasked}
                 </span>
               )}
@@ -466,29 +463,29 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   href={lastDispatchResult.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs cursor-pointer shadow-glass active:scale-95 transition-all"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-mono font-bold text-xs cursor-pointer transition-all duration-150 ease-out"
                 >
-                  <span>📱 إرسال فوري عبر WhatsApp للمالك</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-black" />
+                  <span>إرسال فوري عبر WhatsApp للمالك</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               )}
 
               {lastDispatchResult.smsUrl && (
                 <a
                   href={lastDispatchResult.smsUrl}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card text-white font-mono text-xs cursor-pointer hover:border-white/20 active:scale-95 transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#09090B] border border-[#27272A] hover:bg-white hover:text-[#09090B] hover:border-white text-white font-mono text-xs cursor-pointer transition-all duration-150 ease-out"
                 >
-                  <span>💬 إرسال رسالة نصية SMS</span>
-                  <ExternalLink className="w-3 h-3 text-zinc-400" />
+                  <span>إرسال رسالة نصية SMS</span>
+                  <ExternalLink className="w-3 h-3" />
                 </a>
               )}
 
               {lastDispatchResult.telUrl && (
                 <a
                   href={lastDispatchResult.telUrl}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card text-zinc-300 font-mono text-xs cursor-pointer hover:border-white/20 transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#09090B] border border-[#27272A] hover:bg-white hover:text-[#09090B] hover:border-white text-zinc-300 font-mono text-xs cursor-pointer transition-all duration-150 ease-out"
                 >
-                  <span>📞 اتصال هاتفي مباشر</span>
+                  <span>اتصال هاتفي مباشر</span>
                 </a>
               )}
             </div>
@@ -499,14 +496,14 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
         {/* CASE 1: UNCLAIMED FACTORY TAG -> FIRST-CLAIM ACTIVATION VIEW  */}
         {/* ------------------------------------------------------------- */}
         {!tag.isActivated && (
-          <div className="glass-surface-elevated rounded-3xl p-6 sm:p-8 space-y-6 border border-white/[0.12] shadow-glass">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
+          <div className="bg-[#121215] rounded-xl p-6 sm:p-8 space-y-6 border border-[#27272A]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#27272A] pb-5">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-white text-xs font-mono font-bold mb-2.5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#09090B] border border-[#27272A] text-white text-xs font-mono font-bold mb-2.5">
                   <ShieldCheck className="w-4 h-4 text-white" />
                   <span>AUTHENTIC HARDWARE VERIFIED • READY FOR FIRST-CLAIM</span>
                 </div>
-                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight font-display">
                   {isAr ? "تفعيل واقتران بطاقة جديدة (NFC / QR)" : "First-Claim Hardware Pairing"}
                 </h1>
                 <p className="text-xs sm:text-sm text-zinc-400 mt-1.5 leading-relaxed">
@@ -516,7 +513,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl glass-surface font-mono text-center shrink-0 border border-white/[0.08]">
+              <div className="p-3.5 rounded-xl bg-[#09090B] font-mono text-center shrink-0 border border-[#27272A]">
                 <span className="text-[10px] text-zinc-400 block uppercase font-bold tracking-wider">HARDWARE UID</span>
                 <span className="text-base font-bold text-white">{tag.tagUid}</span>
               </div>
@@ -538,7 +535,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     value={claimPlate}
                     onChange={(e) => setClaimPlate(e.target.value)}
                     placeholder="أ ب ج 1234"
-                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none"
+                    className="w-full bg-[#09090B] border border-[#27272A] focus:border-white rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none"
                   />
                 </div>
 
@@ -551,7 +548,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     value={claimMake}
                     onChange={(e) => setClaimMake(e.target.value)}
                     placeholder="Toyota, Lexus, Porsche..."
-                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none"
+                    className="w-full bg-[#09090B] border border-[#27272A] focus:border-white rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none"
                   />
                 </div>
 
@@ -564,7 +561,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     value={claimModel}
                     onChange={(e) => setClaimModel(e.target.value)}
                     placeholder="Land Cruiser, Panamera..."
-                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none"
+                    className="w-full bg-[#09090B] border border-[#27272A] focus:border-white rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none"
                   />
                 </div>
 
@@ -577,16 +574,16 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     value={claimPhone}
                     onChange={(e) => setClaimPhone(e.target.value)}
                     placeholder="+9665xxxxxxxx"
-                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs font-mono text-white focus:outline-none"
+                    className="w-full bg-[#09090B] border border-[#27272A] focus:border-white rounded-lg px-4 py-2.5 text-xs font-mono text-white focus:outline-none"
                   />
                 </div>
               </div>
             </div>
 
             {/* ONE-TOUCH BIOMETRIC / FIRST-CLAIM BUTTON */}
-            <div className="p-5 rounded-2xl glass-surface flex flex-col sm:flex-row items-center justify-between gap-5 border border-white/[0.08]">
+            <div className="p-5 rounded-xl bg-[#09090B] flex flex-col sm:flex-row items-center justify-between gap-5 border border-[#27272A]">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl glass-pill flex items-center justify-center text-white shrink-0 border border-white/[0.12]">
+                <div className="w-12 h-12 rounded-xl bg-[#121215] flex items-center justify-center text-white shrink-0 border border-[#27272A]">
                   <Fingerprint className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -605,9 +602,9 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                 type="button"
                 onClick={handleFirstClaim}
                 disabled={isPending || isBiometricAuthenticating}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 shrink-0 shadow-glass active:scale-95 cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white text-xs font-black uppercase tracking-wider transition-all duration-150 ease-out disabled:opacity-50 shrink-0 cursor-pointer"
               >
-                <Fingerprint className="w-4 h-4 text-black" />
+                <Fingerprint className="w-4 h-4" />
                 <span>
                   {isBiometricAuthenticating || isPending
                     ? (isAr ? "جارٍ التحقق والاقتران..." : "Verifying Passkey...")
@@ -622,11 +619,11 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
         {/* CASE 2: ACTIVATED TAG + SCANNED BY THE VERIFIED OWNER         */}
         {/* ------------------------------------------------------------- */}
         {tag.isActivated && isOwnerDevice && !viewAsBystander && (
-          <div className="glass-surface-elevated rounded-3xl p-6 sm:p-7 space-y-6 border border-white/[0.12] shadow-glass">
+          <div className="bg-[#121215] rounded-xl p-6 sm:p-7 space-y-6 border border-[#27272A]">
             {/* Owner Recognition Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 p-4 rounded-2xl glass-surface border border-white/[0.08]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 p-4 rounded-xl bg-[#09090B] border border-[#27272A]">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl glass-pill flex items-center justify-center text-white shrink-0 border border-white/[0.10]">
+                <div className="w-9 h-9 rounded-lg bg-[#121215] flex items-center justify-center text-white shrink-0 border border-[#27272A]">
                   <Fingerprint className="w-4 h-4 text-white" />
                 </div>
                 <div>
@@ -634,7 +631,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     <span className="text-xs font-bold text-white">
                       {isAr ? "مرحباً بك: تم التعرف على جهازك كمالك موثق" : "Verified Owner Device Recognized"}
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full glass-pill text-zinc-300 font-bold">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#121215] border border-[#27272A] text-zinc-300 font-bold">
                       OWNER LOCKED
                     </span>
                   </div>
@@ -648,26 +645,26 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
               <button
                 type="button"
                 onClick={() => setViewAsBystander(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl glass-card text-xs font-medium text-zinc-300 hover:text-white transition-all shrink-0 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#121215] border border-[#27272A] text-xs font-medium text-zinc-300 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out shrink-0 cursor-pointer"
               >
-                <Eye className="w-3.5 h-3.5 text-zinc-400" />
+                <Eye className="w-3.5 h-3.5" />
                 <span>{isAr ? "معاينة كزائر (بوابة الغرباء)" : "Preview as Bystander"}</span>
               </button>
             </div>
 
             {/* ZERO-HARDWARE AUTONOMOUS VEHICLE FINDER (OWNER EXCLUSIVE) */}
-            <div className="p-5 sm:p-6 rounded-3xl glass-surface border border-white/[0.08] space-y-4 shadow-glass">
+            <div className="p-5 sm:p-6 rounded-xl bg-[#09090B] border border-[#27272A] space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start sm:items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-black shrink-0 shadow-sm">
-                    <Compass className="w-6 h-6 text-black" />
+                  <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-[#09090B] shrink-0 border border-white">
+                    <Compass className="w-6 h-6 text-[#09090B]" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm sm:text-base font-black text-white">
                         {t.spatialFinder.title}
                       </span>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full glass-pill text-zinc-300 font-bold">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#121215] border border-[#27272A] text-zinc-300 font-bold">
                         ZERO-HARDWARE
                       </span>
                     </div>
@@ -681,18 +678,18 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   <button
                     type="button"
                     onClick={() => setIsSpatialCalibrationOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl glass-card text-xs font-mono font-medium text-zinc-200 hover:text-white transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#121215] border border-[#27272A] text-xs font-mono font-medium text-zinc-200 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out cursor-pointer"
                   >
-                    <RotateCcw className="w-3.5 h-3.5 text-zinc-400" />
+                    <RotateCcw className="w-3.5 h-3.5" />
                     <span>{t.spatialFinder.calibrateButton}</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setIsSpatialFinderOpen(true)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-xs uppercase tracking-wider transition-all shadow-glass active:scale-95 cursor-pointer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-black text-xs uppercase tracking-wider transition-all duration-150 ease-out cursor-pointer"
                   >
-                    <Navigation className="w-4 h-4 text-black" />
+                    <Navigation className="w-4 h-4" />
                     <span>{t.spatialFinder.findCarButton}</span>
                   </button>
                 </div>
@@ -701,7 +698,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
 
             {/* Owner Control Dashboard */}
             <div className="space-y-6">
-              <div className="border-b border-white/[0.08] pb-3 flex items-center justify-between">
+              <div className="border-b border-[#27272A] pb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Sliders className="w-4 h-4 text-white" />
                   <h2 className="text-sm font-bold text-white uppercase tracking-wider">
@@ -722,10 +719,10 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                       key={st}
                       type="button"
                       onClick={() => setOwnerStatus(st)}
-                      className={`p-3 rounded-xl border text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                      className={`p-3 rounded-lg border text-xs font-semibold transition-all duration-150 ease-out flex items-center justify-center gap-2 cursor-pointer ${
                         ownerStatus === st
-                          ? "bg-white/[0.12] border-white text-white font-bold shadow-sm"
-                          : "glass-card text-zinc-400 hover:text-zinc-200"
+                          ? "bg-[#09090B] border-white text-white font-bold"
+                          : "bg-[#09090B] border-[#27272A] text-zinc-400 hover:text-zinc-200"
                       }`}
                     >
                       <StatusBadge status={st} lang={lang} />
@@ -735,7 +732,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
               </div>
 
               {/* Auto Response Text */}
-              <div className="space-y-2 pt-3 border-t border-white/[0.08]">
+              <div className="space-y-2 pt-3 border-t border-[#27272A]">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-semibold text-zinc-300">
                     {isAr ? "تنويه الرد التلقائي (يظهر للماسح عند وضع 'الخارج مؤقتاً'):" : "Auto-Reply Message (When Away):"}
@@ -745,7 +742,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                       type="checkbox"
                       checked={ownerAutoReplyEnabled}
                       onChange={(e) => setOwnerAutoReplyEnabled(e.target.checked)}
-                      className="rounded bg-black border-white/20 text-white focus:ring-0"
+                      className="rounded bg-[#09090B] border-[#27272A] text-white focus:ring-0"
                     />
                     <span>{isAr ? "تفعيل التنويه" : "Enable"}</span>
                   </label>
@@ -755,12 +752,12 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   value={ownerAutoReplyText}
                   onChange={(e) => setOwnerAutoReplyText(e.target.value)}
                   placeholder="سأعود للمركبة خلال 15 دقيقة..."
-                  className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none"
+                  className="w-full bg-[#09090B] border border-[#27272A] focus:border-white rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none"
                 />
               </div>
 
               {/* Notification Channel Toggles */}
-              <div className="space-y-2 pt-3 border-t border-white/[0.08]">
+              <div className="space-y-2 pt-3 border-t border-[#27272A]">
                 <label className="block text-xs font-semibold text-zinc-300">
                   {isAr ? "قنوات الإشعار الفوري عند إرسال طلب:" : "Alert Dispatch Channels:"}
                 </label>
@@ -768,10 +765,10 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   <button
                     type="button"
                     onClick={() => setOwnerNotifyWhatsApp(!ownerNotifyWhatsApp)}
-                    className={`p-3 rounded-xl border text-xs flex items-center justify-between transition-all cursor-pointer ${
+                    className={`p-3 rounded-lg border text-xs flex items-center justify-between transition-all duration-150 ease-out cursor-pointer ${
                       ownerNotifyWhatsApp
-                        ? "glass-surface-elevated border-white/30 text-white font-bold"
-                        : "glass-card text-zinc-400"
+                        ? "bg-white border-white text-[#09090B] font-bold"
+                        : "bg-[#09090B] border-[#27272A] text-zinc-400 hover:text-white"
                     }`}
                   >
                     <span>WhatsApp</span>
@@ -781,10 +778,10 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   <button
                     type="button"
                     onClick={() => setOwnerNotifyPush(!ownerNotifyPush)}
-                    className={`p-3 rounded-xl border text-xs flex items-center justify-between transition-all cursor-pointer ${
+                    className={`p-3 rounded-lg border text-xs flex items-center justify-between transition-all duration-150 ease-out cursor-pointer ${
                       ownerNotifyPush
-                        ? "glass-surface-elevated border-white/30 text-white font-bold"
-                        : "glass-card text-zinc-400"
+                        ? "bg-white border-white text-[#09090B] font-bold"
+                        : "bg-[#09090B] border-[#27272A] text-zinc-400 hover:text-white"
                     }`}
                   >
                     <span>Web Push</span>
@@ -794,10 +791,10 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   <button
                     type="button"
                     onClick={() => setOwnerNotifyTelegram(!ownerNotifyTelegram)}
-                    className={`p-3 rounded-xl border text-xs flex items-center justify-between transition-all cursor-pointer ${
+                    className={`p-3 rounded-lg border text-xs flex items-center justify-between transition-all duration-150 ease-out cursor-pointer ${
                       ownerNotifyTelegram
-                        ? "glass-surface-elevated border-white/30 text-white font-bold"
-                        : "glass-card text-zinc-400"
+                        ? "bg-white border-white text-[#09090B] font-bold"
+                        : "bg-[#09090B] border-[#27272A] text-zinc-400 hover:text-white"
                     }`}
                   >
                     <span>Telegram</span>
@@ -807,10 +804,10 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   <button
                     type="button"
                     onClick={() => setOwnerNotifySms(!ownerNotifySms)}
-                    className={`p-3 rounded-xl border text-xs flex items-center justify-between transition-all cursor-pointer ${
+                    className={`p-3 rounded-lg border text-xs flex items-center justify-between transition-all duration-150 ease-out cursor-pointer ${
                       ownerNotifySms
-                        ? "glass-surface-elevated border-white/30 text-white font-bold"
-                        : "glass-card text-zinc-400"
+                        ? "bg-white border-white text-[#09090B] font-bold"
+                        : "bg-[#09090B] border-[#27272A] text-zinc-400 hover:text-white"
                     }`}
                   >
                     <span>SMS</span>
@@ -820,14 +817,14 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
               </div>
 
               {/* Save Button */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.08]">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#27272A]">
                 <button
                   type="button"
                   onClick={handleSaveOwnerSettings}
                   disabled={isPending}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 shadow-glass cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white text-xs font-black uppercase tracking-wider transition-all duration-150 ease-out disabled:opacity-50 cursor-pointer"
                 >
-                  <ShieldCheck className="w-4 h-4 text-black" />
+                  <ShieldCheck className="w-4 h-4" />
                   <span>{isPending ? (isAr ? "جارٍ الحفظ..." : "Saving...") : (isAr ? "حفظ التغييرات" : "Save Changes")}</span>
                 </button>
               </div>
@@ -842,11 +839,11 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
           <div className="space-y-6">
             {/* If Owner is previewing bystander view */}
             {isOwnerDevice && viewAsBystander && (
-              <div className="p-3.5 rounded-2xl glass-surface border border-white/15 flex items-center justify-between text-xs text-zinc-300">
+              <div className="p-3.5 rounded-xl bg-[#121215] border border-[#27272A] flex items-center justify-between text-xs text-zinc-300">
                 <span>{isAr ? "أنت تشاهد الصفحة الآن كما يراها أي شخص مار يمسح الـ QR." : "You are currently viewing the page as an external bystander."}</span>
                 <button
                   onClick={() => setViewAsBystander(false)}
-                  className="px-3 py-1.5 rounded-xl glass-card border border-white/20 text-white font-medium cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-[#09090B] border border-[#27272A] text-white hover:bg-white hover:text-[#09090B] hover:border-white font-medium transition-all duration-150 ease-out cursor-pointer"
                 >
                   {isAr ? "العودة لوضع المالك" : "Return to Owner Mode"}
                 </button>
@@ -854,7 +851,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             )}
 
             {/* Verification & Privacy Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl glass-surface border border-white/[0.08]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#121215] border border-[#27272A]">
               <div className="flex items-center gap-2.5 text-xs text-zinc-300">
                 <ShieldCheck className="w-4 h-4 text-white shrink-0" />
                 <span className="font-semibold text-white">{t.officialSeal}</span>
@@ -870,9 +867,9 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     type="button"
                     onClick={handleOwnerBiometricLogin}
                     disabled={isBiometricAuthenticating}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card text-white text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#09090B] border border-[#27272A] text-white hover:bg-white hover:text-[#09090B] hover:border-white text-xs font-bold transition-all duration-150 ease-out disabled:opacity-50 cursor-pointer"
                   >
-                    <Fingerprint className="w-3.5 h-3.5 text-white" />
+                    <Fingerprint className="w-3.5 h-3.5" />
                     <span>
                       {isBiometricAuthenticating
                         ? (isAr ? "جارٍ التحقق..." : "Verifying...")
@@ -884,8 +881,8 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             </div>
 
             {/* Vehicle Identity Card (Zero PII Exposed) */}
-            <div className="p-6 sm:p-7 rounded-3xl glass-surface-elevated border border-white/[0.12] shadow-glass">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/[0.08] pb-6">
+            <div className="p-6 sm:p-7 rounded-xl bg-[#121215] border border-[#27272A]">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#27272A] pb-6">
                 <div className="space-y-1.5">
                   <span className="text-[11px] font-mono uppercase text-zinc-400 tracking-wider font-bold">
                     {t.vehicleInfo.plate}
@@ -899,7 +896,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                 </div>
 
                 {/* Privacy Shield Pill */}
-                <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl glass-card text-xs text-zinc-300 max-w-xs border border-white/[0.08]">
+                <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#09090B] text-xs text-zinc-300 max-w-xs border border-[#27272A]">
                   <Lock className="w-4 h-4 text-white shrink-0" />
                   <span className="text-[11px] leading-relaxed">
                     {t.privacyNotice}
@@ -907,9 +904,9 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                 </div>
               </div>
 
-              {/* Owner Auto-Response Protocol (Visible if Away or enabled) */}
+              {/* Owner Auto-Response Protocol */}
               {(tag.status === "AWAY" || tag.autoResponseEnabled) && tag.autoResponseText && (
-                <div className="mt-4 p-4 rounded-2xl glass-surface border border-white/15 flex items-start gap-3">
+                <div className="mt-4 p-4 rounded-xl bg-[#09090B] border border-[#27272A] flex items-start gap-3">
                   <Clock className="w-4 h-4 text-white shrink-0 mt-0.5" />
                   <div>
                     <span className="text-xs font-semibold text-white block mb-0.5">
@@ -925,7 +922,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
 
             {/* Cooldown Timer Alert */}
             {cooldownRemaining > 0 && (
-              <div className="p-3.5 rounded-2xl glass-surface border border-white/[0.08] flex items-center justify-between text-xs text-zinc-300 font-mono">
+              <div className="p-3.5 rounded-xl bg-[#121215] border border-[#27272A] flex items-center justify-between text-xs text-zinc-300 font-mono">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-white" />
                   <span>
@@ -940,8 +937,8 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
 
             {/* Operational State Handling (SUSPENDED / DND / ACTIVE) */}
             {tag.status === "SUSPENDED" ? (
-              <div className="p-8 rounded-3xl glass-surface-elevated border border-red-500/30 text-center space-y-3">
-                <div className="w-12 h-12 rounded-full glass-pill border border-red-500/40 flex items-center justify-center text-red-400 mx-auto">
+              <div className="p-8 rounded-xl bg-[#121215] border border-[#27272A] text-center space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-[#09090B] border border-[#27272A] flex items-center justify-center text-white mx-auto">
                   <Lock className="w-6 h-6" />
                 </div>
                 <h3 className="text-base font-bold text-white">
@@ -957,7 +954,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
               <div className="space-y-4">
                 {/* DND Notice */}
                 {tag.status === "DND" && (
-                  <div className="p-4 rounded-2xl glass-surface border border-white/15 flex items-center gap-3 text-xs text-zinc-300">
+                  <div className="p-4 rounded-xl bg-[#121215] border border-[#27272A] flex items-center gap-3 text-xs text-zinc-300">
                     <AlertTriangle className="w-4 h-4 text-white shrink-0" />
                     <span>
                       {isAr
@@ -967,7 +964,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   </div>
                 )}
 
-                <div className="border-b border-white/[0.08] pb-3">
+                <div className="border-b border-[#27272A] pb-3">
                   <h2 className="text-base font-bold text-white tracking-wide">
                     {t.actions.title}
                   </h2>
@@ -976,7 +973,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   </p>
                 </div>
 
-                {/* 4 Direct Glassmorphic Action Cards */}
+                {/* 4 Direct Hardware Action Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* 1. Request Movement */}
                   <div
@@ -985,19 +982,19 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                         setActiveTab(activeTab === "movement" ? null : "movement");
                       }
                     }}
-                    className={`p-6 rounded-3xl border transition-all ${
+                    className={`p-6 rounded-xl border transition-all duration-150 ease-out ${
                       tag.status === "DND"
-                        ? "glass-surface opacity-40 cursor-not-allowed border-white/[0.04]"
+                        ? "bg-[#121215] opacity-40 cursor-not-allowed border-[#27272A]"
                         : activeTab === "movement"
-                        ? "glass-surface-elevated border-white text-white shadow-glass cursor-pointer scale-[1.01]"
-                        : "glass-card hover:border-white/20 cursor-pointer"
+                        ? "bg-[#121215] border-white text-white cursor-pointer"
+                        : "bg-[#121215] border-[#27272A] hover:border-white cursor-pointer"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-2xl glass-pill flex items-center justify-center text-white border border-white/[0.10]">
+                      <div className="w-10 h-10 rounded-lg bg-[#09090B] flex items-center justify-center text-white border border-[#27272A]">
                         <Car className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full glass-pill text-zinc-400">
+                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-lg bg-[#09090B] border border-[#27272A] text-zinc-400">
                         {tag.status === "DND" ? (isAr ? "مغلق (DND)" : "MUTED") : "PRIORITY 1"}
                       </span>
                     </div>
@@ -1018,17 +1015,17 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   {/* 2. Emergency Report (Always enabled) */}
                   <div
                     onClick={() => setActiveTab(activeTab === "emergency" ? null : "emergency")}
-                    className={`p-6 rounded-3xl border cursor-pointer transition-all ${
+                    className={`p-6 rounded-xl border cursor-pointer transition-all duration-150 ease-out ${
                       activeTab === "emergency"
-                        ? "glass-surface-elevated border-white text-white shadow-glass scale-[1.01]"
-                        : "glass-card hover:border-white/20"
+                        ? "bg-[#121215] border-white text-white"
+                        : "bg-[#121215] border-[#27272A] hover:border-white"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-2xl glass-pill flex items-center justify-center text-white border border-white/20">
+                      <div className="w-10 h-10 rounded-lg bg-[#09090B] flex items-center justify-center text-white border border-[#27272A]">
                         <AlertTriangle className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full glass-pill text-white font-bold border border-white/20">
+                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-lg bg-white text-[#09090B] font-bold border border-white">
                         URGENT
                       </span>
                     </div>
@@ -1051,17 +1048,17 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                         setIsCallOpen(true);
                       }
                     }}
-                    className={`p-6 rounded-3xl border transition-all ${
+                    className={`p-6 rounded-xl border transition-all duration-150 ease-out ${
                       tag.status === "DND"
-                        ? "glass-surface opacity-40 cursor-not-allowed border-white/[0.04]"
-                        : "glass-card hover:border-white/20 cursor-pointer group"
+                        ? "bg-[#121215] opacity-40 cursor-not-allowed border-[#27272A]"
+                        : "bg-[#121215] border-[#27272A] hover:border-white cursor-pointer group"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-2xl glass-pill flex items-center justify-center text-white border border-white/[0.10] group-hover:bg-white/[0.08]">
+                      <div className="w-10 h-10 rounded-lg bg-[#09090B] flex items-center justify-center text-white border border-[#27272A]">
                         <PhoneCall className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full glass-pill text-zinc-300 font-bold">
+                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-lg bg-[#09090B] border border-[#27272A] text-zinc-300 font-bold">
                         {tag.status === "DND" ? (isAr ? "مغلق (DND)" : "MUTED") : "VOIP TUNNEL"}
                       </span>
                     </div>
@@ -1084,19 +1081,19 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                         setActiveTab(activeTab === "note" ? null : "note");
                       }
                     }}
-                    className={`p-6 rounded-3xl border transition-all ${
+                    className={`p-6 rounded-xl border transition-all duration-150 ease-out ${
                       tag.status === "DND"
-                        ? "glass-surface opacity-40 cursor-not-allowed border-white/[0.04]"
+                        ? "bg-[#121215] opacity-40 cursor-not-allowed border-[#27272A]"
                         : activeTab === "note"
-                        ? "glass-surface-elevated border-white text-white shadow-glass cursor-pointer scale-[1.01]"
-                        : "glass-card hover:border-white/20 cursor-pointer"
+                        ? "bg-[#121215] border-white text-white cursor-pointer"
+                        : "bg-[#121215] border-[#27272A] hover:border-white cursor-pointer"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-2xl glass-pill flex items-center justify-center text-zinc-300 border border-white/[0.10]">
+                      <div className="w-10 h-10 rounded-lg bg-[#09090B] flex items-center justify-center text-zinc-300 border border-[#27272A]">
                         <MessageSquare className="w-5 h-5 text-zinc-300" />
                       </div>
-                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full glass-pill text-zinc-400">
+                      <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-lg bg-[#09090B] border border-[#27272A] text-zinc-400">
                         {tag.status === "DND" ? (isAr ? "مغلق (DND)" : "MUTED") : "CONTROLLED"}
                       </span>
                     </div>
@@ -1121,9 +1118,9 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             {activeTab === "movement" && (
               <form
                 onSubmit={handleMovementSubmit}
-                className="p-6 sm:p-7 rounded-3xl glass-surface-elevated border border-white/[0.12] space-y-5 shadow-glass animate-in fade-in duration-200"
+                className="p-6 sm:p-7 rounded-xl bg-[#121215] border border-[#27272A] space-y-5"
               >
-                <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
+                <div className="flex items-center justify-between border-b border-[#27272A] pb-3.5">
                   <h4 className="text-sm font-bold text-white flex items-center gap-2">
                     <Car className="w-4 h-4 text-white" />
                     <span>{t.actions.movement.title}</span>
@@ -1139,10 +1136,10 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     {t.actions.movement.reasons.map((reason, idx) => (
                       <label
                         key={idx}
-                        className={`flex items-center gap-3 p-3.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                        className={`flex items-center gap-3 p-3.5 rounded-lg border text-xs cursor-pointer transition-all duration-150 ease-out ${
                           selectedReason === reason
-                            ? "glass-surface-elevated border-white text-white font-bold shadow-sm"
-                            : "glass-card text-zinc-300 hover:border-white/15"
+                            ? "bg-[#09090B] border-white text-white font-bold"
+                            : "bg-[#09090B] border-[#27272A] text-zinc-300 hover:border-zinc-500"
                         }`}
                       >
                         <input
@@ -1151,7 +1148,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                           value={reason}
                           checked={selectedReason === reason}
                           onChange={() => setSelectedReason(reason)}
-                          className="text-white focus:ring-0 bg-transparent border-white/20"
+                          className="text-white focus:ring-0 bg-transparent border-[#27272A]"
                         />
                         <span>{reason}</span>
                       </label>
@@ -1169,7 +1166,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     value={customMovementNote}
                     onChange={(e) => setCustomMovementNote(e.target.value)}
                     placeholder={isAr ? "مثال: أنا بجانب السيارة في الموقف رقم 4" : "e.g. Standing next to your car"}
-                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none"
+                    className="w-full bg-[#09090B] border border-[#27272A] focus:border-white rounded-lg px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none"
                   />
                 </div>
 
@@ -1177,16 +1174,16 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   <button
                     type="button"
                     onClick={() => setActiveTab(null)}
-                    className="px-4 py-2.5 rounded-xl glass-card text-xs text-zinc-400 hover:text-white cursor-pointer"
+                    className="px-4 py-2.5 rounded-lg bg-[#09090B] border border-[#27272A] text-xs text-zinc-400 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out cursor-pointer"
                   >
                     {isAr ? "إلغاء" : "Cancel"}
                   </button>
                   <button
                     type="submit"
                     disabled={isPending || cooldownRemaining > 0}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-glass"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white text-xs font-black uppercase tracking-wider transition-all duration-150 ease-out disabled:opacity-50 cursor-pointer"
                   >
-                    <Send className="w-3.5 h-3.5 text-black" />
+                    <Send className="w-3.5 h-3.5" />
                     <span>{isPending ? (isAr ? "جارٍ الإرسال..." : "Sending...") : t.actions.movement.button}</span>
                   </button>
                 </div>
@@ -1196,9 +1193,9 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             {activeTab === "emergency" && (
               <form
                 onSubmit={handleEmergencySubmit}
-                className="p-6 sm:p-7 rounded-3xl glass-surface-elevated border border-white/20 space-y-5 shadow-glass animate-in fade-in duration-200"
+                className="p-6 sm:p-7 rounded-xl bg-[#121215] border border-white space-y-5"
               >
-                <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
+                <div className="flex items-center justify-between border-b border-[#27272A] pb-3.5">
                   <h4 className="text-sm font-bold text-white flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-white" />
                     <span>{t.actions.emergency.title}</span>
@@ -1214,10 +1211,10 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     {Object.entries(t.actions.emergency.categories).map(([key, label]) => (
                       <label
                         key={key}
-                        className={`flex items-start gap-3 p-3.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                        className={`flex items-start gap-3 p-3.5 rounded-lg border text-xs cursor-pointer transition-all duration-150 ease-out ${
                           selectedEmergencyCategory === key
-                            ? "glass-surface-elevated border-white text-white font-bold shadow-sm"
-                            : "glass-card text-zinc-300 hover:border-white/15"
+                            ? "bg-[#09090B] border-white text-white font-bold"
+                            : "bg-[#09090B] border-[#27272A] text-zinc-300 hover:border-zinc-500"
                         }`}
                       >
                         <input
@@ -1226,7 +1223,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                           value={key}
                           checked={selectedEmergencyCategory === key}
                           onChange={() => setSelectedEmergencyCategory(key)}
-                          className="accent-white focus:ring-0 mt-0.5 bg-transparent border-white/20 cursor-pointer"
+                          className="accent-white focus:ring-0 mt-0.5 bg-transparent border-[#27272A] cursor-pointer"
                         />
                         <span>{label}</span>
                       </label>
@@ -1244,7 +1241,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     value={emergencyDetails}
                     onChange={(e) => setEmergencyDetails(e.target.value)}
                     placeholder={isAr ? "اكتب تفاصيل مختصرة لمساعدة المالك..." : "Brief details to assist the owner..."}
-                    className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none"
+                    className="w-full bg-[#09090B] border border-[#27272A] focus:border-white rounded-lg px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none"
                   />
                 </div>
 
@@ -1252,16 +1249,16 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   <button
                     type="button"
                     onClick={() => setActiveTab(null)}
-                    className="px-4 py-2.5 rounded-xl glass-card text-xs text-zinc-400 hover:text-white cursor-pointer"
+                    className="px-4 py-2.5 rounded-lg bg-[#09090B] border border-[#27272A] text-xs text-zinc-400 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out cursor-pointer"
                   >
                     {isAr ? "إلغاء" : "Cancel"}
                   </button>
                   <button
                     type="submit"
                     disabled={isPending || cooldownRemaining > 0}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-glass"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white text-xs font-black uppercase tracking-wider transition-all duration-150 ease-out disabled:opacity-50 cursor-pointer"
                   >
-                    <AlertTriangle className="w-3.5 h-3.5 text-black" />
+                    <AlertTriangle className="w-3.5 h-3.5" />
                     <span>{isPending ? (isAr ? "جارٍ الإرسال..." : "Sending...") : t.actions.emergency.button}</span>
                   </button>
                 </div>
@@ -1271,9 +1268,9 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
             {activeTab === "note" && (
               <form
                 onSubmit={handleNoteSubmit}
-                className="p-6 sm:p-7 rounded-3xl glass-surface-elevated border border-white/[0.12] space-y-5 shadow-glass animate-in fade-in duration-200"
+                className="p-6 sm:p-7 rounded-xl bg-[#121215] border border-[#27272A] space-y-5"
               >
-                <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
+                <div className="flex items-center justify-between border-b border-[#27272A] pb-3.5">
                   <h4 className="text-sm font-bold text-white flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-zinc-300" />
                     <span>{t.actions.note.title}</span>
@@ -1290,7 +1287,7 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                     value={directNoteText}
                     onChange={(e) => setDirectNoteText(e.target.value)}
                     placeholder={t.actions.note.placeholder}
-                    className="w-full glass-input rounded-xl p-3.5 text-xs text-white placeholder-zinc-500 focus:outline-none resize-none"
+                    className="w-full bg-[#09090B] border border-[#27272A] focus:border-white rounded-lg p-3.5 text-xs text-white placeholder-zinc-500 focus:outline-none resize-none"
                   />
                 </div>
 
@@ -1298,16 +1295,16 @@ export function TagActionClient({ initialTag, isFactoryUnclaimed }: TagActionCli
                   <button
                     type="button"
                     onClick={() => setActiveTab(null)}
-                    className="px-4 py-2.5 rounded-xl glass-card text-xs text-zinc-400 hover:text-white cursor-pointer"
+                    className="px-4 py-2.5 rounded-lg bg-[#09090B] border border-[#27272A] text-xs text-zinc-400 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out cursor-pointer"
                   >
                     {isAr ? "إلغاء" : "Cancel"}
                   </button>
                   <button
                     type="submit"
                     disabled={isPending || cooldownRemaining > 0 || !directNoteText.trim()}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-glass"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white text-xs font-black uppercase tracking-wider transition-all duration-150 ease-out disabled:opacity-50 cursor-pointer"
                   >
-                    <Send className="w-3.5 h-3.5 text-black" />
+                    <Send className="w-3.5 h-3.5" />
                     <span>{isPending ? (isAr ? "جارٍ الإرسال..." : "Sending...") : t.actions.note.button}</span>
                   </button>
                 </div>

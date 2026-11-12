@@ -1,188 +1,189 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  Car,
-  AlertTriangle,
-  PhoneCall,
-  Check,
-  Send,
-  MessageSquare,
-  Smartphone,
-  ShieldCheck,
-  BellRing,
-} from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { RefreshCw, ExternalLink } from "lucide-react";
 import { Language } from "@/types";
+import { SegmentedLedBar } from "@/components/ui/SegmentedLedBar";
 
 interface LiveOperationsConsoleProps {
   lang: Language;
 }
 
+interface ScanTelemetryRow {
+  id: string;
+  shortCode: string;
+  title: string;
+  payloadType: string;
+  hasPin: boolean;
+  biometricEnabled: boolean;
+  isActive: boolean;
+  accessResult: string;
+  deviceOs: string;
+  createdAt: string;
+}
+
 export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
   const isAr = lang === "ar";
-  const [selectedScenario, setSelectedScenario] = useState<"movement" | "emergency" | "call">("movement");
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [isDelivered, setIsDelivered] = useState(false);
+  const [scans, setScans] = useState<ScanTelemetryRow[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const scenarios = {
-    movement: {
-      title: isAr ? "تحريك السيارة" : "Move Vehicle",
-      desc: isAr
-        ? "تنبيه فوري مهذب عند الوقوف المزدوج أو إغلاق مدخل."
-        : "Polite instant notification for double parking or blocked exit.",
-      phoneTitle: isAr ? "طلب تحريك المركبة" : "Move Vehicle Notice",
-      phoneBody: isAr
-        ? "يرجى تحريك سيارتك لإفساح الطريق إذا أمكن."
-        : "Please adjust your parking if possible to allow access.",
-      phoneAction: isAr ? "سأحضر خلال دقائق" : "On my way",
-    },
-    emergency: {
-      title: isAr ? "إنذار طوارئ" : "Emergency Alert",
-      desc: isAr
-        ? "إشعار عاجل عند وجود نافذة مفتوحة أو خطر داهم."
-        : "Urgent alert for open windows, leaks, or hazards.",
-      phoneTitle: isAr ? "إنذار طوارئ للمركبة!" : "Urgent Vehicle Alert!",
-      phoneBody: isAr
-        ? "تنبيه: تم رصد أمر طارئ يستدعي انتباهك فوراً."
-        : "Immediate attention required near your vehicle.",
-      phoneAction: isAr ? "تأكيد واستجابة" : "Acknowledge",
-    },
-    call: {
-      title: isAr ? "اتصال صوتي مشفر" : "Masked Voice Call",
-      desc: isAr
-        ? "مكالمة صوتية مجانية عبر المتصفح بدون كشف رقمك."
-        : "Direct secure web audio call with zero number disclosure.",
-      phoneTitle: isAr ? "مكالمة مشفرة واردة" : "Incoming Masked Call",
-      phoneBody: isAr
-        ? "مكالمة صوتية مباشرة عبر بطاقة سيارتك الذكية."
-        : "Encrypted call initiated via your vehicle smart tag.",
-      phoneAction: isAr ? "قبول المكالمة" : "Accept Call",
-    },
+  const loadTelemetry = useCallback(async () => {
+    try {
+      const res = await fetch("/api/qr", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data.scans)) {
+        setScans(data.scans.slice(0, 8));
+      }
+    } catch {
+      // silent telemetry fallback
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTelemetry();
+    const handler = () => loadTelemetry();
+    window.addEventListener("taptag:qr-updated", handler);
+    return () => window.removeEventListener("taptag:qr-updated", handler);
+  }, [loadTelemetry]);
+
+  const formatUtcTime = (iso: string) => {
+    try {
+      return new Date(iso).toISOString().substring(11, 19);
+    } catch {
+      return "—";
+    }
   };
-
-  const handleTrigger = (scenario: "movement" | "emergency" | "call") => {
-    setSelectedScenario(scenario);
-    setIsSimulating(true);
-    setIsDelivered(false);
-
-    setTimeout(() => {
-      setIsDelivered(true);
-      setTimeout(() => {
-        setIsSimulating(false);
-      }, 4000);
-    }, 600);
-  };
-
-  const active = scenarios[selectedScenario];
 
   return (
-    <section id="live-simulator" className="w-full py-10 max-w-5xl mx-auto px-4 space-y-6">
-      {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.08] pb-4">
-        <div className="space-y-1 text-start">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
-            <span className="text-[11px] font-mono text-zinc-300 uppercase font-bold tracking-widest">
-              {isAr ? "تجربة حية" : "LIVE SIMULATOR"}
-            </span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            {isAr ? "كيف تصلك التنبيهات على هاتفك فورياً" : "Instant Lockscreen Notifications"}
+    <section id="simulator-section" className="w-full py-10 px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto space-y-5">
+        <div className="flex items-center justify-between gap-4 pb-3 border-b border-[#27272A]">
+          <h2 className="text-lg sm:text-xl font-display font-bold text-[#FFFFFF]">
+            {isAr ? "سجل المسح الأخير" : "Recent Scans"}
           </h2>
-        </div>
-      </div>
 
-      {/* Main Interactive Stage */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-        {/* Left Side: Select Scenario Controls */}
-        <div className="md:col-span-6 space-y-2.5">
-          <div className="space-y-2.5">
-            {[
-              { id: "movement" as const, title: scenarios.movement.title, desc: scenarios.movement.desc, icon: Car },
-              { id: "emergency" as const, title: scenarios.emergency.title, desc: scenarios.emergency.desc, icon: AlertTriangle },
-              { id: "call" as const, title: scenarios.call.title, desc: scenarios.call.desc, icon: PhoneCall },
-            ].map((sc) => {
-              const Icon = sc.icon;
-              const isSelected = selectedScenario === sc.id;
-              return (
-                <button
-                  key={sc.id}
-                  type="button"
-                  onClick={() => handleTrigger(sc.id)}
-                  className={`w-full text-start p-4 rounded-2xl border transition-all duration-200 flex items-center gap-4 cursor-pointer ${
-                    isSelected
-                      ? "glass-surface-elevated border-white text-white scale-[1.01]"
-                      : "glass-card border-white/[0.06] text-zinc-300 hover:border-white/15"
-                  }`}
-                >
-                  <div
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
-                      isSelected ? "bg-white text-black font-bold" : "bg-white/[0.05] text-zinc-300 border border-white/[0.08]"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div className="space-y-0.5 flex-1">
-                    <span className="text-sm font-bold block text-white">{sc.title}</span>
-                    <p className="text-xs text-zinc-400 font-sans">{sc.desc}</p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+          <button
+            type="button"
+            onClick={loadTelemetry}
+            aria-label={isAr ? "تحديث" : "Refresh"}
+            className="w-9 h-9 rounded-lg border border-[#27272A] bg-[#121215] text-[#FFFFFF] hover:bg-[#FFFFFF] hover:text-[#09090B] hover:border-[#FFFFFF] flex items-center justify-center transition-all duration-150 ease-out cursor-pointer"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {/* Right Side: Virtual Phone Simulation Notification Display */}
-        <div className="md:col-span-6 flex justify-center">
-          <div className="w-full max-w-[340px] rounded-[36px] glass-surface-elevated border border-white/[0.12] p-5 relative overflow-hidden">
-            {/* Phone Notch & Dynamic Island */}
-            <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] text-[10px] font-mono text-zinc-400 tabular-nums">
-              <span>09:41</span>
-              <div className="w-24 h-4 bg-black rounded-full border border-white/10 flex items-center justify-center gap-1.5 px-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                <span className="text-[8px] font-mono text-zinc-400">TapTag</span>
-              </div>
-              <span>5G 100%</span>
-            </div>
+        <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden flex flex-col">
+          <SegmentedLedBar
+            level={scans.length > 0 ? 85 : 35}
+            cells={28}
+          />
 
-            {/* Simulated Live Notification Card */}
-            <div className="py-6 space-y-4">
-              <div
-                className={`p-4 rounded-2xl border transition-all duration-300 ${
-                  isDelivered
-                    ? "glass-card border-white/20 text-white translate-y-0 opacity-100"
-                    : "glass-surface border-white/[0.06] text-zinc-400 translate-y-1 opacity-90"
-                }`}
-              >
-                <div className="flex items-center justify-between pb-2.5 border-b border-white/[0.08] text-[11px]">
-                  <div className="flex items-center gap-1.5 font-bold text-white">
-                    <BellRing className="w-3.5 h-3.5 text-white" />
-                    <span>TapTag Protocol</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-zinc-400">{isAr ? "الآن" : "Now"}</span>
-                </div>
-
-                <div className="space-y-1.5 pt-2.5 text-start">
-                  <h4 className="text-xs font-bold text-white">{active.phoneTitle}</h4>
-                  <p className="text-xs text-zinc-300 leading-relaxed font-sans">
-                    {active.phoneBody}
-                  </p>
-                </div>
-
-                <div className="mt-3.5 pt-2.5 border-t border-white/[0.08] flex items-center justify-between">
-                  <span className="text-[10px] text-zinc-400 font-mono tabular-nums">{isAr ? "لوحة: أ ب ج 1234" : "Plate: ABC 1234"}</span>
-                  <span className="text-[10px] px-2.5 py-1 rounded-lg bg-white text-black font-bold">
-                    {active.phoneAction}
-                  </span>
-                </div>
-              </div>
-
-              {/* Status pill under phone */}
-              <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-zinc-400 pt-2">
-                <ShieldCheck className="w-3.5 h-3.5 text-white" />
-                <span>{isAr ? "تشفير فوري بدون وسيط أو تطبيقات خارجية" : "End-to-End Encrypted Without Apps"}</span>
-              </div>
-            </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-start border-collapse">
+              <thead>
+                <tr className="border-b border-[#27272A] bg-[#09090B] text-[11px] font-mono text-[#71717A]">
+                  <th className="py-3 px-4 font-medium text-start">
+                    {isAr ? "الكود" : "Code"}
+                  </th>
+                  <th className="py-3 px-4 font-medium text-start">
+                    {isAr ? "المحتوى" : "Payload"}
+                  </th>
+                  <th className="py-3 px-4 font-medium text-start">
+                    {isAr ? "الحماية" : "Security"}
+                  </th>
+                  <th className="py-3 px-4 font-medium text-start">
+                    {isAr ? "الجهاز" : "Device"}
+                  </th>
+                  <th className="py-3 px-4 font-medium text-start">
+                    {isAr ? "الوقت" : "Time"}
+                  </th>
+                  <th className="py-3 px-4 font-medium text-end">
+                    {isAr ? "الحالة" : "Status"}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#27272A] text-xs font-mono">
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-[#71717A]">
+                      {isAr ? "جارٍ التحميل..." : "Loading..."}
+                    </td>
+                  </tr>
+                ) : scans.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-[#71717A]">
+                      {isAr ? "لا توجد عمليات مسح بعد." : "No scans yet."}
+                    </td>
+                  </tr>
+                ) : (
+                  scans.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="hover:bg-[#16161A] transition-colors duration-150"
+                    >
+                      <td className="py-3 px-4 font-bold text-[#FFFFFF] whitespace-nowrap" dir="ltr">
+                        <Link
+                          href={`/q/${row.shortCode}`}
+                          target="_blank"
+                          className="inline-flex items-center gap-1.5 hover:underline"
+                        >
+                          <span>{row.shortCode}</span>
+                          <ExternalLink className="w-3 h-3 text-[#71717A]" />
+                        </Link>
+                      </td>
+                      <td className="py-3 px-4 text-[#FAFAFA] font-sans font-medium">
+                        <span className="inline-block px-1.5 py-0.5 me-2 rounded border border-[#27272A] bg-[#09090B] text-[10px] font-mono text-[#A1A1AA]">
+                          {row.payloadType}
+                        </span>
+                        <span className="truncate max-w-[180px] inline-block align-middle">
+                          {row.title}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-[#A1A1AA] whitespace-nowrap">
+                        {row.hasPin && row.biometricEnabled
+                          ? "PIN + Bio"
+                          : row.hasPin
+                          ? "PIN"
+                          : row.biometricEnabled
+                          ? "Biometric"
+                          : "Open"}
+                      </td>
+                      <td className="py-3 px-4 text-[#A1A1AA] whitespace-nowrap" dir="ltr">
+                        {row.deviceOs}
+                      </td>
+                      <td
+                        className="py-3 px-4 text-[#71717A] whitespace-nowrap tabular-nums"
+                        dir="ltr"
+                      >
+                        {formatUtcTime(row.createdAt)}
+                      </td>
+                      <td className="py-3 px-4 text-end whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-[#27272A] bg-[#09090B] text-[10px] text-[#FFFFFF]">
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              row.isActive ? "bg-[#10B981]" : "bg-[#52525B]"
+                            }`}
+                          />
+                          <span>
+                            {row.isActive
+                              ? isAr
+                                ? "نشط"
+                                : "Active"
+                              : isAr
+                              ? "موقوف"
+                              : "Paused"}
+                          </span>
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

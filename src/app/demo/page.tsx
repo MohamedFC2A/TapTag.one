@@ -20,16 +20,13 @@ export default function DemoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col justify-between selection:bg-white selection:text-black">
-      {/* Background Spotlight */}
-      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
-
+    <div className="min-h-screen bg-[#09090B] hw-pixel-grid text-[#FAFAFA] flex flex-col justify-between selection:bg-white selection:text-[#09090B]">
       {/* Header */}
-      <header className="w-full border-b border-white/10 bg-black/50 backdrop-blur-xl px-6 py-4 flex items-center justify-between z-20">
+      <header className="w-full border-b border-[#27272A] bg-[#09090B] px-6 py-4 flex items-center justify-between z-20">
         <Link href="/" className="flex items-center gap-2 group">
           <ArrowLeft className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
           <span className="text-xs font-mono tracking-wider text-zinc-400 group-hover:text-white uppercase">
-            Return to TapTag.one
+            Return to TapTag
           </span>
         </Link>
         <div className="flex items-center gap-2">
@@ -65,11 +62,11 @@ export default function DemoPage() {
         {/* Individual Component Breakdowns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* AntiMetalButton Variations */}
-          <div className="p-8 rounded-3xl border border-white/10 bg-zinc-950/60 backdrop-blur-xl space-y-6 flex flex-col justify-between">
+          <div className="p-8 rounded-xl border border-[#27272A] bg-[#121215] space-y-6 flex flex-col justify-between">
             <div className="space-y-2">
               <h3 className="text-lg font-bold text-white">AntiMetalButton</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                Hardware-inspired tactile button featuring an animated dot-matrix chevron wave, smooth slide expansion on hover, and physical bevel shadows.
+                Hardware-inspired tactile button featuring an animated dot-matrix chevron wave and crisp border framing.
               </p>
             </div>
 
@@ -107,7 +104,7 @@ export default function DemoPage() {
           </div>
 
           {/* Animated Menu Bar */}
-          <div className="p-8 rounded-3xl border border-white/10 bg-zinc-950/60 backdrop-blur-xl space-y-6 flex flex-col justify-between">
+          <div className="p-8 rounded-xl border border-[#27272A] bg-[#121215] space-y-6 flex flex-col justify-between">
             <div className="space-y-2">
               <h3 className="text-lg font-bold text-white">AnimatedMenuBar</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">

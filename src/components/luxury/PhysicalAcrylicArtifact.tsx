@@ -76,20 +76,14 @@ export function PhysicalAcrylicArtifact({
         title="انقر لقلب البطاقة ومعاينة العتاد الداخلي"
       >
         <div
-          className="relative w-full max-w-[390px] sm:max-w-[440px] aspect-[7/5] rounded-xl border border-white/20 bg-[#060608] p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-all duration-300 ease-out"
+          className="relative w-full max-w-[390px] sm:max-w-[440px] aspect-[7/5] rounded-xl border border-[#27272A] bg-[#121215] p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-all duration-150 ease-out"
           style={{
             transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y + (isFlipped ? 180 : 0)}deg)`,
             transformStyle: "preserve-3d",
           }}
         >
           {/* Subtle Chamfered Edge Line */}
-          <div className="absolute inset-[3px] rounded-lg border border-white/[0.07] pointer-events-none" />
-
-          {/* Diagonal Optical Sheen (Zero Blur) */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent pointer-events-none" />
-
-          {/* 1.5px Laser Scanline Beam (Pure Emerald Precision) */}
-          <div className="absolute left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FFFFFF] to-transparent pointer-events-none animate-laser-sweep z-20" />
+          <div className="absolute inset-[3px] rounded-lg border border-[#27272A] pointer-events-none" />
 
           {/* ================= FRONT SIDE ================= */}
           {!isFlipped ? (
@@ -271,7 +265,7 @@ export function PhysicalAcrylicArtifact({
                 rel="noopener noreferrer"
                 className="flex-1"
               >
-                <Button className="w-full bg-[#FFFFFF] hover:bg-[#00B045] text-black font-mono font-bold text-xs cursor-pointer gap-1.5">
+                <Button className="w-full bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-mono font-bold text-xs cursor-pointer gap-1.5 transition-all duration-150 ease-out">
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>فتح البوابة</span>
                 </Button>

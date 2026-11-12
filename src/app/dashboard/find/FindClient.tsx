@@ -484,33 +484,26 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
             </div>
             <Link
               href={`/dashboard/calibrate?tag=${selectedTag.tagUid}`}
-              className="inline-flex items-center justify-center w-full py-3 rounded-full bg-white text-black font-black text-xs hover:bg-zinc-200 transition-colors shadow-lg"
+              className="inline-flex items-center justify-center w-full py-3 rounded-lg bg-white text-[#09090B] border border-white font-black text-xs hover:bg-[#09090B] hover:text-white transition-all duration-150 ease-out"
             >
               بدء المعايرة الفضائية الآن
             </Link>
           </div>
         ) : isCloseRange ? (
           /* CLOSE RANGE (<= 5.0m) - Smart Precision Concentric Pulse Circle & Bullseye Target */
-          <div className="flex flex-col items-center justify-center relative w-full select-none animate-in fade-in zoom-in-95 duration-500">
+          <div className="flex flex-col items-center justify-center relative w-full select-none">
             <div className="relative flex items-center justify-center w-[280px] h-[280px]">
-              {/* Layer 1: Expanding Ripple Waves (Radar Pulse) */}
-              <div className="absolute inset-0 rounded-full border border-white/30 animate-ping duration-1000 pointer-events-none" />
-              <div
-                className="absolute inset-6 rounded-full border border-white/20 animate-ping pointer-events-none"
-                style={{ animationDuration: "2.2s", animationDelay: "0.6s" }}
-              />
+              {/* Layer 1: Concentric Radar Rings */}
+              <div className="absolute w-[260px] h-[260px] rounded-full border border-[#27272A] bg-[#121215]" />
+              <div className="absolute w-[185px] h-[185px] rounded-full border border-zinc-700 border-dashed" />
+              <div className="absolute w-[120px] h-[120px] rounded-full border border-zinc-600 bg-[#09090B]" />
 
-              {/* Layer 2: Concentric Radar Rings */}
-              <div className="absolute w-[260px] h-[260px] rounded-full border border-zinc-800/80 bg-zinc-950/50 backdrop-blur-sm" />
-              <div className="absolute w-[185px] h-[185px] rounded-full border border-zinc-700/60 border-dashed" />
-              <div className="absolute w-[120px] h-[120px] rounded-full border border-zinc-600 bg-white/5" />
-
-              {/* Layer 3: Dynamic Core Target with Car Icon */}
-              <div className="relative w-20 h-20 rounded-full bg-gradient-to-b from-white to-zinc-200 text-black flex flex-col items-center justify-center shadow-2xl">
-                <CarFront className="w-9 h-9 text-black fill-black/10 stroke-[2.2]" />
+              {/* Layer 2: Dynamic Core Target with Car Icon */}
+              <div className="relative w-20 h-20 rounded-full bg-white text-[#09090B] flex flex-col items-center justify-center border border-white">
+                <CarFront className="w-9 h-9 text-[#09090B] stroke-[2.2]" />
               </div>
 
-              {/* Layer 4: Orbital Precision Ticks */}
+              {/* Layer 3: Orbital Precision Ticks */}
               <div className="absolute top-2.5 w-1.5 h-1.5 rounded-full bg-white" />
               <div className="absolute bottom-2.5 w-1.5 h-1.5 rounded-full bg-white" />
               <div className="absolute left-2.5 w-1.5 h-1.5 rounded-full bg-white" />
@@ -518,8 +511,8 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
             </div>
 
             {/* Arrival Badge */}
-            <div className="mt-4 flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-700 text-white text-xs font-bold shadow-lg">
-              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+            <div className="mt-4 flex items-center gap-2 px-4 py-1.5 rounded-lg bg-[#121215] border border-[#27272A] text-white text-xs font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
               <span>أنت بجوار المركبة تماماً (هنا)</span>
             </div>
           </div>
@@ -557,7 +550,6 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
                     cy={arcGeometry.endDot.y}
                     r="6.5"
                     fill="#FFFFFF"
-                    className="drop-shadow-sm"
                   />
                 </>
               )}
@@ -565,7 +557,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
 
             {/* Precision Bold White Arrow */}
             <div
-              className="transition-transform duration-200 ease-out will-change-transform flex items-center justify-center"
+              className="transition-transform duration-150 ease-out will-change-transform flex items-center justify-center"
               style={{
                 transform: `rotate(${relativeBearing}deg)`,
               }}
@@ -574,7 +566,6 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
                 width="160"
                 height="160"
                 viewBox="0 0 100 100"
-                className="drop-shadow-lg"
               >
                 <path
                   d="M 50 12 L 84 56 C 86 59 84 63 80 62 L 57 55 L 57 88 C 57 91 54 93 50 93 C 46 93 43 91 43 88 L 43 55 L 20 62 C 16 63 14 59 16 56 Z"
@@ -634,7 +625,7 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
         ) : null}
       </div>
 
-      {/* 4. Bottom Controls Glass Bar */}
+      {/* 4. Bottom Hardware Controls Bar */}
       <footer className="px-6 pb-8 pt-4 z-20 flex items-center justify-between">
         {/* Left: Sound / Proximity Sonar Toggle */}
         <button
@@ -644,17 +635,13 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
             setSoundEnabled(next);
             if (next) playNavigationSound("tick");
           }}
-          className={`w-14 h-14 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-glass active:scale-90 ${
-            isCloseRange
-              ? "glass-pill text-white"
-              : "glass-surface-elevated border border-white/[0.12] text-white hover:border-white/20"
-          }`}
+          className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-150 ease-out cursor-pointer bg-[#121215] border border-[#27272A] text-white hover:bg-white hover:text-[#09090B] hover:border-white"
           title={soundEnabled ? "كتم الصوت" : "تشغيل الصوت والسونار"}
         >
           {soundEnabled ? (
-            <Volume2 className="w-6 h-6 stroke-[2.5]" />
+            <Volume2 className="w-5 h-5 stroke-[2.2]" />
           ) : (
-            <VolumeX className="w-6 h-6 stroke-[2.5] text-zinc-400" />
+            <VolumeX className="w-5 h-5 stroke-[2.2] text-zinc-400" />
           )}
         </button>
 
@@ -663,36 +650,28 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
           <button
             type="button"
             onClick={() => setShowRestartConfirm(true)}
-            className={`px-4 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-glass ${
-              isCloseRange
-                ? "glass-pill text-white"
-                : "glass-card text-zinc-300 hover:text-white border border-white/[0.10]"
-            }`}
+            className="px-4 py-2.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all duration-150 ease-out cursor-pointer bg-[#121215] border border-[#27272A] text-zinc-300 hover:bg-white hover:text-[#09090B] hover:border-white"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>إعادة ضبط (Restart)</span>
           </button>
         )}
 
-        {/* Right: Circle Exit Button */}
+        {/* Right: Exit Button */}
         <Link
           href="/dashboard"
-          className={`w-14 h-14 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-glass active:scale-90 ${
-            isCloseRange
-              ? "glass-pill text-white"
-              : "glass-surface-elevated border border-white/[0.12] text-white hover:border-white/20"
-          }`}
+          className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-150 ease-out cursor-pointer bg-[#121215] border border-[#27272A] text-white hover:bg-white hover:text-[#09090B] hover:border-white"
           title="العودة للوحة التحكم"
         >
-          <X className="w-6 h-6 stroke-[2.5]" />
+          <X className="w-5 h-5 stroke-[2.2]" />
         </Link>
       </footer>
 
       {/* Confirmation Dialog for Irreversible Restart */}
       {showRestartConfirm && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="glass-surface-elevated border border-white/[0.14] rounded-3xl max-w-sm w-full p-6 space-y-5 text-center shadow-glass-elevated">
-            <div className="w-12 h-12 rounded-full glass-pill border border-red-500/30 mx-auto flex items-center justify-center text-red-400">
+        <div className="fixed inset-0 z-50 bg-[#09090B]/90 flex items-center justify-center p-4 transition-all duration-150 ease-out">
+          <div className="bg-[#121215] border border-[#27272A] rounded-xl max-w-sm w-full p-6 space-y-5 text-center">
+            <div className="w-12 h-12 rounded-xl bg-[#09090B] border border-[#27272A] mx-auto flex items-center justify-center text-white">
               <AlertTriangle className="w-6 h-6" />
             </div>
             <div className="space-y-1.5">
@@ -705,14 +684,14 @@ export function FindClient({ activeTag: initialTag, allTags }: FindClientProps) 
               <button
                 type="button"
                 onClick={() => setShowRestartConfirm(false)}
-                className="w-full py-2.5 rounded-xl glass-card text-xs font-semibold text-zinc-300 hover:text-white cursor-pointer"
+                className="w-full py-2.5 rounded-lg bg-[#09090B] border border-[#27272A] text-xs font-semibold text-zinc-300 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out cursor-pointer"
               >
                 إلغاء
               </button>
               <button
                 type="button"
                 onClick={handleConfirmRestart}
-                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-bold text-white shadow-glass transition-colors cursor-pointer"
+                className="w-full py-2.5 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white text-xs font-bold transition-all duration-150 ease-out cursor-pointer"
               >
                 تأكيد إعادة الضبط
               </button>

@@ -419,14 +419,14 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
   return (
     <div
       dir="rtl"
-      className="min-h-screen min-h-[100dvh] bg-[#000000] text-white flex flex-col font-sans select-none overflow-y-auto"
+      className="min-h-screen min-h-[100dvh] bg-[#09090B] hw-pixel-grid text-[#FAFAFA] flex flex-col font-sans select-none overflow-y-auto"
     >
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-40 glass-surface-elevated border-b border-white/[0.08] px-4 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-[#09090B] border-b border-[#27272A] px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <Link
             href="/dashboard"
-            className="w-9 h-9 rounded-full glass-pill flex items-center justify-center text-zinc-300 hover:text-white transition-colors"
+            className="w-9 h-9 rounded-lg bg-[#121215] border border-[#27272A] flex items-center justify-center text-zinc-300 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out"
             title="العودة للوحة التحكم"
           >
             <X className="w-5 h-5" />
@@ -453,10 +453,10 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                   setStep("IDLE");
                 }
               }}
-              className="glass-input text-xs text-zinc-300 rounded-full px-3 py-1.5 pr-7 appearance-none focus:outline-none font-medium cursor-pointer"
+              className="bg-[#121215] border border-[#27272A] text-xs text-zinc-300 rounded-lg px-3 py-1.5 pr-7 appearance-none focus:outline-none focus:border-white font-medium cursor-pointer"
             >
               {allTags.map((t) => (
-                <option key={t.id} value={t.tagUid} className="bg-zinc-950 text-white">
+                <option key={t.id} value={t.tagUid} className="bg-[#09090B] text-white">
                   {t.profile?.vehiclePlate || t.tagUid}
                 </option>
               ))}
@@ -471,12 +471,12 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
         {/* Active Existing Calibration Notice Card */}
         {isMounted && existingCalibration && !isReCalibrating && step === "IDLE" ? (
           <div className="space-y-4">
-            <div className="glass-surface-elevated rounded-3xl p-5 space-y-4 border border-white/[0.12] shadow-glass">
+            <div className="bg-[#121215] rounded-xl p-5 space-y-4 border border-[#27272A]">
               <div className="flex items-center gap-2.5 text-white text-sm font-bold">
                 <CheckCircle2 className="w-5 h-5 text-white" />
                 <span>المركبة معايرة حالياً ومثبتة بنجاح</span>
               </div>
-              <div className="text-xs text-zinc-300 space-y-2.5 glass-surface p-3.5 rounded-2xl border border-white/[0.08] font-mono text-[11px]">
+              <div className="text-xs text-zinc-300 space-y-2.5 bg-[#09090B] p-3.5 rounded-xl border border-[#27272A] font-mono text-[11px]">
                 <div className="flex justify-between items-center">
                   <span className="text-zinc-400">لوحة المركبة:</span>
                   <span className="text-white font-bold">{existingCalibration.vehiclePlate}</span>
@@ -491,7 +491,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                   <div className="flex justify-between items-center">
                     <span className="text-zinc-400">حالة التحديث:</span>
                     <span className="text-zinc-200 font-semibold flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                       <span>{liveRelativeTime}</span>
                     </span>
                   </div>
@@ -505,16 +505,16 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
               <div className="pt-2 flex flex-col gap-2.5">
                 <Link
                   href={`/dashboard/find?tag=${selectedTag.tagUid}`}
-                  className="w-full py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-sm flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-glass cursor-pointer"
+                  className="w-full py-3.5 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-black text-sm flex items-center justify-center gap-2 transition-all duration-150 ease-out cursor-pointer"
                 >
-                  <Navigation2 className="w-4 h-4 fill-black" />
+                  <Navigation2 className="w-4 h-4 fill-current" />
                   <span>الانتقال للبحث عن السيارة الآن</span>
                 </Link>
 
                 <button
                   type="button"
                   onClick={() => setIsReCalibrating(true)}
-                  className="w-full py-2.5 rounded-xl glass-card text-xs text-zinc-300 hover:text-white flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="w-full py-2.5 rounded-lg bg-[#09090B] border border-[#27272A] text-xs text-zinc-300 hover:bg-white hover:text-[#09090B] hover:border-white flex items-center justify-center gap-2 transition-all duration-150 ease-out cursor-pointer"
                 >
                   <RotateCw className="w-3.5 h-3.5" />
                   <span>إجراء معايرة أخرى / تحديث مكان الوقوف</span>
@@ -522,7 +522,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
               </div>
             </div>
 
-            <div className="glass-surface border border-white/[0.08] rounded-3xl p-4 shadow-glass">
+            <div className="bg-[#121215] border border-[#27272A] rounded-xl p-4">
               <IsometricStanceDiagram
                 vehicleMake={vehicleMake}
                 vehicleModel={vehicleModel}
@@ -534,7 +534,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
           /* Stance Guide & Setup */
           <div className="space-y-4">
             {isReCalibrating && existingCalibration && step === "IDLE" && (
-              <div className="flex items-center justify-between glass-surface-elevated border border-white/[0.10] rounded-2xl px-3.5 py-2.5 text-xs">
+              <div className="flex items-center justify-between bg-[#121215] border border-[#27272A] rounded-xl px-3.5 py-2.5 text-xs">
                 <span className="text-zinc-300">يتم الآن تجهيز معايرة جديدة للموقف</span>
                 <button
                   type="button"
@@ -546,7 +546,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
               </div>
             )}
 
-            <div className="glass-surface border border-white/[0.08] rounded-3xl p-4 shadow-glass">
+            <div className="bg-[#121215] border border-[#27272A] rounded-xl p-4">
               <IsometricStanceDiagram
                 vehicleMake={vehicleMake}
                 vehicleModel={vehicleModel}
@@ -555,9 +555,9 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
             </div>
 
             {/* Step Instructions */}
-            <div className="glass-surface border border-white/[0.08] rounded-2xl p-4 text-xs text-zinc-300 space-y-1.5 shadow-glass">
+            <div className="bg-[#121215] border border-[#27272A] rounded-xl p-4 text-xs text-zinc-300 space-y-1.5">
               <div className="font-bold text-white flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-white" />
                 <span>إجراء المعايرة الدقيقة الفائقة (7 ثوانٍ):</span>
               </div>
               <p className="text-zinc-400 leading-relaxed text-xs">
@@ -569,7 +569,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
 
         {/* Live GNSS & Sensor Telemetry */}
         <div className="grid grid-cols-2 gap-2.5 text-xs">
-          <div className="glass-card rounded-2xl p-3 flex items-center justify-between border border-white/[0.06]">
+          <div className="bg-[#121215] rounded-xl p-3 flex items-center justify-between border border-[#27272A]">
             <div className="flex items-center gap-2">
               <Radio
                 className={`w-4 h-4 ${
@@ -591,7 +591,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
             </span>
           </div>
 
-          <div className="glass-card rounded-2xl p-3 flex items-center justify-between border border-white/[0.06]">
+          <div className="bg-[#121215] rounded-xl p-3 flex items-center justify-between border border-[#27272A]">
             <div className="flex items-center gap-2">
               <Compass
                 className="w-4 h-4 text-zinc-300"
@@ -607,18 +607,17 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
 
         {/* Error Message if any */}
         {errorMessage && (
-          <div className="p-3.5 rounded-2xl border border-red-500/30 glass-surface-elevated text-red-300 text-xs flex items-center gap-2.5">
-            <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+          <div className="p-3.5 rounded-xl border border-white bg-[#121215] text-white text-xs flex items-center gap-2.5">
+            <AlertCircle className="w-4 h-4 shrink-0 text-white" />
             <span>{errorMessage}</span>
           </div>
         )}
 
         {/* SAMPLING VIEW (7-Second Multi-GNSS Burst) */}
         {step === "SAMPLING" && (
-          <div className="p-6 rounded-3xl glass-surface-elevated border border-white/[0.12] space-y-5 text-center shadow-glass">
+          <div className="p-6 rounded-xl bg-[#121215] border border-[#27272A] space-y-5 text-center">
             <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-ping opacity-30" />
-              <div className="w-16 h-16 rounded-full glass-surface border border-white/30 flex items-center justify-center font-mono text-2xl font-black text-white shadow-glass">
+              <div className="w-16 h-16 rounded-xl bg-[#09090B] border border-white flex items-center justify-center font-mono text-2xl font-black text-white">
                 {countdown}
               </div>
             </div>
@@ -632,7 +631,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
 
             {/* Progress Bar & Samples Count */}
             <div className="space-y-2 pt-1">
-              <div className="w-full bg-white/[0.08] rounded-full h-2 overflow-hidden border border-white/[0.06]">
+              <div className="w-full bg-[#09090B] rounded-lg h-2 overflow-hidden border border-[#27272A]">
                 <div
                   className="bg-white h-full transition-all duration-300"
                   style={{ width: `${((7 - countdown) / 7) * 100}%` }}
@@ -651,7 +650,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
 
         {/* SUCCESS VIEW */}
         {step === "SUCCESS" && (
-          <div className="p-5 sm:p-6 rounded-3xl glass-surface-elevated border border-white/[0.12] space-y-4 shadow-glass">
+          <div className="p-5 sm:p-6 rounded-xl bg-[#121215] border border-[#27272A] space-y-4">
             <div className="flex items-center gap-2.5 text-white text-sm font-bold">
               <CheckCircle2 className="w-5 h-5 text-white" />
               <span>تم تثبيت المعايرة بدقة الأقمار الفائقة!</span>
@@ -662,9 +661,9 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
             <div className="pt-2 flex flex-col gap-2.5">
               <Link
                 href={`/dashboard/find?tag=${selectedTag.tagUid}`}
-                className="w-full py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-sm flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-glass cursor-pointer"
+                className="w-full py-3.5 rounded-lg bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-black text-sm flex items-center justify-center gap-2 transition-all duration-150 ease-out cursor-pointer"
               >
-                <Navigation2 className="w-4 h-4 fill-black" />
+                <Navigation2 className="w-4 h-4 fill-current" />
                 <span>الانتقال فوراً للبحث عن السيارة</span>
               </Link>
               <button
@@ -673,7 +672,7 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
                   setIsReCalibrating(false);
                   setStep("IDLE");
                 }}
-                className="w-full py-2.5 rounded-xl glass-card text-xs text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                className="w-full py-2.5 rounded-lg bg-[#09090B] border border-[#27272A] text-xs text-zinc-400 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out cursor-pointer"
               >
                 عرض بطاقة الموقف المثبت
               </button>
@@ -688,12 +687,12 @@ export function CalibrateClient({ activeTag: initialTag, allTags }: CalibrateCli
               type="button"
               onClick={handleStartTimedCalibration}
               disabled={isWaitingForGpsLock}
-              className={`w-full py-3.5 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-glass active:scale-95 ${
+              className={`w-full py-3.5 rounded-lg font-black text-sm flex items-center justify-center gap-2 transition-all duration-150 ease-out cursor-pointer border ${
                 isWaitingForGpsLock
-                  ? "bg-white/10 text-white border border-white/20 cursor-wait"
+                  ? "bg-[#121215] text-white border-[#27272A] cursor-wait"
                   : isGpsAcquiring && !latestGpsRef.current
-                  ? "glass-card text-zinc-400 border border-white/[0.08]"
-                  : "bg-white hover:bg-zinc-200 text-black"
+                  ? "bg-[#121215] text-zinc-400 border-[#27272A]"
+                  : "bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border-white"
               }`}
             >
               {isWaitingForGpsLock ? (

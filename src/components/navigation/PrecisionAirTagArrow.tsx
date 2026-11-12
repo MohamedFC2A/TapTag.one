@@ -92,8 +92,8 @@ export function PrecisionAirTagArrow({
           <div className="relative z-10 flex flex-col items-center justify-center space-y-3 animate-in zoom-in-95">
             {/* Precision Target Dot (نقطة بيضاء ناصعة بدون توهج أخضر) */}
             <div className="relative flex items-center justify-center">
-              <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center text-black shadow-2xl">
-                <CheckCircle2 className="w-7 h-7 text-black" />
+              <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center text-[#09090B] border border-[#27272A]">
+                <CheckCircle2 className="w-7 h-7 text-[#09090B]" />
               </div>
               {/* Clean Single Neutral Pulse */}
               <div className="absolute w-20 h-20 rounded-full border-2 border-white animate-ping opacity-30" />

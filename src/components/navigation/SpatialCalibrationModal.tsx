@@ -323,7 +323,7 @@ export function SpatialCalibrationModal({
                 <span>{isAr ? "جارٍ الالتقاط..." : "Acquiring..."}</span>
               </span>
             ) : (
-              <span className="text-xs font-mono text-red-400">
+              <span className="text-xs font-mono text-zinc-400">
                 {isAr ? "لا توجد إشارة" : "No Signal"}
               </span>
             )}
@@ -365,8 +365,8 @@ export function SpatialCalibrationModal({
 
         {/* Error Alert */}
         {errorMessage && (
-          <div className="p-3.5 rounded-xl border border-red-900/60 bg-red-950/20 text-xs text-red-200 font-mono flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl border border-[#27272A] bg-[#121215] text-xs text-white font-mono flex items-start gap-2.5">
+            <AlertTriangle className="w-4 h-4 text-white shrink-0 mt-0.5" />
             <span>{errorMessage}</span>
           </div>
         )}

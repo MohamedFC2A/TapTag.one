@@ -142,3 +142,51 @@ model Alert {
   @@index([tagId])
   @@index([channel])
 }
+
+model SmartQr {
+  id               String        @id @default(cuid())
+  shortCode        String        @unique
+  title            String
+  payloadType      String        @default("URL") // URL | PDF | DOCX | LINKS | VCARD | WIFI | TEXT
+  destinationUrl   String?       @db.Text
+  fileName         String?
+  fileMimeType     String?
+  fileSize         Int?
+  fileDataBase64   String?       @db.Text
+  payloadData      Json?
+  logoDataUrl      String?       @db.Text
+  logoPreset       String        @default("NONE") // NONE | TAPTAG | CUSTOM
+  frameCaption     String?
+  qrStyle          Json?         // { moduleShape: "square" | "dots" }
+  autoRedirect     Boolean       @default(false)
+  pinHash          String?
+  biometricEnabled Boolean       @default(false)
+  biometricCredId  String?
+  maxScans         Int?
+  scanCount        Int           @default(0)
+  expiresAt        DateTime?
+  lastScannedAt    DateTime?
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  scans            SmartQrScan[]
+
+  @@index([shortCode])
+  @@index([payloadType])
+  @@index([isActive])
+  @@index([lastScannedAt])
+}
+
+model SmartQrScan {
+  id           String   @id @default(cuid())
+  qrId         String
+  qr           SmartQr  @relation(fields: [qrId], references: [id], onDelete: Cascade)
+  deviceOs     String
+  accessResult String   @default("ALLOWED") // ALLOWED | PIN_REQUIRED | BIO_REQUIRED | EXPIRED | LIMIT_REACHED | DISABLED
+  ipHash       String
+  createdAt    DateTime @default(now())
+
+  @@index([qrId])
+  @@index([createdAt])
+}

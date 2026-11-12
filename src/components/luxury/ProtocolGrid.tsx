@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
-import { Radio, Lock, PhoneCall, Layers } from "lucide-react";
+import Link from "next/link";
+import { RefreshCw, Clock, Fingerprint, Printer, ArrowUpRight } from "lucide-react";
 import { Language } from "@/types";
+import { SegmentedLedBar } from "@/components/ui/SegmentedLedBar";
 
 interface ProtocolGridProps {
   lang: Language;
@@ -11,87 +13,82 @@ interface ProtocolGridProps {
 export function ProtocolGrid({ lang }: ProtocolGridProps) {
   const isAr = lang === "ar";
 
-  const pillars = [
+  const modules = [
     {
-      num: "01",
-      icon: Radio,
-      title: isAr ? "استجابة فورية بدون تطبيقات" : "Instant App-Free Contact",
+      meter: 92,
+      icon: RefreshCw,
+      href: "/#qr-workspace",
+      title: isAr ? "محتوى ديناميكي" : "Dynamic Payload",
       desc: isAr
-        ? "فتح فوري في المتصفح خلال ثانية واحدة بدون تطبيقات."
-        : "Direct instant browser access in one second without apps.",
+        ? "رابط أو PDF أو Word مع تحديث الوجهة في أي وقت."
+        : "URL, PDF, Word, vCard, or Wi-Fi updated live anytime.",
     },
     {
-      num: "02",
-      icon: Lock,
-      title: isAr ? "خصوصية مطلقة لرقمك" : "Absolute Identity Privacy",
+      meter: 78,
+      icon: Clock,
+      href: "/dashboard",
+      title: isAr ? "قواعد الانتهاء" : "Smart Expiration",
       desc: isAr
-        ? "رقم هاتفك الحقيقي مشفر ومحجوب تماماً."
-        : "Your real phone number is 100% encrypted and hidden.",
+        ? "تحديد عدد المسحات أو الإيقاف التلقائي بالزمن."
+        : "Max scan limits and scheduled time expiration.",
     },
     {
-      num: "03",
-      icon: PhoneCall,
-      title: isAr ? "مكالمات صوتية مشفرة" : "Encrypted Voice Calls",
+      meter: 88,
+      icon: Fingerprint,
+      href: "/dashboard",
+      title: isAr ? "قفل البصمة وكلمة السر" : "PIN & Biometric Lock",
       desc: isAr
-        ? "اتصال صوتي فوري عبر المتصفح بدون كشف الأرقام."
-        : "Direct browser voice calls with zero number disclosure.",
+        ? "حماية الوصول برمز سري أو بصمة الجهاز."
+        : "Protect links and files with PIN or device biometrics.",
     },
     {
-      num: "04",
-      icon: Layers,
-      title: isAr ? "أكريليك عالي التحمل" : "Automotive Acrylic",
+      meter: 84,
+      icon: Printer,
+      href: "/#qr-workspace",
+      title: isAr ? "شعار وتصدير فوري" : "Logo & Instant Export",
       desc: isAr
-        ? "مقاومة تامة لحرارة الصيف والشمس حتى 85°C."
-        : "Engineered acrylic tested up to +85°C extreme heat.",
+        ? "إضافة شعارك وتصدير SVG وPNG أو طباعة مباشرة."
+        : "Custom logo overlay with SVG, PNG, and print output.",
     },
   ];
 
   return (
-    <section id="pillars-section" className="w-full py-8 max-w-5xl mx-auto px-4 space-y-5">
-      {/* Section Header */}
-      <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 text-start">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
-            <span className="text-[10px] font-mono text-zinc-400 uppercase font-bold tracking-widest">
-              {isAr ? "مزايا المنظومة" : "CORE ARCHITECTURE"}
-            </span>
-          </div>
-          <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">
-            {isAr ? "حماية وخصوصية بأعلى المعايير" : "Automotive Privacy & Protection"}
-          </h2>
-        </div>
-      </div>
+    <section id="pillars-section" className="w-full border-b border-[#27272A]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {modules.map((mod) => {
+            const Icon = mod.icon;
+            return (
+              <Link
+                key={mod.title}
+                href={mod.href}
+                className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden flex flex-col justify-between transition-colors duration-150 ease-out hover:border-[#FFFFFF] group"
+              >
+                <SegmentedLedBar level={mod.meter} cells={18} />
 
-      {/* 4-Quadrant Glassmorphic Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-        {pillars.map((p) => {
-          const Icon = p.icon;
-          return (
-            <div
-              key={p.num}
-              className="p-5 sm:p-6 rounded-2xl glass-card border border-white/[0.08] flex flex-col justify-between space-y-3 hover:border-white/20 transition-all text-start"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-zinc-400 font-bold tabular-nums px-2 py-0.5 rounded-md border border-white/10 bg-white/[0.04]">
-                  {p.num}
-                </span>
-                <div className="w-8 h-8 rounded-lg border border-white/[0.10] bg-white/[0.04] flex items-center justify-center text-white">
-                  <Icon className="w-4 h-4 text-white" />
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4 text-start">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="w-9 h-9 rounded-lg border border-[#27272A] bg-[#09090B] flex items-center justify-center text-[#FFFFFF] shrink-0">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span className="w-8 h-8 rounded-lg border border-[#27272A] bg-[#09090B] text-[#FFFFFF] group-hover:bg-[#FFFFFF] group-hover:text-[#09090B] group-hover:border-[#FFFFFF] flex items-center justify-center transition-all duration-150">
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-display font-bold text-[#FFFFFF]">
+                      {mod.title}
+                    </h3>
+                    <p className="text-xs text-[#A1A1AA] leading-relaxed font-sans">
+                      {mod.desc}
+                    </p>
+                  </div>
                 </div>
-              </div>
-
-              <div className="space-y-1">
-                <h3 className="text-sm font-bold text-white tracking-tight">
-                  {p.title}
-                </h3>
-                <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-                  {p.desc}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

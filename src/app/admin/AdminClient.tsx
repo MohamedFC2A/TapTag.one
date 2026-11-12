@@ -37,6 +37,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { SegmentedLedBar } from "@/components/ui/SegmentedLedBar";
 
 interface TagItem {
   id: string;
@@ -245,69 +246,74 @@ export function AdminClient({
   return (
     <div className="space-y-6">
       {/* 1. Master Admin Header & Mission Control Badge */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl border border-white/[0.08] glass-surface shadow-glass">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
-            <span className="text-xs font-mono font-bold uppercase text-white tracking-widest">
-              TAPTAG ROOT PROTOCOL • MASTER ADMIN CONSOLE
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            مركز القيادة الفنية وإدارة الأصول (Mission Control)
-          </h1>
-          <p className="text-xs font-mono text-zinc-400">
-            وصول غير مقيد لبيانات Neon PostgreSQL • سك البطاقات • استوديو QR المتجهي • التيليمترية الحية
-          </p>
+      <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
+        <div className="px-5 py-2.5 border-b border-[#27272A] bg-[#09090B]">
+          <SegmentedLedBar level={20} cells={24} label="ROOT PROTOCOL" />
         </div>
-
-        {/* Global Controls & DB Latency Badge */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] text-xs font-mono text-zinc-300">
-            <Database className="w-3.5 h-3.5 text-zinc-400" />
-            <span>NEON POOLER:</span>
-            <span className="text-white font-bold font-mono">
-              {metrics.dbLatencyMs > 0 ? `${metrics.dbLatencyMs}ms` : "CONNECTED"}
-            </span>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+              <span className="text-xs font-mono font-bold uppercase text-white tracking-widest">
+                TAPTAG ROOT PROTOCOL • MASTER ADMIN CONSOLE
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-display">
+              مركز القيادة الفنية وإدارة الأصول (Mission Control)
+            </h1>
+            <p className="text-xs font-mono text-zinc-400">
+              وصول غير مقيد لبيانات Neon PostgreSQL • سك البطاقات • استوديو QR المتجهي • التيليمترية الحية
+            </p>
           </div>
 
-          <Button
-            onClick={handleRefresh}
-            disabled={isPending}
-            variant="outline"
-            size="sm"
-            className="border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] text-white font-mono text-xs cursor-pointer gap-1.5 rounded-lg"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
-            <span>تحديث</span>
-          </Button>
+          {/* Global Controls & DB Latency Badge */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#27272A] bg-[#09090B] text-xs font-mono text-zinc-300">
+              <Database className="w-3.5 h-3.5 text-zinc-400" />
+              <span>NEON POOLER:</span>
+              <span className="text-white font-bold font-mono">
+                {metrics.dbLatencyMs > 0 ? `${metrics.dbLatencyMs}ms` : "CONNECTED"}
+              </span>
+            </div>
 
-          <Link href="/admin/qr-engine">
             <Button
+              onClick={handleRefresh}
+              disabled={isPending}
+              variant="outline"
               size="sm"
-              className="bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs cursor-pointer gap-1.5 rounded-lg shadow-sm"
+              className="border-[#27272A] bg-[#09090B] hover:bg-white hover:text-[#09090B] hover:border-white text-white font-mono text-xs cursor-pointer gap-1.5 rounded-lg transition-all duration-150 ease-out"
             >
-              <Printer className="w-3.5 h-3.5 text-black" />
-              <span>استوديو الطباعة والسك</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
+              <span>تحديث</span>
             </Button>
-          </Link>
+
+            <Link href="/admin/qr-engine">
+              <Button
+                size="sm"
+                className="bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-mono font-bold text-xs cursor-pointer gap-1.5 rounded-lg transition-all duration-150 ease-out"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>استوديو الطباعة والسك</span>
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Global Feedback Alert */}
       {feedback && (
         <div
-          className={`p-3.5 rounded-xl border text-xs font-mono flex items-center justify-between glass-surface ${
+          className={`p-3.5 rounded-xl border text-xs font-mono flex items-center justify-between ${
             feedback.type === "success"
-              ? "border-white/20 bg-white/5 text-white"
-              : "border-red-500/20 bg-red-500/5 text-red-200"
+              ? "border-[#27272A] bg-[#121215] text-white"
+              : "border-white bg-[#121215] text-white"
           }`}
         >
           <div className="flex items-center gap-2">
             {feedback.type === "success" ? (
               <CheckCircle2 className="w-4 h-4 text-white" />
             ) : (
-              <ShieldAlert className="w-4 h-4 text-red-400" />
+              <ShieldAlert className="w-4 h-4 text-white" />
             )}
             <span>{feedback.text}</span>
           </div>
@@ -322,7 +328,7 @@ export function AdminClient({
 
       {/* 2. Top Metric Cards (High Density Telemetry) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
+        <div className="p-4 rounded-xl border border-[#27272A] bg-[#121215] space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             إجمالي الأصول (TOTAL)
           </div>
@@ -332,7 +338,7 @@ export function AdminClient({
           <div className="text-[10px] font-mono text-zinc-500">مخزون مسجل في Neon</div>
         </div>
 
-        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
+        <div className="p-4 rounded-xl border border-[#27272A] bg-[#121215] space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             البطاقات النشطة (ACTIVE)
           </div>
@@ -342,7 +348,7 @@ export function AdminClient({
           <div className="text-[10px] font-mono text-zinc-500">جاهزة للاستجابة فورياً</div>
         </div>
 
-        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
+        <div className="p-4 rounded-xl border border-[#27272A] bg-[#121215] space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             مخزون المصنع (SEALED)
           </div>
@@ -352,7 +358,7 @@ export function AdminClient({
           <div className="text-[10px] font-mono text-zinc-500">جاهزة للبيع والإقتران</div>
         </div>
 
-        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
+        <div className="p-4 rounded-xl border border-[#27272A] bg-[#121215] space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             مفعلة بالبصمة (CLAIMED)
           </div>
@@ -362,7 +368,7 @@ export function AdminClient({
           <div className="text-[10px] font-mono text-zinc-500">مرتبطة بمركبة ومستخدم</div>
         </div>
 
-        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
+        <div className="p-4 rounded-xl border border-[#27272A] bg-[#121215] space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             إجمالي المسحات (SCANS)
           </div>
@@ -372,7 +378,7 @@ export function AdminClient({
           <div className="text-[10px] font-mono text-zinc-500">NFC & QR Ingested</div>
         </div>
 
-        <div className="p-4 rounded-xl border border-white/[0.08] glass-surface space-y-1">
+        <div className="p-4 rounded-xl border border-[#27272A] bg-[#121215] space-y-1">
           <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
             سجل الحوادث (EVENTS)
           </div>
@@ -385,7 +391,7 @@ export function AdminClient({
 
       {/* 3. Main Navigation Tabs */}
       <Tabs defaultValue="fleet" className="w-full space-y-4">
-        <TabsList className="glass-surface border border-white/[0.08] p-1.5 rounded-xl flex flex-wrap gap-1 shadow-glass">
+        <TabsList className="bg-[#121215] border border-[#27272A] p-1.5 rounded-xl flex flex-wrap gap-1">
           <TabsTrigger
             value="fleet"
             className="data-[state=active]:bg-white data-[state=active]:text-black text-xs font-mono font-bold cursor-pointer rounded-lg transition-all"
@@ -421,14 +427,14 @@ export function AdminClient({
         {/* TAB 1: FLEET REGISTRY */}
         <TabsContent value="fleet" className="space-y-4">
           {/* Search & Filter Bar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-xl border border-white/[0.08] glass-surface shadow-glass">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-xl border border-[#27272A] bg-[#121215]">
             <div className="relative flex-1">
               <Input
                 type="text"
                 placeholder="بحث برقم البطاقة UID، لوحة المركبة، أو نوع السيارة..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-black/40 border-white/[0.08] text-white placeholder-zinc-500 font-mono text-xs pr-9 rounded-lg focus:border-white/30"
+                className="bg-[#09090B] border-[#27272A] text-white placeholder-zinc-500 font-mono text-xs pr-9 rounded-lg focus:border-white"
               />
               <Search className="w-4 h-4 text-zinc-500 absolute top-2.5 right-3 pointer-events-none" />
             </div>
@@ -439,10 +445,10 @@ export function AdminClient({
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
-                  className={`px-3 py-1 rounded-full text-[11px] font-mono transition-colors whitespace-nowrap cursor-pointer ${
+                  className={`px-3 py-1 rounded-lg text-[11px] font-mono transition-all duration-150 ease-out whitespace-nowrap cursor-pointer border ${
                     statusFilter === st
-                      ? "bg-white text-black font-bold shadow-sm"
-                      : "text-zinc-400 hover:text-white bg-white/[0.02] border border-white/[0.08]"
+                      ? "bg-white text-[#09090B] border-white font-bold"
+                      : "text-zinc-400 hover:text-white bg-[#09090B] border-[#27272A]"
                   }`}
                 >
                   {st}
@@ -452,7 +458,7 @@ export function AdminClient({
           </div>
 
           {/* Table */}
-          <div className="rounded-xl border border-white/[0.08] glass-surface overflow-hidden shadow-glass">
+          <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-xs font-mono text-start">
                 <thead className="border-b border-white/[0.08] bg-white/[0.02] text-zinc-400">
@@ -516,12 +522,12 @@ export function AdminClient({
                           >
                             <Badge
                               variant="outline"
-                              className={`text-[10px] font-mono cursor-pointer transition-transform group-hover:scale-105 ${
+                              className={`text-[10px] font-mono cursor-pointer transition-all duration-150 ease-out ${
                                 tag.status === "ACTIVE"
-                                  ? "border-white/20 bg-white/10 text-white"
+                                  ? "border-white bg-white text-[#09090B] font-bold"
                                   : tag.status === "AWAY"
-                                  ? "border-zinc-700 bg-zinc-800 text-zinc-300"
-                                  : "border-red-600/40 bg-red-950/20 text-red-400"
+                                  ? "border-[#27272A] bg-[#09090B] text-zinc-300"
+                                  : "border-[#27272A] bg-[#09090B] text-zinc-400"
                               }`}
                             >
                               {tag.status}
@@ -582,7 +588,8 @@ export function AdminClient({
         <TabsContent value="minting" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* 1-Click Minting Card */}
-            <div className="p-6 rounded-2xl border border-white/[0.08] glass-card space-y-4 shadow-glass">
+            <div className="p-6 rounded-xl border border-[#27272A] bg-[#121215] space-y-4">
+              <SegmentedLedBar level={12} cells={16} label="SINGLE MINT" />
               <div className="flex items-center gap-2 text-white">
                 <PlusCircle className="w-5 h-5 text-white" />
                 <h3 className="text-base font-mono font-bold">سك بطاقة فيزيائية فردية فورية</h3>
@@ -597,7 +604,7 @@ export function AdminClient({
                 <Button
                   onClick={handleMintSingle}
                   disabled={isPending}
-                  className="w-full bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer rounded-xl shadow-sm"
+                  className="w-full bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-mono font-bold text-xs py-5 cursor-pointer rounded-lg transition-all duration-150 ease-out"
                 >
                   <PlusCircle className="w-4 h-4 ml-2" />
                   <span>{isPending ? "جارٍ التوليد والتخزين في Neon..." : "سك بطاقة واحدة فورا (1-Click Mint)"}</span>
@@ -606,7 +613,8 @@ export function AdminClient({
             </div>
 
             {/* Batch Minting Card */}
-            <div className="p-6 rounded-2xl border border-white/[0.08] glass-card space-y-4 shadow-glass">
+            <div className="p-6 rounded-xl border border-[#27272A] bg-[#121215] space-y-4">
+              <SegmentedLedBar level={14} cells={16} label="BATCH MINT" />
               <div className="flex items-center gap-2 text-white">
                 <Layers className="w-5 h-5 text-white" />
                 <h3 className="text-base font-mono font-bold">سك دفعة تصنيع وقص ليزري (Batch Factory)</h3>
@@ -621,7 +629,7 @@ export function AdminClient({
                   onClick={() => handleMintBatch(5)}
                   disabled={isPending}
                   variant="outline"
-                  className="flex-1 border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] text-white font-mono text-xs py-5 cursor-pointer rounded-xl"
+                  className="flex-1 border-[#27272A] bg-[#09090B] hover:bg-white hover:text-[#09090B] hover:border-white text-white font-mono text-xs py-5 cursor-pointer rounded-lg transition-all duration-150 ease-out"
                 >
                   <span>سك دفعة (5 بطاقات)</span>
                 </Button>
@@ -629,7 +637,7 @@ export function AdminClient({
                 <Button
                   onClick={() => handleMintBatch(10)}
                   disabled={isPending}
-                  className="flex-1 bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer rounded-xl shadow-sm"
+                  className="flex-1 bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-mono font-bold text-xs py-5 cursor-pointer rounded-lg transition-all duration-150 ease-out"
                 >
                   <span>سك دفعة (10 بطاقات)</span>
                 </Button>
@@ -638,7 +646,7 @@ export function AdminClient({
           </div>
 
           {/* Quick Studio Jump Banner */}
-          <div className="p-4 rounded-xl border border-white/[0.08] glass-surface shadow-glass flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="p-4 rounded-xl border border-[#27272A] bg-[#121215] flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Printer className="w-5 h-5 text-white shrink-0" />
               <div className="text-xs font-mono">
@@ -654,7 +662,7 @@ export function AdminClient({
             <Link href="/admin/qr-engine">
               <Button
                 size="sm"
-                className="bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs shrink-0 cursor-pointer rounded-lg shadow-sm"
+                className="bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-mono font-bold text-xs shrink-0 cursor-pointer rounded-lg transition-all duration-150 ease-out"
               >
                 <span>فتح استوديو الطباعة</span>
                 <ArrowUpRight className="w-3.5 h-3.5 mr-1" />
@@ -665,7 +673,7 @@ export function AdminClient({
 
         {/* TAB 3: INCIDENTS STREAM */}
         <TabsContent value="incidents" className="space-y-4">
-          <div className="rounded-xl border border-white/[0.08] glass-surface overflow-hidden shadow-glass">
+          <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
             <div className="p-4 border-b border-white/[0.08] flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-white" />
@@ -747,7 +755,7 @@ export function AdminClient({
         <TabsContent value="simulator" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Controls */}
-            <div className="p-6 rounded-2xl border border-white/[0.08] glass-card space-y-4 shadow-glass">
+            <div className="p-6 rounded-xl border border-[#27272A] bg-[#121215] space-y-4">
               <div className="flex items-center gap-2 text-white">
                 <Radio className="w-5 h-5 text-white" />
                 <h3 className="text-sm font-mono font-bold">محاكي لمس الـ NFC والمسح الحي</h3>
@@ -758,7 +766,7 @@ export function AdminClient({
                 <select
                   value={simTagUid}
                   onChange={(e) => setSimTagUid(e.target.value)}
-                  className="w-full bg-black/50 border border-white/[0.08] rounded-xl p-2.5 text-xs font-mono text-white focus:outline-none focus:border-white/30"
+                  className="w-full bg-[#09090B] border border-[#27272A] rounded-lg p-2.5 text-xs font-mono text-white focus:outline-none focus:border-white"
                 >
                   {tags.map((t) => (
                     <option key={t.id} value={t.tagUid}>
@@ -770,14 +778,14 @@ export function AdminClient({
 
               <Button
                 onClick={() => handleRunSimulation(simTagUid)}
-                className="w-full bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer rounded-xl shadow-sm"
+                className="w-full bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-mono font-bold text-xs py-5 cursor-pointer rounded-lg transition-all duration-150 ease-out"
               >
                 <span>محاكاة مسح كود QR أو تقريب NFC</span>
               </Button>
 
               {/* Console Logs */}
-              <div className="p-3.5 rounded-xl border border-white/[0.08] bg-black/60 font-mono text-[11px] space-y-1.5 min-h-[140px]" dir="ltr">
-                <div className="text-zinc-500 text-[10px] border-b border-white/[0.08] pb-1">
+              <div className="p-3.5 rounded-xl border border-[#27272A] bg-[#09090B] font-mono text-[11px] space-y-1.5 min-h-[140px]" dir="ltr">
+                <div className="text-zinc-500 text-[10px] border-b border-[#27272A] pb-1">
                   CONSOLE OUTPUT:
                 </div>
                 {simLogs.map((log, idx) => (
@@ -789,25 +797,25 @@ export function AdminClient({
             </div>
 
             {/* Simulated Mobile Gateway Screen */}
-            <div className="p-6 rounded-2xl border border-white/[0.08] glass-card flex flex-col items-center justify-center shadow-glass">
-              <div className="w-full max-w-[280px] rounded-3xl border border-white/[0.12] bg-black/80 backdrop-blur-xl p-5 space-y-3.5 text-center shadow-glass-elevated">
-                <div className="w-10 h-1 rounded-full bg-zinc-700 mx-auto mb-2" />
+            <div className="p-6 rounded-xl border border-[#27272A] bg-[#121215] flex flex-col items-center justify-center">
+              <div className="w-full max-w-[280px] rounded-xl border border-[#27272A] bg-[#09090B] p-5 space-y-3.5 text-center">
+                <SegmentedLedBar level={12} cells={16} />
                 <div className="text-[10px] font-mono text-white font-bold tracking-wider">
                   TAPTAG SECURE GATEWAY
                 </div>
                 <div className="text-xs font-mono text-zinc-300 font-bold">
                   {simTagUid}
                 </div>
-                <div className="p-3 rounded-xl border border-white/[0.08] bg-white/[0.03] text-[11px] font-mono text-zinc-300">
+                <div className="p-3 rounded-lg border border-[#27272A] bg-[#121215] text-[11px] font-mono text-zinc-300">
                   {tags.find((t) => t.tagUid === simTagUid)?.profile?.autoResponseText ||
                     "سأعود خلال 15 دقيقة"}
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-2">
-                  <div className="p-2.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-[10px] font-mono text-white flex items-center justify-center gap-1.5">
+                  <div className="p-2.5 rounded-lg border border-[#27272A] bg-[#121215] text-[10px] font-mono text-white flex items-center justify-center gap-1.5">
                     <Car className="w-3.5 h-3.5 text-white" />
                     <span>تحريك سيارة</span>
                   </div>
-                  <div className="p-2.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-[10px] font-mono text-white flex items-center justify-center gap-1.5">
+                  <div className="p-2.5 rounded-lg border border-[#27272A] bg-[#121215] text-[10px] font-mono text-white flex items-center justify-center gap-1.5">
                     <PhoneCall className="w-3.5 h-3.5 text-white" />
                     <span>اتصال مشفر</span>
                   </div>
@@ -830,7 +838,7 @@ export function AdminClient({
 
         {/* TAB 5: DIAGNOSTICS */}
         <TabsContent value="diagnostics" className="space-y-4">
-          <div className="p-6 rounded-2xl border border-white/[0.08] glass-card space-y-4 shadow-glass">
+          <div className="p-6 rounded-xl border border-[#27272A] bg-[#121215] space-y-4">
             <h3 className="text-sm font-mono font-bold text-white flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-white" />
               <span>فحص تكامل منظومة الإنتاج (Production Health Check)</span>

@@ -336,7 +336,7 @@ export function VehicleSpatialFinder({
             <button
               type="button"
               onClick={() => setIsCalibrationModalOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg active:scale-95"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-black text-xs uppercase tracking-wider transition-all duration-150 ease-out cursor-pointer active:scale-95"
             >
               <Sparkles className="w-4 h-4 text-black" />
               <span>{isAr ? "معايرة موضع السيارة الآن" : "Calibrate Stance Now"}</span>

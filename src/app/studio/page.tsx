@@ -18,7 +18,7 @@ export default async function StudioPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-[#000000] text-[#E4E4E7] flex flex-col" dir="rtl">
+    <div className="min-h-screen bg-[#09090B] hw-pixel-grid text-[#FAFAFA] flex flex-col" dir="rtl">
       <Header lang="ar" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">

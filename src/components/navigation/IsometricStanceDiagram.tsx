@@ -42,8 +42,8 @@ export function IsometricStanceDiagram({
           priority
           className="object-cover object-center"
         />
-        {/* Subtle Bottom Shade */}
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#0A0A0A] to-transparent pointer-events-none" />
+        {/* Solid Bottom Divider */}
+        <div className="absolute inset-x-0 bottom-0 h-px bg-[#27272A] pointer-events-none" />
       </div>
 
       {/* Minimalist 3-Step Stance Instructions (Pure Apple Monochrome, Zero Clutter) */}

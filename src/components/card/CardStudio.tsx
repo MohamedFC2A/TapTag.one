@@ -18,6 +18,7 @@ import { DEFAULT_CARD_DESIGN } from "@/types/card-design";
 import { saveCardDesignAction } from "@/app/actions/card-customization-actions";
 import { PhysicalCardRenderer } from "./PhysicalCardRenderer";
 import { NfcWaveSymbol } from "./NfcWaveSymbol";
+import { SegmentedLedBar } from "@/components/ui/SegmentedLedBar";
 import {
   Layers,
   Sparkles,
@@ -112,13 +113,13 @@ const PRINTZONE_DIMENSIONS: {
 
 // Curated Luxury Acrylic Palettes
 const LUXURY_COLORS = [
-  { id: "#0A0B0E", label: "أسود أوبسيديان", border: "border-zinc-800" },
-  { id: "#F8FAFC", label: "أبيض ناصع", border: "border-zinc-300" },
-  { id: "#0F172A", label: "كحلي ملكي", border: "border-blue-900" },
-  { id: "#064E3B", label: "أخضر سباقات", border: "border-emerald-900" },
-  { id: "#450A0A", label: "عودي فاخر", border: "border-red-950" },
-  { id: "#1E293B", label: "رمادي سلايت", border: "border-slate-700" },
-  { id: "#EAB308", label: "أصفر سايبر", border: "border-yellow-600" },
+  { id: "#0A0B0E", label: "أسود أوبسيديان", border: "border-[#27272A]" },
+  { id: "#F8FAFC", label: "أبيض ناصع", border: "border-[#E4E4E7]" },
+  { id: "#0F172A", label: "كحلي ملكي", border: "border-[#27272A]" },
+  { id: "#064E3B", label: "أخضر سباقات", border: "border-[#27272A]" },
+  { id: "#450A0A", label: "عودي فاخر", border: "border-[#27272A]" },
+  { id: "#1E293B", label: "رمادي سلايت", border: "border-[#27272A]" },
+  { id: "#EAB308", label: "أصفر سايبر", border: "border-[#27272A]" },
 ];
 
 // Curated Luxury Font Choices
@@ -366,7 +367,9 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
   return (
     <div className="w-full flex flex-col space-y-6 select-none" dir="rtl">
       {/* Studio Header Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
+      <div className="bg-[#121215] border border-[#27272A] rounded-xl overflow-hidden">
+        <SegmentedLedBar level={12} cells={16} label="ACRYLIC STUDIO" active />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
             استوديو الأكريليك
@@ -378,7 +381,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
           <button
             type="button"
             onClick={handleExportPNG}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl glass-card text-xs font-mono text-zinc-300 hover:text-white transition-all cursor-pointer"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#09090B] border border-[#27272A] text-xs font-mono text-zinc-300 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out cursor-pointer"
             title="تحميل بجودة عالية للطباعة (300 DPI)"
           >
             <Download className="w-3.5 h-3.5 text-zinc-400" />
@@ -388,7 +391,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
           <button
             type="button"
             onClick={handleExportSVG}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl glass-card text-xs font-mono text-zinc-300 hover:text-white transition-all cursor-pointer"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#09090B] border border-[#27272A] text-xs font-mono text-zinc-300 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out cursor-pointer"
             title="تصدير فيكتور لآلات قص الليزر (SVG)"
           >
             <Printer className="w-3.5 h-3.5 text-zinc-400" />
@@ -404,6 +407,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
             <Save className="w-3.5 h-3.5 text-black" />
             <span>{isSaving ? "جارٍ الحفظ..." : "حفظ التصميم سحابياً"}</span>
           </button>
+        </div>
         </div>
       </div>
 
@@ -426,11 +430,14 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
         {/* LEFT COLUMN: 3D PHOTOREALISTIC ACRYLIC STAGE                   */}
         {/* ============================================================== */}
         <div className="lg:col-span-7 flex flex-col items-center space-y-4">
-          <div className="w-full glass-surface-elevated rounded-3xl p-6 sm:p-8 border border-white/[0.10] relative flex flex-col items-center">
+          <div className="w-full bg-[#121215] rounded-xl p-6 sm:p-8 border border-[#27272A] relative flex flex-col items-center overflow-hidden">
+            <div className="w-full -mx-6 -mt-6 mb-6 sm:-mx-8 sm:-mt-8 border-b border-[#27272A]">
+              <SegmentedLedBar level={14} cells={16} label="CAD STAGE" active />
+            </div>
             {/* Top Showcase Toolbar */}
             <div className="w-full flex items-center justify-between mb-4 text-[11px] font-mono text-zinc-400">
               <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#10B981] shrink-0" />
                 <span>معاينة حية ثلاثية الأبعاد (3D Stage)</span>
               </span>
 
@@ -438,7 +445,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                 <button
                   type="button"
                   onClick={() => setIsFlipped((prev) => !prev)}
-                  className="px-3 py-1.5 rounded-xl glass-card text-xs text-zinc-300 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-[#09090B] border border-[#27272A] text-xs text-zinc-300 hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out flex items-center gap-1.5 cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5 text-zinc-400" />
                   <span>{isFlipped ? "عرض الوجه الأمامي" : "عرض الوجه الخلفي"}</span>
@@ -480,7 +487,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
         {/* ============================================================== */}
         <div className="lg:col-span-5 space-y-4">
           {/* Tab Navigation Ribbon */}
-          <div className="grid grid-cols-4 p-1 rounded-2xl glass-surface border border-white/[0.08] text-[11px] font-medium">
+          <div className="grid grid-cols-4 p-1 rounded-xl bg-[#121215] border border-[#27272A] text-[11px] font-medium">
             <button
               type="button"
               onClick={() => setActiveTab("dimensions")}
@@ -529,7 +536,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
           {/* TAB 1: OFFICIAL 2026 DIMENSIONS & FORM FACTORS */}
           {activeTab === "dimensions" && (
-            <div className="space-y-3 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
+            <div className="space-y-3 p-5 rounded-xl bg-[#121215] border border-[#27272A]">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-xs font-mono uppercase tracking-wider text-zinc-300 font-bold">
                   المقاس والشكل
@@ -591,7 +598,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
           {/* TAB 2: UNIFIED ACRYLIC MATERIAL & COLOR PICKER */}
           {activeTab === "colors" && (
-            <div className="space-y-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
+            <div className="space-y-4 p-5 rounded-xl bg-[#121215] border border-[#27272A]">
               {/* Custom Color Selector (Color Wheel + Hex Input) */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -700,7 +707,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
           {/* TAB 3: BRANDING & TYPOGRAPHY */}
           {activeTab === "branding" && (
-            <div className="space-y-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
+            <div className="space-y-4 p-5 rounded-xl bg-[#121215] border border-[#27272A]">
               {/* Brand Architecture Selection */}
               <div>
                 <label className="text-xs font-mono uppercase tracking-wider text-zinc-300 block mb-2 font-bold">
@@ -779,7 +786,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
               {/* Logo / Brand Text Input */}
               {config.brandType === "CUSTOM_BRAND" ? (
-                <div className="p-3.5 rounded-2xl glass-surface-elevated border border-white/15 space-y-2">
+                <div className="p-3.5 rounded-xl bg-[#09090B] border border-[#27272A] space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-mono uppercase tracking-wider text-white block font-bold">
                       نص البراند المخصص (+100 ج.م)
@@ -791,7 +798,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
                     value={config.logoText || ""}
                     onChange={(e) => updateField("logoText", e.target.value)}
                     placeholder="مثال: Al-Safwa Motors أو اسم معرضك"
-                    className="w-full glass-input rounded-xl px-3 py-2 text-white font-sans text-sm font-bold focus:outline-none focus:border-white transition-colors"
+                    className="w-full bg-[#09090B] border border-[#27272A] rounded-lg px-3 py-2 text-white font-sans text-sm font-bold focus:outline-none focus:border-white transition-colors duration-150"
                     dir="auto"
                   />
                 </div>
@@ -932,7 +939,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
           {/* TAB 4: CONNECTIVITY (QR STYLES, PLACEMENT & NFC) */}
           {activeTab === "connectivity" && (
-            <div className="space-y-4 p-5 rounded-3xl glass-surface-elevated border border-white/[0.10]">
+            <div className="space-y-4 p-5 rounded-xl bg-[#121215] border border-[#27272A]">
               {/* QR Code Style Selector */}
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -1065,7 +1072,9 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
           )}
 
           {/* LIVE PRICE BREAKDOWN SUMMARY CARD (Minimalist, High Contrast) */}
-          <div className="p-4 rounded-3xl bg-zinc-950 border border-white/[0.12] space-y-3">
+          <div className="rounded-xl bg-[#121215] border border-[#27272A] overflow-hidden">
+            <SegmentedLedBar level={10} cells={16} label="COST MATRIX" />
+            <div className="p-4 space-y-3">
             <div className="flex items-center justify-between text-xs font-mono text-zinc-400 border-b border-white/[0.08] pb-2">
               <span className="font-bold text-white flex items-center gap-1.5">
                 <Sliders className="w-3.5 h-3.5 text-white" />
@@ -1135,6 +1144,7 @@ export function CardStudio({ initialConfig, availableTags = [] }: CardStudioProp
 
             <div className="text-[10px] text-zinc-400 font-mono text-center pt-1 border-t border-white/[0.05]">
               أكريليك 3mm • ليزر دقيق • كود QR دائم • شريحة NFC
+            </div>
             </div>
           </div>
         </div>

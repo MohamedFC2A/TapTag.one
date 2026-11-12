@@ -82,15 +82,15 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, label, active, onClick })
       className={`flex items-center rounded-lg border transition-all focus:outline-none relative overflow-visible
         ${
           active
-            ? "border-white/40 bg-white/10 text-white font-medium shadow-sm"
-            : "border-transparent text-zinc-400 hover:text-white hover:bg-white/[0.05]"
+            ? "border-white bg-white text-[#09090B] font-medium"
+            : "border-transparent text-zinc-400 hover:text-white hover:bg-[#121215]"
         }
-        duration-200
+        duration-150 ease-out
         w-10 sm:w-auto
         px-0 sm:px-3
         py-1.5
         justify-center sm:justify-start
-        bg-black
+        bg-[#09090B]
       `}
       style={{
         minWidth: 40,
@@ -148,7 +148,7 @@ export const MenuBar = ({ active = "dashboard", onSelect, className = "", lang =
 
   return (
     <nav
-      className={`flex items-center gap-1 bg-[#08080A] p-1 rounded-xl border border-white/15 w-fit mx-auto transition-all duration-200 ${className}`}
+      className={`flex items-center gap-1 bg-[#121215] p-1 rounded-xl border border-[#27272A] w-fit mx-auto transition-all duration-150 ease-out ${className}`}
     >
       <IconButton
         icon={icons.dashboard}

@@ -3,8 +3,8 @@ import { ScanClient } from "./ScanClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "فحص ومسح البطاقة الذكية | taptag.one",
-  description: "ماسح ضوئي ذكي لكود QR وشريحة NFC لبطاقات السيارات taptag.one.",
+  title: "فاحص وقارئ رموز QR الذكية | taptag.",
+  description: "ماسح ضوئي ذكي لرموز QR وفحص الروابط الديناميكية والملفات المشفرة عبر taptag.",
 };
 
 export default function ScanPage() {

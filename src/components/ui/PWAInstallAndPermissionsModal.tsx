@@ -222,21 +222,21 @@ export function PWAInstallAndPermissionsModal() {
       {/* Main Installation & Permissions Modal (Only when explicitly open) */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-4"
+          className="fixed inset-0 z-50 bg-[#09090B]/90 flex items-end sm:items-center justify-center p-3 sm:p-4 transition-all duration-150 ease-out"
           dir="rtl"
         >
-          <div className="w-full max-w-md bg-[#0A0A0E] border border-white/20 rounded-2xl p-5 text-white space-y-4 max-h-[90vh] overflow-y-auto relative animate-in fade-in zoom-in-95">
+          <div className="w-full max-w-md bg-[#121215] border border-[#27272A] rounded-xl p-5 text-[#FAFAFA] space-y-4 max-h-[90vh] overflow-y-auto relative">
             {/* Modal Header with High-Resolution App Icon */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="flex items-center justify-between border-b border-[#27272A] pb-3">
               <div className="flex items-center gap-3">
                 <img
                   src="/icon-192.png"
                   alt="TapTag Official Icon"
-                  className="w-12 h-12 rounded-xl border border-white/20 shadow-lg shrink-0 object-cover"
+                  className="w-12 h-12 rounded-xl border border-[#27272A] shrink-0 object-cover"
                 />
                 <div>
                   <h3 className="text-sm font-mono font-bold text-white">
-                    تطبيق taptag.one الرسمي
+                    تطبيق taptag. الرسمي
                   </h3>
                   <span className="text-[10px] font-mono text-zinc-400">
                     AUTHENTIC PWA & PROTOCOL
@@ -245,7 +245,7 @@ export function PWAInstallAndPermissionsModal() {
               </div>
               <button
                 onClick={handleDismiss}
-                className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 cursor-pointer"
+                className="w-9 h-9 rounded-lg border border-[#27272A] bg-[#09090B] text-zinc-400 hover:bg-white hover:text-[#09090B] hover:border-white flex items-center justify-center cursor-pointer transition-all duration-150 ease-out"
                 title="إغلاق"
               >
                 <X className="w-4 h-4" />
@@ -254,8 +254,9 @@ export function PWAInstallAndPermissionsModal() {
 
             {/* Success message */}
             {authSuccessMessage && (
-              <div className="p-3.5 rounded-xl border border-white/20 bg-white/10 text-xs font-mono text-white flex items-center justify-between shadow-glass animate-in fade-in">
+              <div className="p-3.5 rounded-xl border border-[#27272A] bg-[#09090B] text-xs font-mono text-white flex items-center justify-between">
                 <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                   <CheckCircle2 className="w-4 h-4 shrink-0 text-white" />
                   <span>{authSuccessMessage}</span>
                 </div>
@@ -264,7 +265,7 @@ export function PWAInstallAndPermissionsModal() {
             )}
 
             {/* PWA Home Screen Installation Section */}
-            <div className="p-4 rounded-xl border border-white/15 bg-black space-y-3">
+            <div className="p-4 rounded-xl border border-[#27272A] bg-[#09090B] space-y-3">
               <div className="flex items-center gap-2 text-white">
                 <Smartphone className="w-4 h-4 text-zinc-300" />
                 <span className="text-xs font-mono font-bold">
@@ -280,24 +281,24 @@ export function PWAInstallAndPermissionsModal() {
               {deferredPrompt ? (
                 <Button
                   onClick={handleInstallClick}
-                  className="w-full bg-white hover:bg-zinc-200 text-black font-mono font-bold text-xs py-5 cursor-pointer shadow-lg"
+                  className="w-full bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-mono font-bold text-xs py-5 cursor-pointer transition-all duration-150 ease-out"
                 >
                   <Download className="w-4 h-4 ml-2" />
                   <span>تثبيت تطبيق TapTag على الجوال الآن (1-Click)</span>
                 </Button>
               ) : isIOS ? (
                 /* iOS Safari Step-by-Step Guide */
-                <div className="p-3 rounded-lg border border-white/10 bg-[#060608] space-y-2 text-[11px] font-mono text-zinc-300">
+                <div className="p-3 rounded-lg border border-[#27272A] bg-[#121215] space-y-2 text-[11px] font-mono text-zinc-300">
                   <div className="flex items-center gap-2 text-white font-bold">
                     <Share className="w-4 h-4 text-zinc-300" />
                     <span>طريقة التثبيت على أجهزة iPhone / iPad:</span>
                   </div>
                   <ol className="list-decimal list-inside space-y-1.5 text-zinc-400">
                     <li>
-                      اضغط على أيقونة <strong className="text-white">المشاركة (Share 📤)</strong> في شريط Safari بالأسفل.
+                      اضغط على أيقونة <strong className="text-white">المشاركة (Share)</strong> في شريط Safari بالأسفل.
                     </li>
                     <li>
-                      مرر للأسفل واختر <strong className="text-white">"إضافة إلى الصفحة الرئيسية" (Add to Home Screen ➕)</strong>.
+                      مرر للأسفل واختر <strong className="text-white">"إضافة إلى الصفحة الرئيسية" (Add to Home Screen)</strong>.
                     </li>
                     <li>
                       اضغط <strong className="text-white">"إضافة" (Add)</strong> في أعلى الزاوية.
@@ -305,14 +306,14 @@ export function PWAInstallAndPermissionsModal() {
                   </ol>
                 </div>
               ) : (
-                <div className="text-[11px] font-mono text-zinc-400 bg-[#060608] p-2.5 rounded border border-white/10">
+                <div className="text-[11px] font-mono text-zinc-400 bg-[#121215] p-2.5 rounded border border-[#27272A]">
                   من قائمة المتصفح (⋮)، اضغط على <strong>"تثبيت التطبيق" (Install App)</strong> أو <strong>"إضافة للشاشة الرئيسية"</strong>.
                 </div>
               )}
             </div>
 
             {/* Permissions Status Checklist */}
-            <div className="p-4 rounded-xl border border-white/15 bg-black space-y-3">
+            <div className="p-4 rounded-xl border border-[#27272A] bg-[#09090B] space-y-3">
               <div className="flex items-center gap-2 text-white">
                 <ShieldCheck className="w-4 h-4 text-zinc-300" />
                 <span className="text-xs font-mono font-bold">
@@ -322,7 +323,7 @@ export function PWAInstallAndPermissionsModal() {
 
               <div className="space-y-2 text-xs font-mono">
                 {/* Notifications */}
-                <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/10 bg-[#060608]">
+                <div className="flex items-center justify-between p-2.5 rounded-lg border border-[#27272A] bg-[#121215]">
                   <div className="flex items-center gap-2">
                     <Bell className="w-3.5 h-3.5 text-zinc-300" />
                     <span className="text-zinc-300">إشعارات الطوارئ والتحريك:</span>
@@ -337,7 +338,7 @@ export function PWAInstallAndPermissionsModal() {
                 </div>
 
                 {/* Microphone */}
-                <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/10 bg-[#060608]">
+                <div className="flex items-center justify-between p-2.5 rounded-lg border border-[#27272A] bg-[#121215]">
                   <div className="flex items-center gap-2">
                     <Mic className="w-3.5 h-3.5 text-zinc-300" />
                     <span className="text-zinc-300">ميكروفون الاتصال المشفر:</span>
@@ -352,7 +353,7 @@ export function PWAInstallAndPermissionsModal() {
                 </div>
 
                 {/* Sound Chime */}
-                <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/10 bg-[#060608]">
+                <div className="flex items-center justify-between p-2.5 rounded-lg border border-[#27272A] bg-[#121215]">
                   <div className="flex items-center gap-2">
                     <Volume2 className="w-3.5 h-3.5 text-zinc-300" />
                     <span className="text-zinc-300">نغمة الإنذار التكتيكي:</span>
@@ -368,11 +369,7 @@ export function PWAInstallAndPermissionsModal() {
                 <Button
                   onClick={handleGrantAllPermissions}
                   disabled={isAuthorizing || !!authSuccessMessage}
-                  className={`w-full font-mono font-bold text-xs py-5 cursor-pointer transition-all ${
-                    authSuccessMessage
-                      ? "bg-white text-black"
-                      : "bg-white hover:bg-zinc-200 text-black"
-                  }`}
+                  className="w-full bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] border border-white font-mono font-bold text-xs py-5 cursor-pointer transition-all duration-150 ease-out"
                 >
                   {authSuccessMessage ? (
                     <CheckCircle2 className="w-4 h-4 ml-2" />

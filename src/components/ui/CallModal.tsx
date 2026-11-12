@@ -90,25 +90,25 @@ export function CallModal({
   const cleanPhone = emergencyContactPhone?.replace(/[\s\-\(\)]/g, "") || "";
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200" dir={lang === "ar" ? "rtl" : "ltr"}>
-      <div className="w-full max-w-md glass-surface-elevated border border-white/[0.14] rounded-3xl p-6 sm:p-7 shadow-glass-elevated text-white relative">
+    <div className="fixed inset-0 z-50 bg-[#09090B]/90 flex items-center justify-center p-4 transition-all duration-150 ease-out" dir={lang === "ar" ? "rtl" : "ltr"}>
+      <div className="w-full max-w-md bg-[#121215] border border-[#27272A] rounded-xl p-6 sm:p-7 text-[#FAFAFA] relative overflow-hidden">
         {/* Top Header */}
-        <div className="flex items-center justify-between border-b border-white/[0.08] pb-4 mb-6">
+        <div className="flex items-center justify-between border-b border-[#27272A] pb-4 mb-6">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg glass-pill">
+            <div className="p-1.5 rounded-lg bg-[#09090B] border border-[#27272A]">
               <Shield className="w-4 h-4 text-white" />
             </div>
             <span className="text-xs font-mono uppercase text-white font-bold tracking-wider">
               {lang === "ar" ? "قناة صوتية مشفرة (VoIP Tunnel)" : "Encrypted VoIP Tunnel"}
             </span>
           </div>
-          <span className="text-xs font-mono text-zinc-400 font-bold px-2 py-0.5 rounded-full glass-pill">{tagUid}</span>
+          <span className="text-xs font-mono text-zinc-400 font-bold px-2.5 py-0.5 rounded-md bg-[#09090B] border border-[#27272A]">{tagUid}</span>
         </div>
 
         {/* Center Calling Area */}
         <div className="flex flex-col items-center justify-center py-2">
           <div className="relative mb-6">
-            <div className="w-20 h-20 rounded-full glass-surface border border-white/20 flex items-center justify-center shadow-glass">
+            <div className="w-20 h-20 rounded-xl bg-[#09090B] border border-[#27272A] flex items-center justify-center">
               <Phone
                 className={`w-8 h-8 ${
                   callState === "active" ? "text-white animate-pulse" : "text-zinc-400"
@@ -166,10 +166,10 @@ export function CallModal({
               <button
                 type="button"
                 onClick={() => setIsMuted(!isMuted)}
-                className={`p-3 rounded-2xl border transition-all cursor-pointer ${
+                className={`p-3 rounded-lg border transition-all duration-150 ease-out cursor-pointer ${
                   isMuted
-                    ? "border-white/30 bg-white/10 text-white"
-                    : "glass-card text-zinc-300 hover:text-white"
+                    ? "border-white bg-white text-[#09090B]"
+                    : "border-[#27272A] bg-[#09090B] text-zinc-300 hover:bg-white hover:text-[#09090B] hover:border-white"
                 }`}
                 title={isMuted ? t.unmute : t.mute}
               >
@@ -180,7 +180,7 @@ export function CallModal({
             <button
               type="button"
               onClick={handleEndCall}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-red-500/40 bg-red-950/80 hover:bg-red-900 text-red-200 transition-all text-xs font-mono font-bold uppercase tracking-wider cursor-pointer shadow-glass active:scale-95"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-white bg-white hover:bg-[#09090B] hover:text-white text-[#09090B] transition-all duration-150 ease-out text-xs font-mono font-bold uppercase tracking-wider cursor-pointer active:scale-95"
             >
               <PhoneOff className="w-4 h-4" />
               <span>{t.endCall}</span>
@@ -190,7 +190,7 @@ export function CallModal({
           {/* Emergency Fallback Direct Call Option */}
           {cleanPhone && (
             <div className="pt-6 w-full">
-              <div className="p-3.5 rounded-2xl glass-surface border border-white/[0.08] text-center space-y-2">
+              <div className="p-3.5 rounded-xl bg-[#09090B] border border-[#27272A] text-center space-y-2">
                 <span className="text-[11px] font-mono text-zinc-400 block">
                   {lang === "ar"
                     ? "إذا لم يجب المالك عبر المتصفح، يمكنك الاتصال بهاتف الطوارئ مباشرة:"
@@ -198,11 +198,11 @@ export function CallModal({
                 </span>
                 <a
                   href={`tel:${cleanPhone}`}
-                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl glass-card text-white font-mono text-xs font-bold hover:border-white/20 transition-all cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-[#121215] border border-[#27272A] text-white font-mono text-xs font-bold hover:bg-white hover:text-[#09090B] hover:border-white transition-all duration-150 ease-out cursor-pointer"
                 >
                   <Phone className="w-3.5 h-3.5" />
                   <span>{lang === "ar" ? "اتصال هاتفي مباشر بالمالك (GSM)" : "Direct Phone Call"}</span>
-                  <ExternalLink className="w-3 h-3 text-zinc-400" />
+                  <ExternalLink className="w-3 h-3 opacity-70" />
                 </a>
               </div>
             </div>
@@ -210,7 +210,7 @@ export function CallModal({
         </div>
 
         {/* Footer Notice */}
-        <div className="border-t border-white/[0.08] pt-4 mt-2">
+        <div className="border-t border-[#27272A] pt-4 mt-2">
           <p className="text-[11px] font-mono text-zinc-500 text-center leading-relaxed">
             {t.permissionNotice}
           </p>

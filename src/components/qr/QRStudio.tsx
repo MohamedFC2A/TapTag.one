@@ -327,14 +327,14 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
       .card-desc { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 11px; fill: #71717A; }
       .uid-val { font-family: monospace; font-size: 18px; font-weight: bold; fill: #FFFFFF; }
       .uid-lbl { font-family: monospace; font-size: 10px; fill: #FFFFFF; font-weight: bold; }
-      .vertical-bar-txt { font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #FFFFFF; letter-spacing: 2px; }
-      .glass-bevel { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 1; }
+      .vertical-bar-txt { font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #09090B; letter-spacing: 2px; }
+      .frame-bevel { fill: none; stroke: #27272A; stroke-width: 1; }
     </style>
   </defs>
 
   <!-- Acrylic Tag Background (70mm x 50mm, 3mm corner radius) -->
-  <rect x="5" y="5" width="690" height="490" rx="20" ry="20" fill="#000000" stroke="#1F2228" stroke-width="3"/>
-  <rect x="9" y="9" width="682" height="482" rx="16" ry="16" class="glass-bevel"/>
+  <rect x="5" y="5" width="690" height="490" rx="20" ry="20" fill="#09090B" stroke="#27272A" stroke-width="3"/>
+  <rect x="9" y="9" width="682" height="482" rx="16" ry="16" class="frame-bevel"/>
 
   <!-- Top Solar Panel Bar -->
   <rect x="18" y="16" width="664" height="46" rx="4" ry="4" class="solar-bg"/>
@@ -436,10 +436,10 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
       {/* Feedback Banner */}
       {feedback && (
         <div
-          className={`p-4 rounded-lg border text-xs flex items-center justify-between font-medium ${
+          className={`p-4 rounded-xl border text-xs flex items-center justify-between font-medium ${
             feedback.type === "success"
-              ? "border-[#FFFFFF]/40 bg-[#FFFFFF]/10 text-[#FFFFFF]"
-              : "border-red-800/40 bg-red-950/40 text-red-300"
+              ? "border-white bg-[#121215] text-white"
+              : "border-[#27272A] bg-[#121215] text-zinc-300"
           }`}
         >
           <span>{feedback.message}</span>
@@ -468,10 +468,7 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
             {/* The Physical Card Canvas (70mm x 50mm fixed ratio) */}
             <div
               dir="ltr"
-              className="w-[640px] h-[457px] rounded-[18px] border-2 border-[#1F2228] bg-[#000000] text-white p-4 relative flex flex-col justify-between select-none"
-              style={{
-                boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.08), 0 24px 48px rgba(0,0,0,0.9)",
-              }}
+              className="w-[640px] h-[457px] rounded-xl border-2 border-[#27272A] bg-[#09090B] text-white p-4 relative flex flex-col justify-between select-none"
             >
               {/* TOP: Black Solar Panel Bar */}
               <div className="w-full h-11 bg-[#03060B] border border-[#161B24] rounded-md flex items-center justify-between px-1 relative overflow-hidden shrink-0">
@@ -559,8 +556,8 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
                   </div>
                 </div>
 
-                {/* 3. RIGHT: Vertical Green Bar (TAPTAG.ONE) */}
-                <div className="w-11 bg-gradient-to-b from-[#FFFFFF] to-[#059669] rounded-md flex items-center justify-center shrink-0 relative overflow-hidden">
+                {/* 3. RIGHT: Vertical Accent Bar */}
+                <div className="w-11 bg-white text-[#09090B] rounded-md flex items-center justify-center shrink-0 relative overflow-hidden">
                   <span
                     className="font-bold text-sm tracking-widest text-white whitespace-nowrap select-none font-mono"
                     style={{
@@ -574,9 +571,9 @@ export function QRStudio({ lang = "ar", initialInventory = [], isLocal = true }:
 
               {/* Laser Cutting Guide (Red Hairline Overlay) */}
               {showCutMarks && (
-                <div className="absolute inset-1 rounded-[16px] border border-red-500/30 pointer-events-none flex items-center justify-between p-1">
-                  <span className="text-[8px] font-mono text-red-400">2mm Laser Bleed</span>
-                  <span className="text-[8px] font-mono text-red-400">70x50mm</span>
+                <div className="absolute inset-1 rounded-xl border border-[#27272A] pointer-events-none flex items-center justify-between p-1">
+                  <span className="text-[8px] font-mono text-zinc-400">2mm Laser Bleed</span>
+                  <span className="text-[8px] font-mono text-zinc-400">70x50mm</span>
                 </div>
               )}
             </div>
