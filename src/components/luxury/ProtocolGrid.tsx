@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { RefreshCw, Clock, Fingerprint, Printer, ArrowUpRight } from "lucide-react";
+import { Shield, PhoneCall, QrCode, Sparkles, ArrowLeftRight, ArrowUpRight } from "lucide-react";
 import { Language } from "@/types";
 import { SegmentedLedBar } from "@/components/ui/SegmentedLedBar";
 
@@ -15,47 +15,56 @@ export function ProtocolGrid({ lang }: ProtocolGridProps) {
 
   const modules = [
     {
+      meter: 96,
+      icon: Shield,
+      href: "/#secure-share",
+      title: isAr ? "01 مشاركة ملفات مشفرة" : "01 Secure File Share",
+      desc: isAr
+        ? "تشفير AES-256-GCM + رمز PIN + بصمة + حرق بعد التحميل."
+        : "Browser AES-256-GCM E2EE, scrypt PIN, WebAuthn & 1x burn.",
+    },
+    {
+      meter: 90,
+      icon: PhoneCall,
+      href: "/#link-extractor",
+      title: isAr ? "02 استخراج الأرقام والبيانات" : "02 Link & Phone Extractor",
+      desc: isAr
+        ? "سحب الهواتف والبريد وواتساب من أي رابط أو صفحة مع تصدير VCF."
+        : "Extract phone numbers, WhatsApp, emails, JSON-LD & export VCF/CSV.",
+    },
+    {
       meter: 92,
-      icon: RefreshCw,
+      icon: QrCode,
       href: "/#qr-workspace",
-      title: isAr ? "محتوى ديناميكي" : "Dynamic Payload",
+      title: isAr ? "03 استوديو QR الذكي" : "03 Dynamic Smart QR",
       desc: isAr
-        ? "رابط أو PDF أو Word مع تحديث الوجهة في أي وقت."
-        : "URL, PDF, Word, vCard, or Wi-Fi updated live anytime.",
+        ? "أكواد QR ديناميكية بشعار Mata AI أو taptag وتحديث فوري."
+        : "Dynamic QR with Mata AI or custom logos, PIN locks & SVG/PNG.",
     },
     {
-      meter: 78,
-      icon: Clock,
-      href: "/dashboard",
-      title: isAr ? "قواعد الانتهاء" : "Smart Expiration",
+      meter: 94,
+      icon: Sparkles,
+      href: "/#ai-mata",
+      title: isAr ? "04 محرك Mata AI الشامل" : "04 Unified Mata AI",
       desc: isAr
-        ? "تحديد عدد المسحات أو الإيقاف التلقائي بالزمن."
-        : "Max scan limits and scheduled time expiration.",
+        ? "مساعد ذكي موحد عبر جميع الأقسام بخط سوبرا الرياضي."
+        : "Cross-suite Mata AI copilot unifying security, extraction, QR & files.",
     },
     {
-      meter: 88,
-      icon: Fingerprint,
-      href: "/dashboard",
-      title: isAr ? "قفل البصمة وكلمة السر" : "PIN & Biometric Lock",
+      meter: 98,
+      icon: ArrowLeftRight,
+      href: "/#file-converter",
+      title: isAr ? "05 محول جميع الصيغ" : "05 All-Format Converter",
       desc: isAr
-        ? "حماية الوصول برمز سري أو بصمة الجهاز."
-        : "Protect links and files with PIN or device biometrics.",
-    },
-    {
-      meter: 84,
-      icon: Printer,
-      href: "/#qr-workspace",
-      title: isAr ? "شعار وتصدير فوري" : "Logo & Instant Export",
-      desc: isAr
-        ? "إضافة شعارك وتصدير SVG وPNG أو طباعة مباشرة."
-        : "Custom logo overlay with SVG, PNG, and print output.",
+        ? "تحويل الصور والوثائق والجداول والصوت والضغط ZIP/PDF/DOCX."
+        : "Convert Images, PDF, DOCX, XLSX, CSV, JSON, YAML, Audio & ZIP.",
     },
   ];
 
   return (
     <section id="pillars-section" className="w-full border-b border-[#27272A]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {modules.map((mod) => {
             const Icon = mod.icon;
             return (

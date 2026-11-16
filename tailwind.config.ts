@@ -49,6 +49,7 @@ const config: Config = {
         sans: ["var(--font-ibm-plex)", "var(--font-space-grotesk)", "sans-serif"],
         display: ["var(--font-space-grotesk)", "var(--font-ibm-plex)", "sans-serif"],
         mono: ["var(--font-space-grotesk)", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
+        mata: ["var(--font-mata)", "var(--font-ibm-plex)", "cursive", "sans-serif"],
       },
       boxShadow: {
         none: "none",

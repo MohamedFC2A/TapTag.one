@@ -7,6 +7,7 @@ import {
   SmartQrRecordLike,
   verifyUnlockToken,
 } from "@/lib/smart-qr";
+import { formatContentDisposition } from "@/lib/webauthn-gate";
 
 interface RouteContext {
   params: Promise<{ code: string }>;
@@ -60,7 +61,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
       (record.payloadType === "PDF"
         ? "application/pdf"
         : "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-    const safeName = (record.fileName || `${shortCode}.bin`).replace(/[^\w.\-\u0600-\u06FF ]+/g, "_");
+    const rawName = record.fileName || `${shortCode}.bin`;
     const disposition =
       !forceDownload && mimeType === "application/pdf" ? "inline" : "attachment";
 
@@ -68,7 +69,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
       status: 200,
       headers: {
         "Content-Type": mimeType,
-        "Content-Disposition": `${disposition}; filename="${encodeURIComponent(safeName)}"`,
+        "Content-Disposition": formatContentDisposition(disposition, rawName),
+        "X-Content-Type-Options": "nosniff",
         "Cache-Control": "no-store",
       },
     });

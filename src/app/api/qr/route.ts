@@ -23,7 +23,7 @@ const CreateQrSchema = z.object({
   fileSize: z.number().int().nonnegative().max(6_500_000).nullable().optional(),
   fileDataBase64: z.string().max(9_000_000).nullable().optional(),
   payloadData: z.record(z.any()).nullable().optional(),
-  logoPreset: z.enum(["NONE", "TAPTAG", "CUSTOM"]).default("NONE"),
+  logoPreset: z.enum(["NONE", "MATA", "TAPTAG", "CUSTOM"]).default("NONE"),
   logoDataUrl: z.string().max(1_500_000).nullable().optional(),
   frameCaption: z.string().trim().max(48).nullable().optional(),
   qrStyle: z

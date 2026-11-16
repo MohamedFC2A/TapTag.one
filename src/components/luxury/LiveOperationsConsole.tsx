@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { RefreshCw, ExternalLink } from "lucide-react";
 import { Language } from "@/types";
-import { SegmentedLedBar } from "@/components/ui/SegmentedLedBar";
 
 interface LiveOperationsConsoleProps {
   lang: Language;
@@ -62,9 +61,11 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
     <section id="simulator-section" className="w-full py-10 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center justify-between gap-4 pb-3 border-b border-[#27272A]">
-          <h2 className="text-lg sm:text-xl font-display font-bold text-[#FFFFFF]">
-            {isAr ? "سجل المسح الأخير" : "Recent Scans"}
-          </h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-lg sm:text-xl font-display font-bold text-[#FFFFFF]">
+              {isAr ? "سجل المسح الأخير" : "Recent Scans"}
+            </h2>
+          </div>
 
           <button
             type="button"
@@ -77,10 +78,6 @@ export function LiveOperationsConsole({ lang }: LiveOperationsConsoleProps) {
         </div>
 
         <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden flex flex-col">
-          <SegmentedLedBar
-            level={scans.length > 0 ? 85 : 35}
-            cells={28}
-          />
 
           <div className="overflow-x-auto">
             <table className="w-full text-start border-collapse">

@@ -15,6 +15,7 @@ import {
   toSmartQrPublicDTO,
   verifyPin,
 } from "@/lib/smart-qr";
+import { issueBiometricChallenge, verifyBiometricGateProof } from "@/lib/webauthn-gate";
 
 interface RouteContext {
   params: Promise<{ code: string }>;
@@ -22,7 +23,13 @@ interface RouteContext {
 
 const UnlockSchema = z.object({
   pin: z.string().optional(),
-  biometricVerified: z.boolean().optional(),
+  biometricProof: z
+    .object({
+      challengeToken: z.string().min(10).max(500),
+      clientDataJSON: z.string().min(10).max(4000),
+      attestationObject: z.string().min(20).max(16000),
+    })
+    .optional(),
 });
 
 const PatchQrSchema = z.object({
@@ -34,7 +41,7 @@ const PatchQrSchema = z.object({
   fileSize: z.number().int().nonnegative().max(6_500_000).nullable().optional(),
   fileDataBase64: z.string().max(9_000_000).nullable().optional(),
   payloadData: z.record(z.any()).nullable().optional(),
-  logoPreset: z.enum(["NONE", "TAPTAG", "CUSTOM"]).optional(),
+  logoPreset: z.enum(["NONE", "MATA", "TAPTAG", "CUSTOM"]).optional(),
   logoDataUrl: z.string().max(1_500_000).nullable().optional(),
   frameCaption: z.string().trim().max(48).nullable().optional(),
   qrStyle: z
@@ -125,10 +132,15 @@ export async function GET(request: NextRequest, context: RouteContext) {
     }
 
     if (isLocked) {
+      const challengePayload = record.biometricEnabled
+        ? issueBiometricChallenge("QR", shortCode)
+        : null;
       return NextResponse.json({
         qr: toSmartQrPublicDTO(record, true),
         locked: true,
         available: true,
+        biometricChallenge: challengePayload?.challenge || null,
+        biometricChallengeToken: challengePayload?.challengeToken || null,
       });
     }
 
@@ -204,15 +216,18 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     const pinValid = record.pinHash
       ? Boolean(parsed.data.pin && verifyPin(parsed.data.pin, record.pinHash))
-      : false;
+      : true;
     const bioValid = record.biometricEnabled
-      ? Boolean(parsed.data.biometricVerified)
-      : false;
+      ? verifyBiometricGateProof({
+          scope: "QR",
+          code: shortCode,
+          proof: parsed.data.biometricProof,
+          requestHost: headerList.get("x-forwarded-host") || headerList.get("host"),
+          requestOrigin: headerList.get("origin"),
+        })
+      : true;
 
-    const unlocked =
-      (record.pinHash && pinValid) ||
-      (record.biometricEnabled && bioValid) ||
-      (!record.pinHash && !record.biometricEnabled);
+    const unlocked = pinValid && bioValid;
 
     if (!unlocked) {
       await db.$executeRawUnsafe(
@@ -239,13 +254,20 @@ export async function POST(request: NextRequest, context: RouteContext) {
       record.id
     );
 
+    const accessAction =
+      record.biometricEnabled && parsed.data.biometricProof
+        ? record.pinHash
+          ? "PIN_BIO_UNLOCKED"
+          : "BIO_UNLOCKED"
+        : "PIN_UNLOCKED";
+
     await db.$executeRawUnsafe(
       `INSERT INTO "SmartQrScan" ("id", "qrId", "deviceOs", "accessResult", "ipHash")
        VALUES ($1, $2, $3, $4, $5)`,
       `scn_${crypto.randomBytes(6).toString("hex")}`,
       record.id,
       deviceOs,
-      bioValid ? "BIO_UNLOCKED" : "PIN_UNLOCKED",
+      accessAction,
       ipHash
     );
 

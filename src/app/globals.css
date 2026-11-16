@@ -130,18 +130,18 @@ body {
   border: 1px solid #27272A;
 }
 
-/* Segmented LED Step Animation (Pure opacity stepping, zero blur) */
-@keyframes ledCellPulse {
+/* Segmented LED Step Animation — active ONLY during genuine async processing */
+@keyframes ledWorkPulse {
   0%, 100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.45;
+    opacity: 0.42;
   }
 }
 
-.hw-led-head {
-  animation: ledCellPulse 1.4s steps(2, end) infinite;
+.hw-led-working {
+  animation: ledWorkPulse 0.75s ease-in-out infinite;
 }
 
 /* Oscillating audio frequency bars for VoIP call simulator */
@@ -197,6 +197,16 @@ body {
   font-weight: 900;
   letter-spacing: -0.04em;
   text-transform: lowercase !important;
+}
+
+/* Supra-Inspired Flowing Brush Script Typography for "AI mata" across ALL sections */
+.font-mata {
+  font-family: var(--font-mata), var(--font-ibm-plex), cursive, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  display: inline-block;
+  transform: skewX(-11deg) scaleX(1.1) scaleY(0.92);
+  transform-origin: center;
 }
 
 /* Clean Print Mode: Prints only the high-contrast QR specimen card cleanly */

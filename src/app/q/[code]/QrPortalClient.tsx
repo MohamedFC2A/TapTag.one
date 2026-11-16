@@ -34,35 +34,49 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
   const isAr = lang === "ar";
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<"NOT_FOUND" | "LOAD_FAILED" | "NETWORK" | null>(null);
   const [qr, setQr] = useState<SmartQrPublicDTO | null>(null);
   const [locked, setLocked] = useState(false);
   const [available, setAvailable] = useState(true);
   const [reason, setReason] = useState<string | null>(null);
   const [unlockToken, setUnlockToken] = useState<string | null>(null);
+  const [bioChallenge, setBioChallenge] = useState<string | null>(null);
+  const [bioChallengeToken, setBioChallengeToken] = useState<string | null>(null);
+  const [collectedBioProof, setCollectedBioProof] = useState<{
+    challengeToken: string;
+    clientDataJSON: string;
+    attestationObject: string;
+  } | null>(null);
 
   const [pinInput, setPinInput] = useState("");
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const [unlocking, setUnlocking] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const error =
+    errorCode === "NOT_FOUND"
+      ? isAr
+        ? "رمز QR غير موجود."
+        : "QR code not found."
+      : errorCode === "LOAD_FAILED"
+      ? isAr
+        ? "تعذر تحميل بيانات الكود."
+        : "Failed to resolve Smart QR."
+      : errorCode === "NETWORK"
+      ? isAr
+        ? "خطأ في الاتصال بالخادم."
+        : "Network error."
+      : null;
+
   const resolveQr = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setErrorCode(null);
     try {
       const res = await fetch(`/api/qr/${encodeURIComponent(shortCode)}`, {
         cache: "no-store",
       });
       if (!res.ok) {
-        setError(
-          res.status === 404
-            ? isAr
-              ? "رمز QR غير موجود."
-              : "QR code not found."
-            : isAr
-            ? "تعذر تحميل بيانات الكود."
-            : "Failed to resolve Smart QR."
-        );
+        setErrorCode(res.status === 404 ? "NOT_FOUND" : "LOAD_FAILED");
         return;
       }
       const data = await res.json();
@@ -71,12 +85,15 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
       setAvailable(Boolean(data.available));
       setReason(data.reason || null);
       setUnlockToken(data.unlockToken || null);
+      setBioChallenge(data.biometricChallenge || null);
+      setBioChallengeToken(data.biometricChallengeToken || null);
+      setCollectedBioProof(null);
     } catch {
-      setError(isAr ? "خطأ في الاتصال بالخادم." : "Network error.");
+      setErrorCode("NETWORK");
     } finally {
       setLoading(false);
     }
-  }, [shortCode, isAr]);
+  }, [shortCode]);
 
   useEffect(() => {
     resolveQr();
@@ -92,16 +109,42 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
     }
   }, [loading, locked, available, qr]);
 
+  const bytesToB64Url = (buf: ArrayBuffer): string => {
+    const bytes = new Uint8Array(buf);
+    let bin = "";
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  };
+
+  const b64UrlToBytes = (b64url: string): Uint8Array => {
+    const pad = b64url.length % 4 === 0 ? "" : "=".repeat(4 - (b64url.length % 4));
+    const bin = atob(b64url.replace(/-/g, "+").replace(/_/g, "/") + pad);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  };
+
   const handlePinUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pinInput.trim()) return;
+    if (qr?.biometricEnabled && !collectedBioProof) {
+      setUnlockError(
+        isAr
+          ? "هذا الكود محمي بالبصمة مع رمز PIN — اضغط التحقق بالبصمة لإكمال فتح القفل."
+          : "Biometric verification is also required — click Verify Biometric after entering PIN."
+      );
+      return;
+    }
     setUnlockError(null);
     setUnlocking(true);
     try {
       const res = await fetch(`/api/qr/${encodeURIComponent(shortCode)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pin: pinInput.trim() }),
+        body: JSON.stringify({
+          pin: pinInput.trim(),
+          biometricProof: collectedBioProof || undefined,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -122,29 +165,48 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
 
   const handleBiometricUnlock = async () => {
     setUnlockError(null);
+    if (qr?.hasPin && !pinInput.trim()) {
+      setUnlockError(
+        isAr
+          ? "أدخل رمز PIN أعلاه أولاً ثم اضغط التحقق بالبصمة."
+          : "Enter PIN above first, then click Verify Biometric."
+      );
+      return;
+    }
+    if (!bioChallenge || !bioChallengeToken) {
+      setUnlockError(
+        isAr ? "تعذر إصدار تحدي البصمة من الخادم — أعد المحاولة." : "Missing server biometric challenge."
+      );
+      return;
+    }
     setUnlocking(true);
     try {
-      let bioPassed = false;
+      let proof: {
+        challengeToken: string;
+        clientDataJSON: string;
+        attestationObject: string;
+      } | null = null;
 
       if (typeof window !== "undefined" && window.PublicKeyCredential && navigator.credentials) {
         try {
-          const challenge = new Uint8Array(32);
-          window.crypto.getRandomValues(challenge);
+          const challenge = b64UrlToBytes(bioChallenge);
+          const rpId =
+            window.location.hostname === "127.0.0.1" ? undefined : window.location.hostname;
           const userId = new TextEncoder().encode(`unlock_${shortCode}`.slice(0, 16));
-          const cred = await navigator.credentials.create({
+          const cred = (await navigator.credentials.create({
             publicKey: {
-              challenge,
+              challenge: challenge.buffer.slice(
+                challenge.byteOffset,
+                challenge.byteOffset + challenge.byteLength
+              ) as ArrayBuffer,
               rp: {
-                name: "taptag.",
-                id:
-                  window.location.hostname === "localhost"
-                    ? "localhost"
-                    : window.location.hostname,
+                name: "AI mata",
+                ...(rpId ? { id: rpId } : {}),
               },
               user: {
                 id: userId,
                 name: `gate_${shortCode.toLowerCase()}`,
-                displayName: `taptag. (${shortCode})`,
+                displayName: `AI mata (${shortCode})`,
               },
               pubKeyCredParams: [
                 { alg: -7, type: "public-key" },
@@ -156,8 +218,15 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
               },
               timeout: 45000,
             },
-          });
-          if (cred) bioPassed = true;
+          })) as PublicKeyCredential | null;
+          if (cred && cred.response) {
+            const attResp = cred.response as AuthenticatorAttestationResponse;
+            proof = {
+              challengeToken: bioChallengeToken,
+              clientDataJSON: bytesToB64Url(attResp.clientDataJSON),
+              attestationObject: bytesToB64Url(attResp.attestationObject),
+            };
+          }
         } catch (err) {
           const name = err instanceof Error ? err.name : "";
           if (name === "NotAllowedError") {
@@ -167,11 +236,11 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
             setUnlocking(false);
             return;
           }
-          bioPassed = false;
+          proof = null;
         }
       }
 
-      if (!bioPassed) {
+      if (!proof) {
         setUnlockError(
           isAr
             ? "حساس البصمة غير متاح على هذا المتصفح."
@@ -181,10 +250,15 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
         return;
       }
 
+      setCollectedBioProof(proof);
+
       const res = await fetch(`/api/qr/${encodeURIComponent(shortCode)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ biometricVerified: true }),
+        body: JSON.stringify({
+          ...(qr?.hasPin ? { pin: pinInput.trim() } : {}),
+          biometricProof: proof,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -261,14 +335,14 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
       <main className="flex-1 relative z-10 w-full max-w-2xl mx-auto px-4 sm:px-6 py-12">
         {loading ? (
           <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
-            <SegmentedLedBar level={45} cells={24} active />
+            <SegmentedLedBar level={45} status="working" label="RESOLVING" />
             <div className="p-10 text-center font-mono text-xs text-[#A1A1AA]">
               {isAr ? "جارٍ الفتح..." : "Loading..."}
             </div>
           </div>
         ) : error || !qr ? (
           <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
-            <SegmentedLedBar level={12} cells={24} />
+            <SegmentedLedBar level={20} status="error" label="UNAVAILABLE" />
             <div className="p-8 text-center space-y-5">
               <div className="w-12 h-12 rounded-xl border border-[#27272A] bg-[#09090B] flex items-center justify-center mx-auto">
                 <ShieldAlert className="w-5 h-5 text-[#FFFFFF]" />
@@ -290,7 +364,7 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
           </div>
         ) : !available ? (
           <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
-            <SegmentedLedBar level={15} cells={24} />
+            <SegmentedLedBar level={15} status="error" label={reason || "BLOCKED"} />
             <div className="p-8 text-center space-y-5">
               <div className="w-12 h-12 rounded-xl border border-[#27272A] bg-[#09090B] flex items-center justify-center mx-auto">
                 <Clock className="w-5 h-5 text-[#FFFFFF]" />
@@ -323,10 +397,15 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
           </div>
         ) : locked ? (
           <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
-            <SegmentedLedBar level={70} cells={24} label={qr.shortCode} active />
+            <SegmentedLedBar
+              level={unlocking ? 65 : pinInput.trim() ? 80 : 40}
+              status={unlocking ? "working" : unlockError ? "error" : "active"}
+              label={qr.shortCode}
+              metricText={qr.biometricEnabled && qr.hasPin ? "PIN + BIO" : qr.hasPin ? "PIN LOCK" : "BIO LOCK"}
+            />
             <div className="p-6 sm:p-8 space-y-6">
               <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#27272A]">
-                <div className="space-y-1 text-start">
+                <div className="space-y-1.5 text-start">
                   <span className="text-[11px] font-mono uppercase text-[#71717A] block">
                     {qr.shortCode} · {qr.payloadType}
                   </span>
@@ -389,7 +468,7 @@ export function QrPortalClient({ shortCode }: QrPortalClientProps) {
           </div>
         ) : (
           <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
-            <SegmentedLedBar level={100} cells={24} label={qr.shortCode} active />
+            <SegmentedLedBar level={100} status="success" label={qr.shortCode} metricText="VERIFIED" />
             <div className="p-6 sm:p-8 space-y-6 text-start">
               <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#27272A]">
                 <div className="space-y-1">

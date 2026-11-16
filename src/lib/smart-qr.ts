@@ -247,7 +247,7 @@ export interface SmartQrPublicDTO {
   hasFileData: boolean;
   payloadData: Record<string, unknown> | null;
   logoDataUrl: string | null;
-  logoPreset: "NONE" | "TAPTAG" | "CUSTOM";
+  logoPreset: "NONE" | "MATA" | "TAPTAG" | "CUSTOM";
   frameCaption: string | null;
   qrStyle: QrStyleConfig | null;
   autoRedirect: boolean;

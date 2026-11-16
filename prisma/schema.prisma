@@ -190,3 +190,45 @@ model SmartQrScan {
   @@index([qrId])
   @@index([createdAt])
 }
+
+model SecureShare {
+  id               String           @id @default(cuid())
+  shareCode        String           @unique
+  title            String
+  fileName         String
+  fileMimeType     String
+  fileSize         Int
+  fileSha256       String
+  fileDataBase64   String           @db.Text
+  isEncrypted      Boolean          @default(false)
+  encryptionMeta   Json?
+  pinHash          String?
+  biometricEnabled Boolean          @default(false)
+  maxDownloads     Int?
+  downloadCount    Int              @default(0)
+  burnAfterRead    Boolean          @default(false)
+  expiresAt        DateTime?
+  isActive         Boolean          @default(true)
+  aiSummary        String?          @db.Text
+  lastAccessedAt   DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  logs             SecureShareLog[]
+
+  @@index([shareCode])
+  @@index([isActive])
+}
+
+model SecureShareLog {
+  id        String      @id @default(cuid())
+  shareId   String
+  share     SecureShare @relation(fields: [shareId], references: [id], onDelete: Cascade)
+  deviceOs  String
+  action    String      @default("VIEW")
+  ipHash    String
+  createdAt DateTime    @default(now())
+
+  @@index([shareId])
+  @@index([createdAt])
+}

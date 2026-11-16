@@ -1,0 +1,34 @@
+# TapTag.one — Full Corporate & Technical Directory
+
+> TapTag.one is a unified web security, Smart QR, phone extraction, universal file conversion, and Mata AI workspace Built By Matany Group (المطعني جروب) and developed by Mohamed Matany (محمد مطعني).
+
+---
+
+## Corporate & Developer Identity
+
+- **Corporate Umbrella**: Matany Group (المطعني جروب) — Established 2019
+- **Corporate Portal**: https://matanygroup.com
+- **Corporate Email**: support@matanygroup.com
+- **Founder & Lead Developer**: Mohamed Matany (محمد مطعني / محمد أحمد مطعني)
+- **Developer Contact**: mo@matany.one
+
+---
+
+## Core Capabilities & Mata AI
+
+1. **AES-256-GCM Encrypted File Share** — Client-side zero-knowledge encryption with PIN & WebAuthn biometrics.
+2. **Link & Phone Extractor** — Structured extraction of phone numbers, WhatsApp links, emails, and JSON-LD contacts.
+3. **Dynamic Smart QR Studio** — Custom branded QR codes featuring the Mata AI calligraphic emblem (`Kaushan_Script` + vector paths).
+4. **Mata AI** — Cross-suite intelligent copilot unifying file auditing, contact structuring, QR generation, and conversion.
+5. **All-Format Converter** — Instant client-side and server-side document, spreadsheet, media, and archive conversion.
+
+---
+
+## Matany Group Umbrella Platforms (Connected Ecosystem)
+
+- **Matany Group**: https://matanygroup.com
+- **TapTag.one**: https://taptag.one
+- **UpStore.one**: https://upstore.one
+- **Matany.one**: https://matany.one
+- **e7dar.com**: https://e7dar.com
+- **brand.one**: https://brand.one

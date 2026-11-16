@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
   Link2,
@@ -29,6 +29,8 @@ import {
 } from "lucide-react";
 import { Language } from "@/types";
 import { SegmentedLedBar } from "@/components/ui/SegmentedLedBar";
+import { MataLogo, MataSectionHeader } from "@/components/ui/MataLogo";
+import type { QrPrefillEventDetail } from "@/lib/mata-events";
 import {
   QrRenderMatrix,
   buildExportQrSvg,
@@ -40,7 +42,7 @@ interface ExecutiveHeroProps {
   lang: Language;
 }
 
-type LogoPreset = "NONE" | "TAPTAG" | "CUSTOM";
+type LogoPreset = "NONE" | "MATA" | "TAPTAG" | "CUSTOM";
 type ModuleShape = "square" | "dots";
 
 interface MultiLinkItem {
@@ -108,6 +110,38 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
     typeof window !== "undefined" ? window.location.origin : "https://taptag.one";
 
   const dynamicResolveUrl = savedCode ? `${origin}/q/${savedCode}` : null;
+
+  const applyQrPrefill = (detail: QrPrefillEventDetail) => {
+    if (detail.payloadType) setPayloadType(detail.payloadType);
+    if (detail.title !== undefined) setTitle(detail.title);
+    if (detail.destinationUrl !== undefined) setDestinationUrl(detail.destinationUrl);
+    if (detail.fullName !== undefined) setVcardName(detail.fullName);
+    if (detail.phone !== undefined) setVcardPhone(detail.phone);
+    if (detail.email !== undefined) setVcardEmail(detail.email);
+    if (detail.ssid !== undefined) setWifiSsid(detail.ssid);
+    if (detail.password !== undefined) setWifiPass(detail.password);
+    if (detail.encryption !== undefined) setWifiEnc(detail.encryption);
+    if (detail.text !== undefined) setTextContent(detail.text);
+    if (detail.logoPreset) setLogoPreset(detail.logoPreset);
+    if (detail.frameCaption !== undefined) setFrameCaption(detail.frameCaption);
+    if (detail.pin && detail.pin.trim().length >= 3) {
+      setPinEnabled(true);
+      setPinCode(detail.pin.trim());
+    }
+    setSavedCode(null);
+    setStatusError(null);
+  };
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const custom = event as CustomEvent<QrPrefillEventDetail>;
+      if (custom.detail) {
+        applyQrPrefill(custom.detail);
+      }
+    };
+    window.addEventListener("mata:prefill-qr", handler);
+    return () => window.removeEventListener("mata:prefill-qr", handler);
+  }, []);
 
   const qrEncodedValue = useMemo(() => {
     if (dynamicResolveUrl) return dynamicResolveUrl;
@@ -397,32 +431,70 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
   return (
     <>
       <section id="qr-workspace" className="hw-no-print w-full border-b border-[#27272A]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* LEFT COLUMN: Effortless Dynamic QR Workspace */}
-          <div className="lg:col-span-7 space-y-5 text-start">
-            <div className="flex items-center justify-between gap-4">
-              <h1 className="text-3xl sm:text-4xl font-display font-bold tracking-tight text-[#FFFFFF]">
-                {isAr ? "أنشئ رمز QR ديناميكي فوراً" : "Dynamic Smart QR"}
-              </h1>
-              {savedCode && (
-                <button
-                  type="button"
-                  onClick={handleResetBuilder}
-                  className="h-9 px-3 rounded-lg border border-[#27272A] bg-[#121215] text-xs font-mono text-[#A1A1AA] hover:text-[#FFFFFF] hover:border-[#FFFFFF] inline-flex items-center gap-1.5 transition-all duration-150 cursor-pointer shrink-0"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>{isAr ? "جديد" : "New"}</span>
-                </button>
-              )}
-            </div>
-
-            <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
-              <SegmentedLedBar
-                level={savedCode ? 100 : pinEnabled || bioEnabled ? 88 : 74}
-                cells={28}
-                label={savedCode || undefined}
-                active
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="flex-1">
+              <MataSectionHeader
+                sectionNumber="03"
+                titleAr="استوديو QR الذكي الديناميكي"
+                titleEn="Dynamic Smart QR Studio"
+                subtitleAr="أنشئ رمز QR ديناميكياً للروابط أو الملفات أو جهات الاتصال أو Wi-Fi مع شعار Mata AI وقفل PIN وبصمة."
+                subtitleEn="Create dynamic QR codes for URLs, documents, vCards, or Wi-Fi with Mata AI branding, PIN/biometrics, and SVG/PNG exports."
+                isAr={isAr}
+                badgeText="DYNAMIC QR // LEVEL H"
               />
+            </div>
+            {savedCode && (
+              <button
+                type="button"
+                onClick={handleResetBuilder}
+                className="h-9 px-3 rounded-lg border border-[#27272A] bg-[#121215] text-xs font-mono text-[#A1A1AA] hover:text-[#FFFFFF] hover:border-[#FFFFFF] inline-flex items-center gap-1.5 transition-all duration-150 cursor-pointer shrink-0 self-start sm:self-end"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>{isAr ? "جديد" : "New"}</span>
+              </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* LEFT COLUMN: Effortless Dynamic QR Workspace */}
+            <div className="lg:col-span-7 space-y-4 text-start">
+              <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
+              {(() => {
+                const readinessScore =
+                  (qrEncodedValue.trim() ? 45 : 0) +
+                  (pinEnabled ? (pinCode.trim().length >= 3 ? 25 : 10) : 0) +
+                  (bioEnabled ? 15 : 0) +
+                  (logoPreset !== "NONE" ? 15 : 0);
+                return (
+                  <SegmentedLedBar
+                    level={isSaving ? 60 : savedCode ? 100 : readinessScore}
+                    status={
+                      isSaving
+                        ? "working"
+                        : statusError
+                        ? "error"
+                        : savedCode
+                        ? "success"
+                        : readinessScore > 0
+                        ? "active"
+                        : "idle"
+                    }
+                    label={savedCode || payloadType}
+                    metricText={
+                      savedCode
+                        ? "SAVED"
+                        : pinEnabled && bioEnabled
+                        ? "PIN + BIO"
+                        : pinEnabled
+                        ? "PIN"
+                        : bioEnabled
+                        ? "BIO"
+                        : "LEVEL H"
+                    }
+                  />
+                );
+              })()}
 
               <div className="p-4 sm:p-5 space-y-4">
                 {/* 1. Content Type */}
@@ -882,6 +954,20 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
                       </button>
                       <button
                         type="button"
+                        onClick={() => setLogoPreset("MATA")}
+                        className={`h-8 px-2.5 rounded-md border inline-flex items-center justify-center cursor-pointer ${
+                          logoPreset === "MATA"
+                            ? "bg-[#FFFFFF] text-[#09090B] border-[#FFFFFF]"
+                            : "bg-[#121215] text-[#A1A1AA] border-[#27272A] hover:text-[#FFFFFF]"
+                        }`}
+                      >
+                        <MataLogo
+                          size="xs"
+                          variant={logoPreset === "MATA" ? "light" : "dark"}
+                        />
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => setLogoPreset("TAPTAG")}
                         className={`h-8 px-2.5 rounded-md border cursor-pointer ${
                           logoPreset === "TAPTAG"
@@ -1000,8 +1086,6 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
           {/* RIGHT COLUMN: Live Hardware-Style QR Preview Card */}
           <div className="lg:col-span-5">
             <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
-              <SegmentedLedBar level={savedCode ? 100 : 88} cells={24} />
-
               <div className="p-5 sm:p-6 space-y-5">
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#27272A]">
                   <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md border border-[#27272A] bg-[#09090B] text-[11px] font-mono font-semibold text-[#FFFFFF]">
@@ -1121,13 +1205,20 @@ export function ExecutiveHero({ lang }: ExecutiveHeroProps) {
               </div>
             </div>
           </div>
+          </div>
         </div>
       </section>
 
       {/* Clean Dedicated Print Label Sheet (Hidden on screen, visible ONLY during window.print()) */}
       <div className="hidden hw-print-sheet" aria-hidden="true">
         <div className="border-2 border-[#09090B] rounded-xl p-8 flex flex-col items-center gap-4 bg-[#FFFFFF] text-[#09090B]">
-          <span className="font-taptag text-2xl text-[#09090B]">taptag.</span>
+          {logoPreset === "MATA" ? (
+            <MataLogo size="md" variant="light" />
+          ) : (
+            <span className="font-taptag text-2xl text-[#09090B]">
+              taptag.
+            </span>
+          )}
           <QrRenderMatrix
             value={qrEncodedValue}
             logoPreset={logoPreset}

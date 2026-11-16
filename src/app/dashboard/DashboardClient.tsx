@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import jsQR from "jsqr";
 import {
   Plus,
   Edit3,
@@ -16,13 +18,23 @@ import {
   Search,
   Eye,
   RotateCcw,
+  Camera,
+  QrCode,
+  Shield,
+  RefreshCw,
+  Copy,
+  Check,
+  AlertCircle,
 } from "lucide-react";
 import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import { SegmentedLedBar } from "@/components/ui/SegmentedLedBar";
 import { QrRenderMatrix, buildExportQrPngDataUrl, buildExportQrSvg } from "@/components/qr/QrRenderMatrix";
 import type { SmartQrPublicDTO } from "@/lib/smart-qr";
+import type { SecureSharePublicDTO } from "@/lib/secure-share";
 import type { Language } from "@/types";
+
+export type HubTab = "CODES" | "SCAN" | "SHARES";
 
 interface ScanLogRow {
   id: string;
@@ -31,11 +43,19 @@ interface ScanLogRow {
   createdAt: string;
 }
 
-export function DashboardClient() {
+interface DashboardClientProps {
+  initialTab?: HubTab;
+}
+
+export function DashboardClient({ initialTab = "CODES" }: DashboardClientProps) {
+  const router = useRouter();
   const [lang, setLang] = useState<Language>("ar");
   const isAr = lang === "ar";
+  const [activeTab, setActiveTab] = useState<HubTab>(initialTab);
 
   const [qrs, setQrs] = useState<SmartQrPublicDTO[]>([]);
+  const [shares, setShares] = useState<SecureSharePublicDTO[]>([]);
+  const [cachedKeyFragments, setCachedKeyFragments] = useState<Record<string, string>>({});
   const [stats, setStats] = useState({
     total: 0,
     active: 0,
@@ -43,9 +63,23 @@ export function DashboardClient() {
     totalScans: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [loadingShares, setLoadingShares] = useState(true);
   const [filterType, setFilterType] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<"newest" | "scans">("newest");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Scanner Tab State (merged from /scan)
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const uploadInputRef = useRef<HTMLInputElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const animRef = useRef<number | null>(null);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
+  const [manualInput, setManualInput] = useState("");
+  const [decodedResult, setDecodedResult] = useState<string | null>(null);
+  const [copiedScan, setCopiedScan] = useState(false);
 
   // Inspect Modal (live QR preview + per-QR scan telemetry)
   const [inspectingQr, setInspectingQr] = useState<SmartQrPublicDTO | null>(null);
@@ -70,21 +104,202 @@ export function DashboardClient() {
 
   const loadData = useCallback(async () => {
     try {
-      const res = await fetch("/api/qr", { cache: "no-store" });
-      if (!res.ok) return;
-      const data = await res.json();
-      setQrs(data.qrs || []);
-      if (data.stats) setStats(data.stats);
+      const [qrRes, shareRes] = await Promise.all([
+        fetch("/api/qr", { cache: "no-store" }),
+        fetch("/api/share", { cache: "no-store" }),
+      ]);
+      if (qrRes.ok) {
+        const data = await qrRes.json();
+        setQrs(data.qrs || []);
+        if (data.stats) setStats(data.stats);
+      }
+      if (shareRes.ok) {
+        const shareData = await shareRes.json();
+        if (Array.isArray(shareData.shares)) {
+          setShares(shareData.shares);
+          if (typeof window !== "undefined") {
+            const map: Record<string, string> = {};
+            for (const item of shareData.shares as SecureSharePublicDTO[]) {
+              try {
+                const cached = sessionStorage.getItem(`mata_share_key_${item.shareCode}`);
+                if (cached) map[item.shareCode] = cached;
+              } catch {
+                // ignore storage errors
+              }
+            }
+            setCachedKeyFragments(map);
+          }
+        }
+      }
     } catch {
       // silent
     } finally {
       setLoading(false);
+      setLoadingShares(false);
     }
   }, []);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  const stopCamera = useCallback(() => {
+    if (animRef.current) cancelAnimationFrame(animRef.current);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+    setCameraActive(false);
+  }, []);
+
+  const handleDecoded = useCallback(
+    (rawText: string) => {
+      const clean = rawText.trim();
+      if (!clean) return;
+      setDecodedResult(clean);
+      stopCamera();
+      if (clean.includes("/q/")) {
+        const code = clean.split("/q/").pop()?.split(/[?#]/)[0]?.toUpperCase();
+        if (code) {
+          router.push(`/q/${code}`);
+        }
+      }
+    },
+    [router, stopCamera]
+  );
+
+  const startCamera = async (facing: "environment" | "user") => {
+    setCameraError(null);
+    setDecodedResult(null);
+    try {
+      stopCamera();
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 720 } },
+      });
+      streamRef.current = stream;
+      setCameraActive(true);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+    } catch {
+      setCameraActive(false);
+      setCameraError(
+        isAr
+          ? "تعذر فتح الكاميرا — يمكنك رفع صورة رمز QR أو إدخال الكود يدوياً أدناه."
+          : "Camera unavailable — upload a QR image or enter the code below."
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (!cameraActive) return;
+    let active = true;
+    const tick = () => {
+      if (!active) return;
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      if (video && video.readyState === video.HAVE_ENOUGH_DATA && canvas) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(img.data, img.width, img.height);
+          if (code?.data) {
+            handleDecoded(code.data);
+            return;
+          }
+        }
+      }
+      animRef.current = requestAnimationFrame(tick);
+    };
+    animRef.current = requestAnimationFrame(tick);
+    return () => {
+      active = false;
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+    };
+  }, [cameraActive, handleDecoded]);
+
+  useEffect(() => {
+    if (activeTab !== "SCAN") stopCamera();
+  }, [activeTab, stopCamera]);
+
+  useEffect(() => {
+    return () => stopCamera();
+  }, [stopCamera]);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCameraError(null);
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width || 512;
+      canvas.height = img.height || 512;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        if (code?.data) {
+          handleDecoded(code.data);
+        } else {
+          setCameraError(
+            isAr ? "لم يتم العثور على رمز QR واضح داخل الصورة." : "No readable QR code found in image."
+          );
+        }
+      }
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      setCameraError(isAr ? "تعذر قراءة ملف الصورة." : "Could not load image file.");
+    };
+    img.src = url;
+  };
+
+  const handleManualLookup = (e: React.FormEvent) => {
+    e.preventDefault();
+    const val = manualInput.trim().toUpperCase();
+    if (!val) return;
+    if (val.includes("/Q/")) {
+      const code = val.split("/Q/").pop()?.split(/[?#]/)[0];
+      if (code) router.push(`/q/${code}`);
+      return;
+    }
+    router.push(`/q/${val}`);
+  };
+
+  const handleCopyScan = async () => {
+    if (!decodedResult) return;
+    try {
+      await navigator.clipboard.writeText(decodedResult);
+      setCopiedScan(true);
+      setTimeout(() => setCopiedScan(false), 1600);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleToggleShare = async (item: SecureSharePublicDTO) => {
+    await fetch(`/api/share/${encodeURIComponent(item.shareCode)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isActive: !item.isActive }),
+    });
+    await loadData();
+  };
+
+  const handleDeleteShare = async (item: SecureSharePublicDTO) => {
+    await fetch(`/api/share/${encodeURIComponent(item.shareCode)}`, {
+      method: "DELETE",
+    });
+    await loadData();
+  };
 
   const openInspectModal = async (item: SmartQrPublicDTO) => {
     setInspectingQr(item);
@@ -264,95 +479,138 @@ export function DashboardClient() {
       <Header lang={lang} onLanguageChange={setLang} />
 
       <main className="flex-1 relative z-10 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-10 space-y-6">
-        {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-[#27272A]">
-          <div className="text-start">
+        {/* Unified Hub Top Header & Mode Switcher */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-[#27272A]">
+          <div className="text-start space-y-1">
             <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#FFFFFF]">
-              {isAr ? "إدارة الأكواد" : "QR Codes"}
+              {activeTab === "SCAN"
+                ? isAr
+                  ? "فاحص وقارئ رموز QR"
+                  : "QR Scanner"
+                : activeTab === "SHARES"
+                ? isAr
+                  ? "الملفات المشفرة"
+                  : "Encrypted Shares"
+                : isAr
+                ? "إدارة الأكواد والفحص"
+                : "Codes & Scanner"}
             </h1>
+            <p className="text-xs text-[#A1A1AA]">
+              {isAr
+                ? "لوحة موحّدة لإدارة أكواد QR، فحص الكاميرا والصور، وإدارة الملفات المشفرة."
+                : "Unified workspace for Dynamic QRs, live camera/image scanner, and encrypted shares."}
+            </p>
           </div>
 
-          <Link
-            href="/#qr-workspace"
-            className="h-10 px-4 rounded-lg bg-[#FFFFFF] text-[#09090B] border border-[#FFFFFF] hover:bg-[#09090B] hover:text-[#FFFFFF] font-mono font-bold text-xs uppercase inline-flex items-center justify-center gap-2 transition-all duration-150 self-start sm:self-auto"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{isAr ? "إنشاء QR جديد" : "New QR"}</span>
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-1 p-1 rounded-xl border border-[#27272A] bg-[#121215]">
+              {(
+                [
+                  { id: "CODES" as const, icon: QrCode, label: isAr ? "الأكواد" : "Codes" },
+                  { id: "SCAN" as const, icon: Camera, label: isAr ? "المسح والفتح" : "Scanner" },
+                  { id: "SHARES" as const, icon: Shield, label: isAr ? "المشفرة" : "Shares" },
+                ] as const
+              ).map((tab) => {
+                const Icon = tab.icon;
+                const active = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`h-9 px-3.5 rounded-lg text-xs font-medium inline-flex items-center gap-1.5 transition-all duration-150 cursor-pointer ${
+                      active
+                        ? "bg-[#FFFFFF] text-[#09090B] font-bold"
+                        : "text-[#A1A1AA] hover:text-[#FFFFFF]"
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <Link
+              href={activeTab === "SHARES" ? "/?tool=share" : "/?tool=qr"}
+              className="h-10 px-4 rounded-xl bg-[#FFFFFF] text-[#09090B] border border-[#FFFFFF] hover:bg-[#09090B] hover:text-[#FFFFFF] font-mono font-bold text-xs inline-flex items-center gap-1.5 transition-all duration-150"
+            >
+              <Plus className="w-4 h-4" />
+              <span>{activeTab === "SHARES" ? (isAr ? "مشاركة جديدة" : "New Share") : isAr ? "إنشاء QR" : "New QR"}</span>
+            </Link>
+          </div>
         </div>
 
-        {/* 4 Monochrome KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {[
-            { key: "total", label: isAr ? "إجمالي الأكواد" : "Total", val: stats.total, level: 80 },
-            { key: "active", label: isAr ? "النشطة" : "Active", val: stats.active, level: 95, dot: true },
-            { key: "protected", label: isAr ? "المحمية" : "Protected", val: stats.protected, level: 70 },
-            { key: "scans", label: isAr ? "إجمالي المسح" : "Scans", val: stats.totalScans, level: 88 },
-          ].map((kpi) => (
-            <div
-              key={kpi.key}
-              className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden"
-            >
-              <SegmentedLedBar level={kpi.level} cells={16} />
-              <div className="p-4 text-start space-y-1">
-                <span className="text-[11px] font-mono text-[#A1A1AA] flex items-center gap-1.5">
-                  {kpi.dot && <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />}
-                  <span>{kpi.label}</span>
-                </span>
-                <span className="text-2xl font-mono font-bold text-[#FFFFFF] tabular-nums block">
-                  {kpi.val}
-                </span>
+        {activeTab === "CODES" && (
+          <>
+            {/* Clean Summary Metrics (No decorative LED clutter) */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {[
+                { key: "total", label: isAr ? "إجمالي الأكواد" : "Total QRs", val: stats.total },
+                { key: "active", label: isAr ? "النشطة" : "Active", val: stats.active, dot: true },
+                { key: "protected", label: isAr ? "المحمية" : "Protected", val: stats.protected },
+                { key: "scans", label: isAr ? "إجمالي المسح" : "Total Scans", val: stats.totalScans },
+              ].map((kpi) => (
+                <div
+                  key={kpi.key}
+                  className="rounded-xl border border-[#27272A] bg-[#121215] p-4 text-start space-y-1"
+                >
+                  <span className="text-[11px] font-mono text-[#A1A1AA] flex items-center gap-1.5">
+                    {kpi.dot && <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />}
+                    <span>{kpi.label}</span>
+                  </span>
+                  <span className="text-2xl font-mono font-bold text-[#FFFFFF] tabular-nums block">
+                    {kpi.val}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Filter & Sort Toolbar */}
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-1.5">
+                {["ALL", "URL", "PDF", "DOCX", "LINKS", "VCARD", "WIFI", "TEXT"].map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setFilterType(t)}
+                    className={`h-8 px-2.5 rounded-md border text-[11px] font-mono transition-all duration-150 cursor-pointer ${
+                      filterType === t
+                        ? "bg-[#FFFFFF] text-[#09090B] border-[#FFFFFF] font-bold"
+                        : "bg-[#121215] text-[#A1A1AA] border-[#27272A] hover:text-[#FFFFFF]"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <select
+                  aria-label={isAr ? "ترتيب" : "Sort"}
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as "newest" | "scans")}
+                  className="h-9 px-2.5 rounded-lg bg-[#121215] border border-[#27272A] text-xs font-mono text-[#FFFFFF]"
+                >
+                  <option value="newest">{isAr ? "الأحدث" : "Newest"}</option>
+                  <option value="scans">{isAr ? "الأكثر مسحاً" : "Most Scanned"}</option>
+                </select>
+
+                <div className="relative flex-1 sm:w-56">
+                  <Search className="w-3.5 h-3.5 text-[#71717A] absolute top-1/2 -translate-y-1/2 start-3" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={isAr ? "بحث..." : "Search..."}
+                    className="w-full h-9 ps-9 pe-3 rounded-lg bg-[#121215] border border-[#27272A] text-xs font-mono text-[#FFFFFF] placeholder:text-[#52525B] focus:outline-none focus:border-[#FFFFFF]"
+                  />
+                </div>
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* Filter & Sort Toolbar */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            {["ALL", "URL", "PDF", "DOCX", "LINKS", "VCARD", "WIFI", "TEXT"].map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setFilterType(t)}
-                className={`h-8 px-2.5 rounded-md border text-[11px] font-mono transition-all duration-150 cursor-pointer ${
-                  filterType === t
-                    ? "bg-[#FFFFFF] text-[#09090B] border-[#FFFFFF] font-bold"
-                    : "bg-[#121215] text-[#A1A1AA] border-[#27272A] hover:text-[#FFFFFF]"
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <select
-              aria-label={isAr ? "ترتيب" : "Sort"}
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as "newest" | "scans")}
-              className="h-9 px-2.5 rounded-lg bg-[#121215] border border-[#27272A] text-xs font-mono text-[#FFFFFF]"
-            >
-              <option value="newest">{isAr ? "الأحدث" : "Newest"}</option>
-              <option value="scans">{isAr ? "الأكثر مسحاً" : "Most Scanned"}</option>
-            </select>
-
-            <div className="relative flex-1 sm:w-56">
-              <Search className="w-3.5 h-3.5 text-[#71717A] absolute top-1/2 -translate-y-1/2 start-3" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={isAr ? "بحث..." : "Search..."}
-                className="w-full h-9 ps-9 pe-3 rounded-lg bg-[#121215] border border-[#27272A] text-xs font-mono text-[#FFFFFF] placeholder:text-[#52525B] focus:outline-none focus:border-[#FFFFFF]"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Registry Table */}
-        <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
-          <SegmentedLedBar level={visibleQrs.length > 0 ? 90 : 30} cells={30} />
+            {/* Clean Registry Table */}
+            <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-start border-collapse">
               <thead>
@@ -512,13 +770,264 @@ export function DashboardClient() {
             </table>
           </div>
         </div>
+          </>
+        )}
+
+        {activeTab === "SCAN" && (
+          <div className="max-w-2xl mx-auto space-y-5">
+            <div className="rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden">
+              <SegmentedLedBar
+                level={cameraActive ? 65 : cameraError ? 25 : decodedResult ? 100 : 15}
+                status={cameraActive ? "working" : cameraError ? "error" : decodedResult ? "success" : "idle"}
+                label={cameraActive ? "LIVE SCAN" : decodedResult ? "DECODED" : "SCANNER"}
+                metricText={cameraActive ? facingMode.toUpperCase() : undefined}
+              />
+              <div className="p-5 sm:p-6 space-y-4">
+                <div className="aspect-video w-full rounded-xl border border-[#27272A] bg-[#09090B] relative overflow-hidden flex items-center justify-center">
+                  <video
+                    ref={videoRef}
+                    playsInline
+                    muted
+                    className={`w-full h-full object-cover ${cameraActive ? "block" : "hidden"}`}
+                  />
+                  <canvas ref={canvasRef} className="hidden" />
+
+                  {!cameraActive && (
+                    <div className="text-center p-6 space-y-3">
+                      <div className="w-14 h-14 rounded-2xl border border-[#27272A] bg-[#121215] flex items-center justify-center mx-auto">
+                        <QrCode className="w-7 h-7 text-[#FFFFFF]" />
+                      </div>
+                      <p className="text-xs font-mono text-[#A1A1AA]">
+                        {isAr
+                          ? "شغّل الكاميرا لمسح أي QR أو ارفع صورة كود QR مباشرة"
+                          : "Start camera feed or upload a QR image to decode"}
+                      </p>
+                    </div>
+                  )}
+
+                  {cameraActive && (
+                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                      <div className="w-48 h-48 border-2 border-[#FFFFFF] rounded-xl" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {!cameraActive ? (
+                    <button
+                      type="button"
+                      onClick={() => startCamera(facingMode)}
+                      className="flex-1 h-10 px-4 rounded-lg bg-[#FFFFFF] text-[#09090B] border border-[#FFFFFF] hover:bg-[#09090B] hover:text-[#FFFFFF] font-mono font-bold text-xs uppercase inline-flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer"
+                    >
+                      <Camera className="w-4 h-4" />
+                      <span>{isAr ? "تشغيل الكاميرا" : "Start Camera"}</span>
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={stopCamera}
+                        className="flex-1 h-10 px-4 rounded-lg bg-[#FFFFFF] text-[#09090B] border border-[#FFFFFF] hover:bg-[#09090B] hover:text-[#FFFFFF] font-mono font-bold text-xs uppercase cursor-pointer"
+                      >
+                        {isAr ? "إيقاف الكاميرا" : "Stop Camera"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = facingMode === "environment" ? "user" : "environment";
+                          setFacingMode(next);
+                          startCamera(next);
+                        }}
+                        className="w-10 h-10 rounded-lg border border-[#27272A] bg-[#09090B] text-[#FFFFFF] hover:bg-[#FFFFFF] hover:text-[#09090B] flex items-center justify-center cursor-pointer"
+                        title="Flip Camera"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+
+                  <input
+                    ref={uploadInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => uploadInputRef.current?.click()}
+                    className="h-10 px-4 rounded-lg bg-[#09090B] text-[#FFFFFF] border border-[#27272A] hover:bg-[#FFFFFF] hover:text-[#09090B] hover:border-[#FFFFFF] font-mono font-bold text-xs uppercase inline-flex items-center gap-2 transition-all duration-150 cursor-pointer"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>{isAr ? "فحص صورة QR" : "Upload QR Image"}</span>
+                  </button>
+                </div>
+
+                {cameraError && (
+                  <div className="p-3 rounded-lg border border-[#27272A] bg-[#09090B] text-xs font-mono text-[#A1A1AA] flex items-center gap-2 text-start">
+                    <AlertCircle className="w-4 h-4 text-[#FFFFFF] shrink-0" />
+                    <span>{cameraError}</span>
+                  </div>
+                )}
+
+                {decodedResult && (
+                  <div className="p-4 rounded-lg border border-[#FFFFFF] bg-[#09090B] space-y-3 text-start">
+                    <span className="text-[10px] font-mono uppercase text-[#71717A] block">
+                      {isAr ? "النتيجة المقروءة" : "DECODED PAYLOAD"}
+                    </span>
+                    <div dir="ltr" className="text-xs font-mono text-[#FFFFFF] break-all">
+                      {decodedResult}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {/^https?:\/\//i.test(decodedResult) && (
+                        <a
+                          href={decodedResult}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="h-9 px-3.5 rounded-lg bg-[#FFFFFF] text-[#09090B] font-mono font-bold text-xs inline-flex items-center gap-1.5"
+                        >
+                          <span>{isAr ? "فتح الوجهة" : "Open URL"}</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleCopyScan}
+                        className="w-9 h-9 rounded-lg border border-[#27272A] bg-[#121215] text-[#FFFFFF] hover:bg-[#FFFFFF] hover:text-[#09090B] flex items-center justify-center cursor-pointer"
+                      >
+                        {copiedScan ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <form
+              onSubmit={handleManualLookup}
+              className="rounded-xl border border-[#27272A] bg-[#121215] p-5 space-y-3 text-start"
+            >
+              <label className="text-xs font-mono text-[#A1A1AA] block">
+                {isAr
+                  ? "أو أدخل كود taptag. مباشرة (مثال: TT-DOCS1)"
+                  : "Or enter a taptag. code directly (e.g. TT-DOCS1)"}
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  dir="ltr"
+                  value={manualInput}
+                  onChange={(e) => setManualInput(e.target.value)}
+                  placeholder="TT-DOCS1"
+                  className="flex-1 h-10 px-3 rounded-lg bg-[#09090B] border border-[#27272A] text-xs font-mono text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]"
+                />
+                <button
+                  type="submit"
+                  className="h-10 px-4 rounded-lg bg-[#FFFFFF] text-[#09090B] border border-[#FFFFFF] hover:bg-[#09090B] hover:text-[#FFFFFF] font-mono font-bold text-xs uppercase inline-flex items-center gap-1.5 cursor-pointer transition-all duration-150"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                  <span>{isAr ? "فتح" : "Open"}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {activeTab === "SHARES" && (
+          <div className="rounded-xl border border-[#27272A] bg-[#121215] p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-bold text-[#FFFFFF]">
+                {isAr ? "الملفات المشفرة النشطة" : "Encrypted File Vaults"}
+              </span>
+              <button
+                type="button"
+                onClick={loadData}
+                aria-label="Refresh shares"
+                className="w-9 h-9 rounded-lg border border-[#27272A] bg-[#09090B] text-[#FFFFFF] hover:border-[#FFFFFF] flex items-center justify-center cursor-pointer"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
+            </div>
+
+            {loadingShares ? (
+              <div className="py-10 text-center text-xs font-mono text-[#71717A]">
+                {isAr ? "جارٍ التحميل..." : "Loading..."}
+              </div>
+            ) : shares.length === 0 ? (
+              <div className="py-10 text-center space-y-3">
+                <p className="text-xs font-mono text-[#71717A]">
+                  {isAr ? "لا توجد مشاركات مشفرة بعد." : "No encrypted shares yet."}
+                </p>
+                <Link
+                  href="/?tool=share"
+                  className="inline-flex h-9 px-4 rounded-lg bg-[#FFFFFF] text-[#09090B] font-mono font-bold text-xs items-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{isAr ? "إنشاء مشاركة مشفرة" : "Create Secure Share"}</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {shares.map((s) => (
+                  <div
+                    key={s.id}
+                    className="p-4 rounded-xl border border-[#27272A] bg-[#09090B] flex items-center justify-between gap-3 text-start"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                            s.isUsable ? "bg-[#10B981]" : "bg-[#52525B]"
+                          }`}
+                        />
+                        <span className="text-sm font-bold text-[#FFFFFF] truncate">{s.title}</span>
+                      </div>
+                      <div dir="ltr" className="text-[11px] font-mono text-[#71717A] mt-1 flex flex-wrap gap-2">
+                        <span>{s.shareCode}</span>
+                        <span>· {Math.max(1, Math.ceil(s.fileSize / 1024))} KB</span>
+                        {s.isEncrypted && <span>· E2EE</span>}
+                        {s.burnAfterRead && <span>· 1x BURN</span>}
+                        <span>· DL {s.downloadCount}{s.maxDownloads ? `/${s.maxDownloads}` : ""}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0" dir="ltr">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleShare(s)}
+                        title={s.isActive ? "Pause" : "Resume"}
+                        className="w-9 h-9 rounded-lg border border-[#27272A] bg-[#121215] text-[#FFFFFF] hover:border-[#FFFFFF] flex items-center justify-center cursor-pointer"
+                      >
+                        <Power className="w-3.5 h-3.5" />
+                      </button>
+                      <Link
+                        href={`/s/${s.shareCode}${cachedKeyFragments[s.shareCode] || ""}`}
+                        target="_blank"
+                        className="w-9 h-9 rounded-lg border border-[#27272A] bg-[#121215] text-[#FFFFFF] hover:border-[#FFFFFF] flex items-center justify-center"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteShare(s)}
+                        title="Delete"
+                        className="w-9 h-9 rounded-lg border border-[#27272A] bg-[#121215] text-[#A1A1AA] hover:text-[#FFFFFF] hover:border-[#FFFFFF] flex items-center justify-center cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       {/* INSPECT QR & ANALYTICS MODAL */}
       {inspectingQr && (
         <div className="fixed inset-0 z-50 bg-[#09090B]/90 flex items-center justify-center p-4">
           <div className="w-full max-w-lg rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden text-start">
-            <SegmentedLedBar level={95} cells={24} label={inspectingQr.shortCode} active />
             <div className="p-5 sm:p-6 space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-[#27272A]">
                 <div>
@@ -612,7 +1121,6 @@ export function DashboardClient() {
       {editingQr && (
         <div className="fixed inset-0 z-50 bg-[#09090B]/90 flex items-center justify-center p-4">
           <div className="w-full max-w-lg rounded-xl border border-[#27272A] bg-[#121215] overflow-hidden text-start">
-            <SegmentedLedBar level={90} cells={24} label={editingQr.shortCode} active />
             <form onSubmit={handleSaveEdit} className="p-5 sm:p-6 space-y-4 max-h-[85vh] overflow-y-auto">
               <div className="flex items-center justify-between pb-3 border-b border-[#27272A]">
                 <div>
