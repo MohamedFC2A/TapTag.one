@@ -1,0 +1,16 @@
+/* TEAM */
+Founder, Lead Architect & Developer: Mohamed Matany (محمد أحمد مطعني / محمد مطعني)
+Handle: @mo_matany
+Contact: mo@matany.one
+Corporate Umbrella: Matany Group (المطعني جروب) — https://matanygroup.com
+GitHub: https://github.com/MohamedFC2A
+
+/* ECOSYSTEM */
+Smart Access & Encrypted Share: https://taptag.one (Mata AI)
+AI Workspace: https://matany.one (Mata AI / Fathom Quant 3)
+Digital Commerce: https://upstore.one (Mata AI)
+Safety & Attendance: https://e7dar.com
+
+/* TECHNOLOGY */
+Stack: Next.js 15, TypeScript, Prisma, Tailwind CSS, WebAuthn, AES-256, Mata AI
+Standards: Schema.org JSON-LD, llms.txt, RFC 9116 security.txt, Strict CSP & HSTS

@@ -1,0 +1,6 @@
+Contact: mailto:mo@matany.one
+Contact: mailto:support@matanygroup.com
+Expires: 2027-11-17T00:00:00.000Z
+Preferred-Languages: ar, en
+Canonical: https://taptag.one/.well-known/security.txt
+Hiring: https://matanygroup.com

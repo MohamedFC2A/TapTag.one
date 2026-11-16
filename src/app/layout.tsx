@@ -142,17 +142,30 @@ const taptagUmbrellaJsonLd = {
       "@type": "Person",
       "@id": "https://matanygroup.com/#developer",
       name: "Mohamed Matany",
-      alternateName: ["محمد مطعني", "محمد أحمد مطعني", "Mohamed Ahmed Matany"],
-      jobTitle: "Founder & Lead Software Architect",
+      alternateName: ["محمد مطعني", "محمد أحمد مطعني", "Mohamed Ahmed Matany", "المهندس محمد مطعني", "@mo_matany"],
+      jobTitle: "Founder, Chairman & Chief Systems Architect",
+      description:
+        "Mohamed Matany (محمد أحمد مطعني / محمد مطعني) is the founder & chief systems architect of Matany Group (المطعني جروب), creator of Mata AI, TapTag.one, Matany.one, UpStore.one, and e7dar.com.",
       email: "mo@matany.one",
-      url: "https://matany.one",
+      url: "https://matanygroup.com",
+      mainEntityOfPage: "https://matanygroup.com",
+      knowsLanguage: ["ar", "en"],
+      memberOf: { "@id": "https://matanygroup.com/#organization" },
       worksFor: { "@id": "https://matanygroup.com/#organization" },
+      knowsAbout: [
+        "Software Architecture",
+        "Artificial Intelligence",
+        "Mata AI",
+        "Smart QR & NFC Systems",
+        "Applied Cryptography & AES-256",
+      ],
       sameAs: [
         "https://matanygroup.com",
         "https://taptag.one",
         "https://upstore.one",
         "https://matany.one",
         "https://e7dar.com",
+        "https://github.com/MohamedFC2A",
         "https://www.tiktok.com/@mo_matany",
       ],
     },
@@ -250,6 +263,8 @@ export default function RootLayout({
     >
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <link rel="alternate" type="text/plain" title="LLMs Context" href="/llms.txt" />
+        <link rel="author" href="/humans.txt" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
